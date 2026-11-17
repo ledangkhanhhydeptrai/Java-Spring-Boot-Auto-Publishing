@@ -1,3 +1,4 @@
+
 package com.socialhub.publishingjob.engine;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -63,6 +64,11 @@ public class FanpageQueueProcessor {
 
     @Value("${FACEBOOK_LIVE_JOB_ID:}")
     private String liveJobId;
+
+    // Fail-closed allowlist for Phase 2C exact-job LIVE tests.
+    // This guard is intentionally separate from the optional connection selector.
+    @Value("${FACEBOOK_LIVE_ALLOWED_PAGE_ID:}")
+    private String liveAllowedPageId;
 
     @Value("${FACEBOOK_BULK_ENABLED:false}")
     private boolean bulkEnabled;
@@ -698,8 +704,23 @@ public class FanpageQueueProcessor {
         if (jobId == null) {
             throw new IllegalArgumentException("Queue jobId is required");
         }
-        if (!isLive() || bulkEnabled || !LIVE_URL.equals(metaBaseUrl)) {
+        if (!isLive() || bulkEnabled || multiJobEnabled || !LIVE_URL.equals(metaBaseUrl)) {
             throw new IllegalStateException("Queued Facebook execution requires single LIVE Graph API mode");
+        }
+        // Exact-job LIVE is fail closed. A queue message must never select
+        // a different post or Page, even if the outbox dispatched it.
+        UUID allowedJobId;
+        try {
+            allowedJobId = UUID.fromString(liveJobId == null ? "" : liveJobId.trim());
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalStateException("FACEBOOK_LIVE_JOB_ID must be a valid UUID before LIVE execution");
+        }
+        if (!allowedJobId.equals(jobId)) {
+            throw new IllegalStateException("Queued Facebook job is not the explicitly allowed LIVE Job ID");
+        }
+        String allowedPageId = liveAllowedPageId == null ? "" : liveAllowedPageId.trim();
+        if (!allowedPageId.matches("[0-9]+")) {
+            throw new IllegalStateException("FACEBOOK_LIVE_ALLOWED_PAGE_ID must be a numeric Page ID");
         }
         if (!graphVersion.matches("v[0-9]+\\.[0-9]+")) {
             throw new IllegalStateException("Invalid Graph API version");
@@ -719,7 +740,12 @@ public class FanpageQueueProcessor {
                               AND j.external_post_id IS NULL AND j.published_at IS NULL
                               AND j.published_url IS NULL
                               AND a.platform='FACEBOOK_PAGE' AND a.status='CONNECTED'
+                              AND a.external_account_id = ?
                               AND a.workspace_id=p.workspace_id
+                              AND NOT EXISTS (
+                                SELECT 1 FROM facebook_bulk_run_jobs bj
+                                WHERE bj.publishing_job_id = j.id
+                              )
                               AND NULLIF(BTRIM(a.access_token_encrypted),'') IS NOT NULL
                               AND (a.token_expires_at IS NULL OR a.token_expires_at>NOW())
                               AND p.status IN ('READY','SCHEDULED')
@@ -742,7 +768,7 @@ public class FanpageQueueProcessor {
                             RETURNING j.id,j.attempt_count
                             """, (rs, i) -> new ClaimedJob(
                             rs.getObject("id", UUID.class), rs.getInt("attempt_count")),
-                    jobId, maxImagesPerPost);
+                    jobId, allowedPageId, maxImagesPerPost);
             if (rows.isEmpty()) return null;
             ClaimedJob item = rows.getFirst();
             db.update("""
@@ -815,6 +841,9 @@ public class FanpageQueueProcessor {
             String pageId = (String) row.get("external_account_id");
             if (pageId == null || !pageId.matches("[0-9]+")) {
                 throw new IllegalStateException("Invalid Facebook Page ID");
+            }
+            if (exactQueuedJob && !pageId.equals(liveAllowedPageId.trim())) {
+                throw new IllegalStateException("Queued LIVE job Page ID does not match the allowlist");
             }
             UUID workspaceId = (UUID) row.get("workspace_id");
             if (workspaceId == null) {
@@ -1334,3 +1363,4 @@ public class FanpageQueueProcessor {
         }
     }
 }
+

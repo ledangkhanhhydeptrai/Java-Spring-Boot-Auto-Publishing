@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.amqp.core.MessageDeliveryMode;
 
 import java.util.List;
 import java.util.UUID;
@@ -61,6 +62,26 @@ public class AutomationOutboxDispatcher {
     @Value("${app.automation.queue.confirm-timeout-ms:15000}")
     private long confirmTimeoutMs;
 
+    // Single-Fanpage LIVE test allowlist; must match FanpageQueueProcessor.
+    @Value("${FACEBOOK_LIVE_JOB_ID:}")
+    private String allowedJobId;
+
+    @Value("${FACEBOOK_LIVE_ALLOWED_PAGE_ID:}")
+    private String allowedPageId;
+
+    private UUID validatedLiveJobId() {
+        if (allowedJobId == null || allowedJobId.isBlank()
+                || allowedPageId == null || !allowedPageId.trim().matches("[0-9]+")) {
+            throw new IllegalStateException(
+                    "LIVE requires FACEBOOK_LIVE_JOB_ID and FACEBOOK_LIVE_ALLOWED_PAGE_ID");
+        }
+        try {
+            return UUID.fromString(allowedJobId.trim());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException("Invalid FACEBOOK_LIVE_JOB_ID", e);
+        }
+    }
+
     @PostConstruct
     void initConfirmedTemplate() {
         ConnectionFactory factory = rabbit.getConnectionFactory();
@@ -88,6 +109,8 @@ public class AutomationOutboxDispatcher {
         }
 
         try {
+            // Fail closed before touching any Outbox row or sending to RabbitMQ.
+            if (liveDispatchEnabled) validatedLiveJobId();
             // A previous LIVE send with no confirmed result cannot be blindly replayed.
             if (liveDispatchEnabled) reviewExpiredLiveSending();
 
@@ -128,11 +151,35 @@ public class AutomationOutboxDispatcher {
                 ? switch (event.platform()) {
             case "FACEBOOK_PAGE" -> AutomationQueueConfiguration.FACEBOOK_LIVE_KEY;
             case "THREADS" -> AutomationQueueConfiguration.THREADS_LIVE_KEY;
-            default -> throw new IllegalStateException("Unsupported outbox platform");
+            default -> throw new IllegalStateException(
+                    "Unsupported outbox platform"
+            );
         }
                 : AutomationQueueConfiguration.KEY;
 
-        CorrelationData correlation = new CorrelationData(event.id().toString());
+        CorrelationData correlation =
+                new CorrelationData(event.id().toString());
+
+        // Gửi message thật sự vào RabbitMQ
+        confirmedRabbit.convertAndSend(
+                AutomationQueueConfiguration.EXCHANGE,
+                routingKey,
+                event.jobId().toString(),
+                message -> {
+                    message.getMessageProperties().setDeliveryMode(
+                            MessageDeliveryMode.PERSISTENT
+                    );
+
+                    message.getMessageProperties().setMessageId(
+                            event.id().toString()
+                    );
+
+                    return message;
+                },
+                correlation
+        );
+
+        // Chỉ chờ xác nhận SAU KHI gửi message
         CorrelationData.Confirm confirm =
                 correlation.getFuture().get(
                         confirmTimeoutMs,
@@ -150,6 +197,14 @@ public class AutomationOutboxDispatcher {
                     "RabbitMQ routing failed (unroutable)"
             );
         }
+
+        log.info(
+                "[AUTOMATION] RabbitMQ delivery confirmed | eventId={} | jobId={} | platform={} | routingKey={}",
+                event.id(),
+                event.jobId(),
+                event.platform(),
+                routingKey
+        );
     }
 
     private void deliveryNotConfirmed(Event event, String reason) {
@@ -174,33 +229,48 @@ public class AutomationOutboxDispatcher {
     }
 
     private void reviewExpiredLiveSending() {
-        // Crash recovery: never replay an uncertain LIVE delivery.
+        // Only touch the explicitly authorized LIVE job, never unrelated Outbox rows.
         int count = db.update("""
-                UPDATE automation_job_outbox
+                UPDATE automation_job_outbox o
                 SET state='REVIEW', lease_until=NULL,
                     last_error='LIVE delivery lease expired; verify broker and job outcome'
-                WHERE state='SENDING' AND lease_until < NOW()
-                """);
+                FROM publishing_jobs j JOIN social_accounts a ON a.id=j.social_account_id
+                WHERE o.publishing_job_id=j.id
+                  AND o.state='SENDING' AND o.lease_until < NOW()
+                  AND j.id=? AND o.platform='FACEBOOK_PAGE'
+                  AND a.platform='FACEBOOK_PAGE' AND a.external_account_id=?
+                """, validatedLiveJobId(), allowedPageId.trim());
         if (count > 0) log.warn("[AUTOMATION] {} expired LIVE outbox sends require review", count);
     }
 
     private Event claimNext() {
+        UUID authorizedJob = liveDispatchEnabled ? validatedLiveJobId() : null;
+        String authorizedPage = liveDispatchEnabled ? allowedPageId.trim() : "";
         return tx.execute(status -> {
             List<Event> items = db.query("""
-                    WITH chosen AS (
-                        SELECT id FROM automation_job_outbox
-                        WHERE (state='PENDING' AND next_attempt_at<=NOW())
-                           OR (CAST(? AS BOOLEAN)=TRUE AND state='SENDING' AND lease_until<NOW())
-                        ORDER BY next_attempt_at, created_at
-                        LIMIT 1 FOR UPDATE SKIP LOCKED
-                    )
-                    UPDATE automation_job_outbox o
-                    SET state='SENDING', delivery_attempts=delivery_attempts+1,
-                        lease_until=NOW()+INTERVAL '2 minutes'
-                    FROM chosen WHERE o.id=chosen.id
-                    RETURNING o.id,o.publishing_job_id,o.platform
-                    """, (rs, i) -> new Event(rs.getObject(1, UUID.class),
-                    rs.getObject(2, UUID.class), rs.getString(3)), !liveDispatchEnabled);
+                            WITH chosen AS (
+                                SELECT o.id FROM automation_job_outbox o
+                                JOIN publishing_jobs j ON j.id=o.publishing_job_id
+                                JOIN social_accounts a ON a.id=j.social_account_id
+                                WHERE ((o.state='PENDING' AND o.next_attempt_at<=NOW())
+                                    OR (CAST(? AS BOOLEAN)=TRUE AND o.state='SENDING'
+                                        AND o.lease_until<NOW()))
+                                  AND (CAST(? AS BOOLEAN)=FALSE OR (
+                                      j.id=CAST(? AS UUID)
+                                      AND o.platform='FACEBOOK_PAGE'
+                                      AND a.platform='FACEBOOK_PAGE'
+                                      AND a.external_account_id=?))
+                                ORDER BY o.next_attempt_at, o.created_at
+                                LIMIT 1 FOR UPDATE OF o SKIP LOCKED
+                            )
+                            UPDATE automation_job_outbox o
+                            SET state='SENDING', delivery_attempts=delivery_attempts+1,
+                                lease_until=NOW()+INTERVAL '2 minutes'
+                            FROM chosen WHERE o.id=chosen.id
+                            RETURNING o.id,o.publishing_job_id,o.platform
+                            """, (rs, i) -> new Event(rs.getObject(1, UUID.class),
+                            rs.getObject(2, UUID.class), rs.getString(3)),
+                    !liveDispatchEnabled, liveDispatchEnabled, authorizedJob, authorizedPage);
             return items.isEmpty() ? null : items.getFirst();
         });
     }
