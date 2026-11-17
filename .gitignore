@@ -1,0 +1,7 @@
+target/
+.idea/
+*.iml
+.env
+group-worker/browser-profile/
+__pycache__/
+*.pyc

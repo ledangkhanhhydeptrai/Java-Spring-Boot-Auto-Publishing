@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Keep the standard Spring Boot Console layout and internal log behavior. -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <springProperty scope="context" name="BACKEND_LOG_PATH" source="logging.file.name" defaultValue="logs/socialhub-mock.log"/>
+    <springProperty scope="context" name="MOCK_TERMINAL_LOG_PATH" source="socialhub.mock-queue.terminal-log-file" defaultValue="logs/mock-worker-terminal.log"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder><pattern>${CONSOLE_LOG_PATTERN}</pattern><charset>UTF-8</charset></encoder>
+    </appender>
+    <appender name="BACKEND_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${BACKEND_LOG_PATH}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${BACKEND_LOG_PATH}.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+            <maxFileSize>5MB</maxFileSize><maxHistory>2</maxHistory><totalSizeCap>15MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder><pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n</pattern><charset>UTF-8</charset></encoder>
+    </appender>
+    <appender name="MOCK_TERMINAL_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${MOCK_TERMINAL_LOG_PATH}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${MOCK_TERMINAL_LOG_PATH}.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+            <maxFileSize>5MB</maxFileSize><maxHistory>2</maxHistory><totalSizeCap>12MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder><pattern>%d{HH:mm:ss.SSS} %-5level %msg%n</pattern><charset>UTF-8</charset></encoder>
+    </appender>
+
+    <!-- Important: additivity=false prevents the mock events from reaching IntelliJ Console. -->
+    <logger name="socialhub.mock.terminal" level="INFO" additivity="false">
+        <appender-ref ref="MOCK_TERMINAL_FILE"/>
+    </logger>
+    <logger name="com.socialhub.mockqueue" level="INFO"/>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="BACKEND_FILE"/>
+    </root>
+</configuration>

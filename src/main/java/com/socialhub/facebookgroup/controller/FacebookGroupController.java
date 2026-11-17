@@ -1,0 +1,4 @@
+package com.socialhub.facebookgroup.controller;
+
+import java.util.*; import lombok.*; import jakarta.validation.Valid; import org.springframework.http.HttpStatus; import org.springframework.web.bind.annotation.*; import com.socialhub.facebookgroup.dto.FacebookGroupDto; import com.socialhub.facebookgroup.service.interfaces.FacebookGroupService;
+@RestController @RequestMapping("/api/workspaces/{workspaceId}/groups") @RequiredArgsConstructor public class FacebookGroupController {private final FacebookGroupService service;@PostMapping public FacebookGroupDto.View create(@PathVariable UUID workspaceId,@Valid @RequestBody FacebookGroupDto.Create r){return service.create(workspaceId,r);}@GetMapping public List<FacebookGroupDto.View> list(@PathVariable UUID workspaceId){return service.list(workspaceId);}@DeleteMapping("/{id}") @ResponseStatus(HttpStatus.NO_CONTENT) public void delete(@PathVariable UUID workspaceId,@PathVariable UUID id){service.delete(workspaceId,id);}}

@@ -1,0 +1,19 @@
+{
+  "mode": "OFFLINE_MOCK_ONLY",
+  "meta_requests": 0,
+  "database_writes": 0,
+  "rabbitmq_messages": 0,
+  "accounts": 100,
+  "jobs": 1000,
+  "workers": 8,
+  "latency_ms": 25,
+  "elapsed_seconds": 3.147,
+  "jobs_per_second": 317.76,
+  "status_counts": {
+    "PUBLISHED_MOCK": 1000,
+    "FAILED_MOCK": 0,
+    "DUPLICATE_CLAIM": 0
+  },
+  "timestamp_utc": "2026-11-16T10:05:17.556556+00:00",
+  "warning": "This is a synthetic executor benchmark, NOT a SocialHub integration test and NOT proof of Meta publishing capability."
+}
