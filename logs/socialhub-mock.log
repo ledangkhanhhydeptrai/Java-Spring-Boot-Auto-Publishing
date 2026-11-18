@@ -8337,3 +8337,981 @@ com.socialhub.common.ApiException: No Excel rows with a linked Post and non-empt
 2026-11-18 15:06:50.946 INFO  [SpringApplicationShutdownHook] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-11-18 15:06:50.956 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2026-11-18 15:06:50.967 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-11-18 15:07:01.220 INFO  [main] com.socialhub.SocialHubApplication - Starting SocialHubApplication using Java 25.0.2 with PID 5904 (D:\vox-social-media\SocialHub_Automation_2K_Phase1_SafePatch\SocialHub-Backend-Threads-AutoPublishing-v1\SocialHub-Backend\target\classes started by Khanhhy in D:\vox-social-media\SocialHub_Automation_2K_Phase1_SafePatch\SocialHub-Backend-Threads-AutoPublishing-v1\SocialHub-Backend)
+2026-11-18 15:07:01.226 INFO  [main] com.socialhub.SocialHubApplication - No active profile set, falling back to 1 default profile: "default"
+2026-11-18 15:07:05.989 INFO  [main] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-18 15:07:06.276 INFO  [main] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 273 ms. Found 16 JPA repository interfaces.
+2026-11-18 15:07:07.413 INFO  [main] o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
+2026-11-18 15:07:07.431 INFO  [main] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-11-18 15:07:07.431 INFO  [main] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.27]
+2026-11-18 15:07:07.530 INFO  [main] o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 6204 ms
+2026-11-18 15:07:08.097 INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-11-18 15:07:08.343 INFO  [main] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@538e74fc
+2026-11-18 15:07:08.345 INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-11-18 15:07:08.363 INFO  [main] org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5433/socialhub_test (PostgreSQL 13.23)
+2026-11-18 15:07:08.690 INFO  [main] o.f.core.internal.command.DbValidate - Successfully validated 22 migrations (execution time 00:00.268s)
+2026-11-18 15:07:08.711 INFO  [main] o.f.core.internal.command.DbMigrate - Current version of schema "public": 22
+2026-11-18 15:07:08.718 INFO  [main] o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2026-11-18 15:07:08.970 INFO  [main] org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-18 15:07:09.043 INFO  [main] org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.4.13.Final
+2026-11-18 15:07:09.513 INFO  [main] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-18 15:07:09.635 WARN  [main] org.hibernate.orm.core - HHH000511: The 13.23.0 version for [org.hibernate.dialect.PostgreSQLDialect] is no longer supported, hence certain features may not work properly.The minimum supported version is 14.0.0. Check the community dialects project for available legacy versions.
+2026-11-18 15:07:09.657 INFO  [main] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5433/socialhub_test]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 13.23
+	Default catalog/schema: socialhub_test/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-18 15:07:11.140 INFO  [main] org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-18 15:07:11.200 INFO  [main] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-18 15:07:11.304 INFO  [main] o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-11-18 15:07:13.836 INFO  [main] c.s.mockqueue.ExcelMockQueueWorker - [EXCEL MOCK] Dedicated worker initialized | queue=socialhub.mock.excel.v1
+2026-11-18 15:07:14.269 WARN  [main] o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 903b059a-384b-4956-8565-2fc987ad2bc1
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-18 15:07:14.279 INFO  [main] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-18 15:07:14.446 DEBUG [main] o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, CsrfFilter, LogoutFilter, , RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2026-11-18 15:07:14.600 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.a.c.AuthController:
+	{POST [/api/auth/register]}: register(Register,HttpServletResponse)
+	{GET [/api/auth/me]}: me(Authentication)
+	{GET [/api/auth/csrf]}: csrf(CsrfToken)
+	{POST [/api/auth/logout]}: logout(HttpServletRequest,HttpServletResponse)
+	{POST [/api/auth/login]}: login(Login,String,HttpServletResponse)
+2026-11-18 15:07:14.613 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.a.c.AutomationReadinessController:
+	{GET [/api/workspaces/{workspaceId}/automation/readiness]}: readiness(UUID)
+2026-11-18 15:07:14.615 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.a.h.AccountHealthController:
+	{GET [/api/workspaces/{workspaceId}/automation/accounts/health]}: accounts(UUID)
+2026-11-18 15:07:14.617 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.a.q.AutomationOutboxStatusController:
+	{GET [/api/workspaces/{workspaceId}/automation/queue/status]}: status(UUID)
+2026-11-18 15:07:14.620 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.c.c.CampaignController:
+	{GET [/api/campaigns]}: list(UUID)
+	{POST [/api/campaigns]}: create(Create)
+	{GET [/api/campaigns/{id}/progress]}: progress(UUID)
+	{GET [/api/campaigns/{id}]}: detail(UUID)
+	{POST [/api/campaigns/{id}/pause]}: pause(UUID)
+	{POST [/api/campaigns/{id}/resume]}: resume(UUID)
+	{POST [/api/campaigns/{id}/jobs]}: addJob(UUID,AddJob)
+2026-11-18 15:07:14.625 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.d.DryRunController:
+	{GET [/api/workspaces/{workspaceId}/dry-run/preview]}: preview(UUID)
+2026-11-18 15:07:14.628 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.d.DryRunExcelController:
+	{POST [/api/workspaces/{workspaceId}/dry-run/excel/preview], consumes [multipart/form-data]}: preview(UUID,MultipartFile)
+2026-11-18 15:07:14.631 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.d.DryRunQueueController:
+	{POST [/api/workspaces/{workspaceId}/dry-run/excel/simulate-queue], consumes [multipart/form-data]}: simulate(UUID,MultipartFile)
+2026-11-18 15:07:14.633 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.e.c.ExcelBulkImportController:
+	{POST [/api/workspaces/{workspaceId}/excel-imports/bulk], consumes [multipart/form-data]}: bulkImport(UUID,MultipartFile,List,LocalTime,boolean,boolean)
+2026-11-18 15:07:14.640 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.e.c.ExcelImportController:
+	{GET [/api/workspaces/{workspaceId}/excel-imports]}: list(UUID)
+	{GET [/api/workspaces/{workspaceId}/excel-imports/{importId}]}: detail(UUID,UUID)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/auto-plan]}: autoPlan(UUID,UUID)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/export-published], consumes [multipart/form-data]}: exportPublished(UUID,UUID,MultipartFile)
+	{POST [/api/workspaces/{workspaceId}/excel-imports], consumes [multipart/form-data]}: importExcel(UUID,MultipartFile,UUID,LocalTime,boolean)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/auto-plan/one]}: autoPlanOne(UUID,UUID,int,OffsetDateTime,boolean)
+	{GET [/api/workspaces/{workspaceId}/excel-imports/{importId}/publish-progress]}: publishProgress(UUID,UUID)
+2026-11-18 15:07:14.646 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.f.c.FacebookGroupController:
+	{GET [/api/workspaces/{workspaceId}/groups]}: list(UUID)
+	{POST [/api/workspaces/{workspaceId}/groups]}: create(UUID,Create)
+	{DELETE [/api/workspaces/{workspaceId}/groups/{id}]}: delete(UUID,UUID)
+2026-11-18 15:07:14.648 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.f.c.FacebookLivePreflightController:
+	{GET [/api/workspaces/{workspaceId}/facebook/preflight/jobs/{jobId}]}: checkJob(UUID,UUID)
+2026-11-18 15:07:14.651 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.f.c.FacebookOAuthController:
+	{GET [/api/facebook/oauth/start]}: start(UUID)
+	{GET [/api/facebook/oauth/callback]}: callback(String,String,String,HttpServletRequest,HttpServletResponse)
+	{GET [/api/facebook/oauth/bridge]}: bridge(String,HttpServletResponse)
+2026-11-18 15:07:14.654 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.f.c.FacebookPageConnectionController:
+	{GET [/api/workspaces/{workspaceId}/facebook-page-connections]}: list(UUID,UUID)
+	{GET [/api/workspaces/{workspaceId}/facebook-page-connections/jobs/{jobId}/binding]}: binding(UUID,UUID)
+	{POST [/api/workspaces/{workspaceId}/facebook-page-connections/jobs/{jobId}/bind]}: bind(UUID,UUID,BindRequest)
+	{POST [/api/workspaces/{workspaceId}/facebook-page-connections/{connectionId}/disconnect]}: disconnect(UUID,UUID)
+2026-11-18 15:07:14.660 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.g.c.GroupPublishingTaskController:
+	{GET [/api/posts/{postId}/group-tasks]}: list(UUID)
+	{POST [/api/posts/{postId}/group-tasks/{id}/cancel]}: cancel(UUID,UUID)
+	{POST [/api/posts/{postId}/group-tasks]}: create(UUID,Create)
+	{POST [/api/posts/{postId}/group-tasks/{id}/ready]}: ready(UUID,UUID)
+	{POST [/api/posts/{postId}/group-tasks/{id}/confirm]}: confirm(UUID,UUID,Confirm)
+2026-11-18 15:07:14.663 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.g.w.GroupWorkerController:
+	{POST [/internal/group-worker/{id}/result]}: result(String,UUID,Result)
+	{POST [/internal/group-worker/claim]}: claim(String)
+2026-11-18 15:07:14.665 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.m.c.CloudinaryTestController:
+	{POST [/api/media-test/upload], consumes [multipart/form-data]}: upload(MultipartFile)
+2026-11-18 15:07:14.666 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.m.c.ExcelImportMediaBatchController:
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/media/process]}: process(UUID,UUID,int,Integer)
+2026-11-18 15:07:14.668 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.m.c.MediaProcessingController:
+	{POST [/api/posts/{postId}/media/process]}: process(UUID)
+2026-11-18 15:07:14.669 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.m.ExcelMockRunController:
+	{GET [/api/workspaces/{workspaceId}/excel-imports/{importId}/mock-publishing/runs/{runId}]}: status(UUID,UUID,UUID)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/mock-publishing/start]}: start(UUID,UUID)
+	{GET [/api/workspaces/{workspaceId}/excel-imports/{importId}/mock-publishing/latest]}: latest(UUID,UUID)
+2026-11-18 15:07:14.673 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.c.PostApprovalController:
+	{GET [/api/posts/{postId}/approval/history]}: history(UUID)
+	{POST [/api/posts/{postId}/approval/submit]}: submit(UUID)
+	{POST [/api/posts/{postId}/approval/reject]}: reject(UUID,Reject)
+	{GET [/api/posts/{postId}/approval/status]}: getStatus(UUID)
+	{POST [/api/posts/{postId}/approval/approve]}: approve(UUID)
+2026-11-18 15:07:14.675 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.c.PostMediaController:
+	{GET [/api/posts/{postId}/media]}: list(UUID)
+	{POST [/api/posts/{postId}/media]}: create(UUID,Create)
+	{DELETE [/api/posts/{postId}/media/{id}]}: delete(UUID,UUID)
+2026-11-18 15:07:14.677 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.c.PostController:
+	{PUT [/api/workspaces/{workspaceId}/posts/{id}]}: update(UUID,UUID,Update)
+	{GET [/api/workspaces/{workspaceId}/posts]}: list(UUID,int,int,String,String)
+	{POST [/api/workspaces/{workspaceId}/posts]}: create(UUID,Create)
+	{DELETE [/api/workspaces/{workspaceId}/posts/{id}]}: delete(UUID,UUID)
+	{GET [/api/workspaces/{workspaceId}/posts/{id}]}: detail(UUID,UUID)
+2026-11-18 15:07:14.680 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.c.PublishingAttemptController:
+	{GET [/api/jobs/{jobId}/attempts]}: list(UUID)
+2026-11-18 15:07:14.682 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.b.c.FacebookBulkRunController:
+	{GET [/api/facebook/bulk-runs/{runId}]}: get(Authentication,UUID)
+	{POST [/api/facebook/bulk-runs/{runId}/start]}: start(Authentication,UUID)
+	{POST [/api/facebook/bulk-runs/{runId}/cancel]}: cancel(Authentication,UUID)
+	{POST [/api/facebook/bulk-runs]}: create(Authentication,CreateFacebookBulkRunRequest)
+2026-11-18 15:07:14.685 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.c.PublishingJobController:
+	{GET [/api/posts/{postId}/jobs]}: list(UUID)
+	{POST [/api/jobs/{jobId}/cancel]}: cancel(UUID)
+	{POST [/api/posts/{postId}/jobs]}: create(UUID,Create)
+	{POST [/api/jobs/{jobId}/retry]}: retry(UUID)
+	{POST [/api/jobs/{jobId}/confirm-not-published]}: confirmNotPublished(UUID,ConfirmNotPublished)
+	{POST [/api/jobs/{jobId}/confirm-published]}: confirmPublished(UUID,ConfirmPublished)
+	{GET [/api/workspaces/{workspaceId}/publishing-jobs]}: listWorkspaceJobs(UUID,int,int,String,UUID)
+	{GET [/api/jobs/{jobId}/reviews]}: getReviews(UUID)
+2026-11-18 15:07:14.688 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.s.c.SocialAccountController:
+	{GET [/api/workspaces/{workspaceId}/social-accounts]}: list(UUID)
+	{POST [/api/workspaces/{workspaceId}/social-accounts]}: create(UUID,Create)
+	{DELETE [/api/workspaces/{workspaceId}/social-accounts/{id}]}: delete(UUID,UUID)
+2026-11-18 15:07:14.689 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.t.ThreadsBulkController:
+	{POST [/api/workspaces/{workspaceId}/threads/bulk-run]}: queue(UUID,BulkRequest)
+2026-11-18 15:07:14.690 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.t.ThreadsOAuthController:
+	{GET [/api/threads/oauth/start]}: start(UUID,HttpServletResponse)
+	{GET [/api/threads/oauth/callback]}: callback(String,String,String,HttpServletRequest,HttpServletResponse)
+	{GET [/api/threads/oauth/bridge]}: bridge(String,HttpServletResponse)
+2026-11-18 15:07:14.692 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.t.ThreadsPublishingController:
+	{POST [/api/threads/publishing/jobs/{jobId}/publish-now]}: publishNow(UUID)
+2026-11-18 15:07:14.693 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.w.c.WorkspaceMemberController:
+	{DELETE [/api/workspaces/{workspaceId}/members/{userId}]}: remove(UUID,UUID)
+	{POST [/api/workspaces/{workspaceId}/members]}: add(UUID,Add)
+	{GET [/api/workspaces/{workspaceId}/members]}: list(UUID)
+2026-11-18 15:07:14.696 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.w.c.WorkspaceController:
+	{GET [/api/workspaces]}: list()
+	{POST [/api/workspaces]}: create(Create)
+	{DELETE [/api/workspaces/{id}]}: delete(UUID)
+	{PUT [/api/workspaces/{id}]}: rename(UUID,Create)
+	{GET [/api/workspaces/{id}]}: detail(UUID)
+2026-11-18 15:07:14.699 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	o.s.b.w.a.e.BasicErrorController:
+	{ [/error]}: error(HttpServletRequest)
+	{ [/error], produces [text/html]}: errorHtml(HttpServletRequest,HttpServletResponse)
+2026-11-18 15:07:14.710 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	o.s.w.a.OpenApiWebMvcResource:
+	{GET [/v3/api-docs], produces [application/json]}: openapiJson(HttpServletRequest,String,Locale)
+	{GET [/v3/api-docs.yaml], produces [application/vnd.oai.openapi]}: openapiYaml(HttpServletRequest,String,Locale)
+2026-11-18 15:07:14.712 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	o.s.w.u.SwaggerWelcomeWebMvc:
+	{GET [/swagger-ui.html]}: redirectToUi(HttpServletRequest)
+2026-11-18 15:07:14.713 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	o.s.w.u.SwaggerConfigResource:
+	{GET [/v3/api-docs/swagger-config], produces [application/json]}: openapiJson(HttpServletRequest)
+2026-11-18 15:07:14.716 DEBUG [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 98 mappings in 'requestMappingHandlerMapping'
+2026-11-18 15:07:15.283 INFO  [main] o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoints beneath base path '/actuator'
+2026-11-18 15:07:15.411 INFO  [main] o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path '/'
+2026-11-18 15:07:15.414 INFO  [main] o.s.a.r.c.CachingConnectionFactory - Attempting to connect to: [localhost:5673]
+2026-11-18 15:07:15.490 INFO  [main] o.s.a.r.c.CachingConnectionFactory - Created new connection: rabbitConnectionFactory#71d85b53:0/SimpleConnection@70573f5f [delegate=amqp://socialhub@127.0.0.1:5673/, localPort=49687]
+2026-11-18 15:07:15.750 INFO  [main] com.socialhub.SocialHubApplication - Started SocialHubApplication in 15.57 seconds (process running for 16.601)
+2026-11-18 15:07:15.831 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:07:26.990 INFO  [http-nio-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-11-18 15:07:26.992 INFO  [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-11-18 15:07:26.995 INFO  [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-11-18 15:07:27.012 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/publishing-jobs?page=0&size=20
+2026-11-18 15:07:27.195 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:07:27.199 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/publishing-jobs?page=0&size=20
+2026-11-18 15:07:27.205 TRACE [http-nio-8081-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.publishingjob.controller.PublishingJobController#listWorkspaceJobs(UUID, int, int, String, UUID)
+2026-11-18 15:07:27.356 WARN  [http-nio-8081-exec-1] o.s.d.w.c.SpringDataJackson3Configuration$PageModule$WarningLoggingModifier - Serializing PageImpl instances as-is is not supported, meaning that there is no guarantee about the stability of the resulting JSON structure!
+	For a stable JSON structure, please use Spring Data's PagedModel (globally via @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO))
+	or Spring HATEOAS and Spring Data's PagedResourcesAssembler as documented in https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.pageables.
+
+2026-11-18 15:07:28.737 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces
+2026-11-18 15:07:28.739 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/social-accounts
+2026-11-18 15:07:28.740 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports
+2026-11-18 15:07:28.756 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:07:28.757 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports
+2026-11-18 15:07:28.762 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.excelimport.controller.ExcelImportController#list(UUID)
+2026-11-18 15:07:28.767 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:07:28.767 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces
+2026-11-18 15:07:28.769 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.workspace.controller.WorkspaceController#list()
+2026-11-18 15:07:28.772 DEBUG [http-nio-8081-exec-6] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:07:28.778 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/social-accounts
+2026-11-18 15:07:28.790 TRACE [http-nio-8081-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.socialaccount.controller.SocialAccountController#list(UUID)
+2026-11-18 15:07:30.409 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/30e53dd9-65d5-4f87-b07b-67b8ea4f0cf3/mock-publishing/latest
+2026-11-18 15:07:30.417 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:07:30.418 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/30e53dd9-65d5-4f87-b07b-67b8ea4f0cf3/mock-publishing/latest
+2026-11-18 15:07:30.419 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:07:30.845 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:07:33.419 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing OPTIONS /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/30e53dd9-65d5-4f87-b07b-67b8ea4f0cf3/mock-publishing/start
+2026-11-18 15:07:33.425 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing POST /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/30e53dd9-65d5-4f87-b07b-67b8ea4f0cf3/mock-publishing/start
+2026-11-18 15:07:33.432 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:07:33.433 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured POST /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/30e53dd9-65d5-4f87-b07b-67b8ea4f0cf3/mock-publishing/start
+2026-11-18 15:07:33.434 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#start(UUID, UUID)
+2026-11-18 15:07:33.434 INFO  [http-nio-8081-exec-8] c.s.mockqueue.ExcelMockRunController - [EXCEL MOCK] Start request | importId=30e53dd9-65d5-4f87-b07b-67b8ea4f0cf3
+2026-11-18 15:07:33.463 ERROR [http-nio-8081-exec-8] c.s.mockqueue.ExcelMockRunController - [EXCEL MOCK] Start failed
+com.socialhub.common.ApiException: No Excel rows with a linked Post and non-empty content available for MOCK demo
+	at com.socialhub.mockqueue.ExcelMockRunService.start(ExcelMockRunService.java:158)
+	at com.socialhub.mockqueue.ExcelMockRunController.start(ExcelMockRunController.java:34)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:184)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:649)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:132)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:59)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:108)
+	at org.springframework.security.web.FilterChainProxy.lambda$doFilterInternal$2(FilterChainProxy.java:235)
+	at org.springframework.security.web.ObservationFilterChainDecorator$FilterObservation$SimpleFilterObservation.lambda$wrap$1(ObservationFilterChainDecorator.java:491)
+	at org.springframework.security.web.ObservationFilterChainDecorator$AroundFilterObservation$SimpleAroundFilterObservation.lambda$wrap$1(ObservationFilterChainDecorator.java:353)
+	at org.springframework.security.web.ObservationFilterChainDecorator.lambda$wrapSecured$0(ObservationFilterChainDecorator.java:84)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:131)
+	at org.springframework.security.web.access.intercept.AuthorizationFilter.doFilter(AuthorizationFilter.java:101)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:126)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:120)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:132)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:86)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:101)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:181)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at com.socialhub.security.SecurityConfig$1.doFilterInternal(SecurityConfig.java:116)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:110)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:96)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.csrf.CsrfFilter.doFilterInternal(CsrfFilter.java:135)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.web.filter.CorsFilter.doFilterInternal(CorsFilter.java:91)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.header.HeaderWriterFilter.doHeadersAfter(HeaderWriterFilter.java:91)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:76)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:82)
+	at org.springframework.security.web.context.SecurityContextHolderFilter.doFilter(SecurityContextHolderFilter.java:69)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:62)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:230)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.session.DisableEncodeUrlFilter.doFilterInternal(DisableEncodeUrlFilter.java:42)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.wrapFilter(ObservationFilterChainDecorator.java:243)
+	at org.springframework.security.web.ObservationFilterChainDecorator$AroundFilterObservation$SimpleAroundFilterObservation.lambda$wrap$0(ObservationFilterChainDecorator.java:336)
+	at org.springframework.security.web.ObservationFilterChainDecorator$ObservationFilter.doFilter(ObservationFilterChainDecorator.java:227)
+	at org.springframework.security.web.ObservationFilterChainDecorator$VirtualFilterChain.doFilter(ObservationFilterChainDecorator.java:140)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:237)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:195)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.ServletRequestPathFilter.doFilter(ServletRequestPathFilter.java:52)
+	at org.springframework.web.filter.CompositeFilter$VirtualFilterChain.doFilter(CompositeFilter.java:113)
+	at org.springframework.web.filter.CompositeFilter.doFilter(CompositeFilter.java:74)
+	at org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration$CompositeFilterChainProxy.doFilter(WebSecurityConfiguration.java:317)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:355)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:272)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:110)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:111)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:164)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:540)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:86)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:71)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:347)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:411)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:71)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:1308)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:2202)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:74)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:947)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:481)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:74)
+	at java.base/java.lang.Thread.run(Thread.java:1474)
+2026-11-18 15:07:34.966 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/30e53dd9-65d5-4f87-b07b-67b8ea4f0cf3/mock-publishing/latest
+2026-11-18 15:07:34.973 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:07:34.974 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/30e53dd9-65d5-4f87-b07b-67b8ea4f0cf3/mock-publishing/latest
+2026-11-18 15:07:34.975 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:07:35.715 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/30e53dd9-65d5-4f87-b07b-67b8ea4f0cf3/mock-publishing/latest
+2026-11-18 15:07:35.720 DEBUG [http-nio-8081-exec-9] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:07:35.720 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/30e53dd9-65d5-4f87-b07b-67b8ea4f0cf3/mock-publishing/latest
+2026-11-18 15:07:35.722 TRACE [http-nio-8081-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:07:45.857 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:08:00.872 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:08:15.880 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:08:26.508 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Securing GET /api/auth/me
+2026-11-18 15:08:26.522 DEBUG [http-nio-8081-exec-10] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:08:26.524 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Secured GET /api/auth/me
+2026-11-18 15:08:26.525 TRACE [http-nio-8081-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.auth.controller.AuthController#me(Authentication)
+2026-11-18 15:08:26.581 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces
+2026-11-18 15:08:26.587 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:08:26.588 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces
+2026-11-18 15:08:26.589 TRACE [http-nio-8081-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.workspace.controller.WorkspaceController#list()
+2026-11-18 15:08:26.615 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports
+2026-11-18 15:08:26.616 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/social-accounts
+2026-11-18 15:08:26.621 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:08:26.622 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports
+2026-11-18 15:08:26.623 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.excelimport.controller.ExcelImportController#list(UUID)
+2026-11-18 15:08:26.624 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:08:26.624 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/social-accounts
+2026-11-18 15:08:26.626 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.socialaccount.controller.SocialAccountController#list(UUID)
+2026-11-18 15:08:30.890 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:08:32.112 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing OPTIONS /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/dry-run/excel/preview
+2026-11-18 15:08:32.121 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing POST /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/dry-run/excel/preview
+2026-11-18 15:08:32.127 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:08:32.128 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured POST /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/dry-run/excel/preview
+2026-11-18 15:08:32.174 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.dryrun.DryRunExcelController#preview(UUID, MultipartFile)
+2026-11-18 15:08:40.364 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing OPTIONS /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports?socialAccountId=f1b3e59e-33ae-4e6f-9dc6-8c1cf8ee2c7b&publishTime=09%3A00
+2026-11-18 15:08:40.377 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing POST /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports?socialAccountId=f1b3e59e-33ae-4e6f-9dc6-8c1cf8ee2c7b&publishTime=09%3A00
+2026-11-18 15:08:40.384 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:08:40.385 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured POST /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports?socialAccountId=f1b3e59e-33ae-4e6f-9dc6-8c1cf8ee2c7b&publishTime=09%3A00
+2026-11-18 15:08:40.406 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.excelimport.controller.ExcelImportController#importExcel(UUID, MultipartFile, UUID, LocalTime, boolean)
+2026-11-18 15:08:41.490 INFO  [http-nio-8081-exec-8] c.s.e.s.i.ExcelImportServiceImpl - [EXCEL IMPORT AUDIT] import=6a6b2c4e-197a-45d1-8bda-dc1ad43b2138 workspace=5b98521c-1513-4039-936f-b17d8d8516db db=socialhub_test dbPort=5433 expectedRows=300 importedPosts=122 skipped=178 persistedRows=300 linkedPostIds=122 existingPosts=122
+2026-11-18 15:08:41.505 INFO  [http-nio-8081-exec-8] c.s.e.c.ExcelImportController - [MOCK AUTO] SKIPPED | enabled=false queueEnabled=false liveEnabled=true confirmed=true
+2026-11-18 15:08:41.521 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports
+2026-11-18 15:08:41.530 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:08:41.531 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports
+2026-11-18 15:08:41.532 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.excelimport.controller.ExcelImportController#list(UUID)
+2026-11-18 15:08:41.547 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Securing OPTIONS /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/start
+2026-11-18 15:08:41.551 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Securing POST /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/start
+2026-11-18 15:08:41.555 DEBUG [http-nio-8081-exec-10] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:08:41.555 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Secured POST /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/start
+2026-11-18 15:08:41.556 TRACE [http-nio-8081-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#start(UUID, UUID)
+2026-11-18 15:08:41.557 INFO  [http-nio-8081-exec-10] c.s.mockqueue.ExcelMockRunController - [EXCEL MOCK] Start request | importId=6a6b2c4e-197a-45d1-8bda-dc1ad43b2138
+2026-11-18 15:08:41.767 INFO  [http-nio-8081-exec-10] c.s.mockqueue.ExcelMockRunService - [MOCK ENGINE] Excel demo START | run=b8071fda-f8a1-4130-9e93-565947228f66 import=6a6b2c4e-197a-45d1-8bda-dc1ad43b2138 accountsUsed=100 jobs=122
+2026-11-18 15:08:44.079 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:08:44.085 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:08:44.085 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:08:44.085 TRACE [http-nio-8081-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:08:45.939 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:08:46.127 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:08:46.131 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:08:46.131 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:08:46.131 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:08:48.162 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:08:48.165 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:08:48.165 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:08:48.165 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:08:50.203 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:08:50.206 DEBUG [http-nio-8081-exec-6] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:08:50.207 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:08:50.207 TRACE [http-nio-8081-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:08:52.236 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:08:52.246 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:08:52.247 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:08:52.253 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:08:54.293 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:08:54.297 DEBUG [http-nio-8081-exec-5] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:08:54.298 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:08:54.298 TRACE [http-nio-8081-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:08:56.331 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:08:56.335 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:08:56.335 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:08:56.336 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:08:58.360 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:08:58.364 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:08:58.365 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:08:58.365 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:00.963 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:09:08.404 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:08.408 DEBUG [http-nio-8081-exec-9] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:08.408 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:08.409 TRACE [http-nio-8081-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:10.444 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:10.453 DEBUG [http-nio-8081-exec-10] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:10.453 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:10.454 TRACE [http-nio-8081-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:12.491 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:12.495 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:12.495 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:12.496 TRACE [http-nio-8081-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:14.521 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:14.525 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:14.525 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:14.526 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:15.981 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:09:16.559 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:16.562 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:16.563 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:16.563 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:18.600 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:18.604 DEBUG [http-nio-8081-exec-6] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:18.605 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:18.605 TRACE [http-nio-8081-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:20.638 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:20.641 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:20.641 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:20.642 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:22.676 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:22.684 DEBUG [http-nio-8081-exec-5] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:22.685 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:22.686 TRACE [http-nio-8081-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:24.714 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:24.718 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:24.719 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:24.720 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:26.752 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:26.756 DEBUG [http-nio-8081-exec-9] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:26.756 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:26.757 TRACE [http-nio-8081-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:28.785 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:28.788 DEBUG [http-nio-8081-exec-10] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:28.788 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:28.789 TRACE [http-nio-8081-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:30.807 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:30.810 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:30.811 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:30.811 TRACE [http-nio-8081-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:31.005 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:09:32.203 INFO  [org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-1] c.s.mockqueue.ExcelMockRunService - [MOCK ENGINE] Excel Worker running | completed=25/122 run=b8071fda-f8a1-4130-9e93-565947228f66
+2026-11-18 15:09:32.844 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:32.847 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:32.848 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:32.848 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:34.889 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:34.899 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:34.901 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:34.902 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:36.970 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:36.974 DEBUG [http-nio-8081-exec-6] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:36.974 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:36.974 TRACE [http-nio-8081-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:38.996 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:39.000 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:39.001 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:39.001 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:41.027 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:41.031 DEBUG [http-nio-8081-exec-5] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:41.031 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:41.032 TRACE [http-nio-8081-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:43.050 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:43.054 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:43.055 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:43.056 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:45.093 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:45.096 DEBUG [http-nio-8081-exec-9] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:45.096 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:45.097 TRACE [http-nio-8081-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:46.011 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:09:47.119 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:47.122 DEBUG [http-nio-8081-exec-10] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:47.123 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:47.124 TRACE [http-nio-8081-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:49.147 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:49.150 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:49.150 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:49.151 TRACE [http-nio-8081-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:51.171 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:51.174 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:51.174 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:51.175 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:53.472 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:53.476 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:53.477 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:53.477 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:55.513 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:55.516 DEBUG [http-nio-8081-exec-6] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:55.517 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:55.517 TRACE [http-nio-8081-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:57.538 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:57.541 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:57.542 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:57.542 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:09:59.567 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:59.571 DEBUG [http-nio-8081-exec-5] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:09:59.571 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:09:59.571 TRACE [http-nio-8081-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:01.017 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:10:01.601 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:01.604 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:01.605 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:01.605 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:03.625 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:03.629 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:03.629 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:03.630 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:05.650 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:05.654 DEBUG [http-nio-8081-exec-9] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:05.654 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:05.655 TRACE [http-nio-8081-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:07.692 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:07.694 DEBUG [http-nio-8081-exec-10] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:07.694 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:07.695 TRACE [http-nio-8081-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:09.721 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:09.725 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:09.725 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:09.725 TRACE [http-nio-8081-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:11.757 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:11.761 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:11.761 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:11.761 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:13.787 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:13.790 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:13.790 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:13.791 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:15.814 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:15.817 DEBUG [http-nio-8081-exec-6] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:15.818 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:15.818 TRACE [http-nio-8081-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:16.032 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:10:17.847 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:17.851 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:17.851 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:17.852 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:19.872 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:19.877 DEBUG [http-nio-8081-exec-5] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:19.878 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:19.878 TRACE [http-nio-8081-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:21.903 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:21.906 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:21.907 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:21.907 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:22.498 INFO  [org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-1] c.s.mockqueue.ExcelMockRunService - [MOCK ENGINE] Excel Worker running | completed=50/122 run=b8071fda-f8a1-4130-9e93-565947228f66
+2026-11-18 15:10:23.927 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:23.929 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:23.930 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:23.930 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:25.955 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:25.970 DEBUG [http-nio-8081-exec-9] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:25.970 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:25.971 TRACE [http-nio-8081-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:27.991 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:27.995 DEBUG [http-nio-8081-exec-10] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:27.995 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:27.996 TRACE [http-nio-8081-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:30.026 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:30.029 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:30.029 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:30.030 TRACE [http-nio-8081-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:31.041 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:10:32.048 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:32.051 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:32.051 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:32.051 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:34.074 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:34.079 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:34.080 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:34.080 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:36.103 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:36.106 DEBUG [http-nio-8081-exec-6] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:36.106 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:36.107 TRACE [http-nio-8081-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:38.129 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:38.133 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:38.133 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:38.134 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:40.152 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:40.154 DEBUG [http-nio-8081-exec-5] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:40.155 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:40.155 TRACE [http-nio-8081-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:42.169 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:42.172 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:42.172 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:42.172 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:44.200 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:44.205 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:44.205 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:44.206 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:46.050 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:10:46.234 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:46.236 DEBUG [http-nio-8081-exec-9] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:46.236 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:46.236 TRACE [http-nio-8081-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:47.875 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Securing GET /api/auth/me
+2026-11-18 15:10:47.878 DEBUG [http-nio-8081-exec-10] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:47.879 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Secured GET /api/auth/me
+2026-11-18 15:10:47.879 TRACE [http-nio-8081-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.auth.controller.AuthController#me(Authentication)
+2026-11-18 15:10:48.267 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:48.270 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:48.270 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:48.270 TRACE [http-nio-8081-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:48.392 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces
+2026-11-18 15:10:48.396 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:48.396 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces
+2026-11-18 15:10:48.397 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.workspace.controller.WorkspaceController#list()
+2026-11-18 15:10:48.435 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/automation/readiness
+2026-11-18 15:10:48.436 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/automation/queue/status
+2026-11-18 15:10:48.437 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/automation/accounts/health
+2026-11-18 15:10:48.444 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:48.445 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:48.445 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/automation/queue/status
+2026-11-18 15:10:48.445 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/automation/readiness
+2026-11-18 15:10:48.445 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.automation.queue.AutomationOutboxStatusController#status(UUID)
+2026-11-18 15:10:48.446 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.automation.controller.AutomationReadinessController#readiness(UUID)
+2026-11-18 15:10:48.450 DEBUG [http-nio-8081-exec-6] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:48.452 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/automation/accounts/health
+2026-11-18 15:10:48.452 TRACE [http-nio-8081-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.automation.health.AccountHealthController#accounts(UUID)
+2026-11-18 15:10:52.760 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:52.765 DEBUG [http-nio-8081-exec-5] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:52.767 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:52.769 TRACE [http-nio-8081-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:54.809 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:54.811 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:54.814 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:54.814 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:56.839 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:56.842 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:56.843 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:56.843 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:10:58.865 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:58.876 DEBUG [http-nio-8081-exec-9] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:10:58.878 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:10:58.879 TRACE [http-nio-8081-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:00.926 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:00.929 DEBUG [http-nio-8081-exec-10] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:00.929 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:00.930 TRACE [http-nio-8081-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:01.078 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:11:02.950 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:02.953 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:02.953 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:02.953 TRACE [http-nio-8081-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:04.972 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:04.975 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:04.976 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:04.976 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:06.998 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:07.001 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:07.001 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:07.002 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:09.034 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:09.038 DEBUG [http-nio-8081-exec-6] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:09.038 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:09.038 TRACE [http-nio-8081-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:11.088 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:11.091 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:11.091 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:11.092 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:12.997 INFO  [org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-1] c.s.mockqueue.ExcelMockRunService - [MOCK ENGINE] Excel Worker running | completed=75/122 run=b8071fda-f8a1-4130-9e93-565947228f66
+2026-11-18 15:11:13.115 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:13.118 DEBUG [http-nio-8081-exec-5] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:13.119 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:13.119 TRACE [http-nio-8081-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:15.150 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:15.153 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:15.153 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:15.154 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:16.083 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:11:17.177 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:17.182 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:17.182 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:17.183 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:19.206 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:19.211 DEBUG [http-nio-8081-exec-9] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:19.212 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:19.213 TRACE [http-nio-8081-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:21.236 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:21.239 DEBUG [http-nio-8081-exec-10] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:21.239 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:21.240 TRACE [http-nio-8081-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:23.257 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:23.260 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:23.260 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:23.261 TRACE [http-nio-8081-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:25.279 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:25.282 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:25.282 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:25.283 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:27.301 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:27.303 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:27.303 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:27.303 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:29.319 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:29.322 DEBUG [http-nio-8081-exec-6] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:29.322 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:29.323 TRACE [http-nio-8081-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:31.089 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:11:31.353 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:31.356 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:31.356 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:31.356 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:33.375 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:33.378 DEBUG [http-nio-8081-exec-5] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:33.378 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:33.378 TRACE [http-nio-8081-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:35.395 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:35.398 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:35.399 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:35.399 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:37.421 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:37.424 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:37.424 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:37.425 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:39.444 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:39.446 DEBUG [http-nio-8081-exec-9] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:39.446 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:39.446 TRACE [http-nio-8081-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:41.463 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:41.465 DEBUG [http-nio-8081-exec-10] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:41.466 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:41.466 TRACE [http-nio-8081-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:43.488 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:43.490 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:43.491 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:43.491 TRACE [http-nio-8081-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:45.510 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:45.512 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:45.512 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:45.513 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:46.100 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:11:47.529 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:47.531 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:47.531 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:47.532 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:49.570 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:49.581 DEBUG [http-nio-8081-exec-5] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:49.581 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:49.582 TRACE [http-nio-8081-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:51.814 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:51.817 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:51.817 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:51.818 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:53.853 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:53.856 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:53.856 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:53.857 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:55.888 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:55.891 DEBUG [http-nio-8081-exec-9] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:55.891 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:55.891 TRACE [http-nio-8081-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:57.913 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:57.915 DEBUG [http-nio-8081-exec-10] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:57.915 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:57.915 TRACE [http-nio-8081-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:11:59.934 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:59.937 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:11:59.937 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:11:59.938 TRACE [http-nio-8081-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:01.106 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:12:01.975 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:01.978 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:01.979 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:01.979 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:03.446 INFO  [org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-1] c.s.mockqueue.ExcelMockRunService - [MOCK ENGINE] Excel Worker running | completed=100/122 run=b8071fda-f8a1-4130-9e93-565947228f66
+2026-11-18 15:12:03.999 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:04.004 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:04.005 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:04.007 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:06.047 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:06.050 DEBUG [http-nio-8081-exec-6] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:06.050 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:06.050 TRACE [http-nio-8081-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:08.076 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:08.077 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:08.077 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:08.079 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:14.101 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:14.104 DEBUG [http-nio-8081-exec-5] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:14.104 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:14.105 TRACE [http-nio-8081-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:16.109 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:12:18.131 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:18.133 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:18.134 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:18.134 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:20.152 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:20.157 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:20.158 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:20.158 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:22.183 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:22.185 DEBUG [http-nio-8081-exec-9] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:22.186 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:22.186 TRACE [http-nio-8081-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:24.201 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:24.203 DEBUG [http-nio-8081-exec-10] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:24.204 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:24.204 TRACE [http-nio-8081-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:26.224 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:26.234 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:26.234 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:26.234 TRACE [http-nio-8081-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:28.261 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:28.263 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:28.264 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:28.264 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:30.283 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:30.286 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:30.286 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:30.286 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:31.125 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:12:32.306 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:32.309 DEBUG [http-nio-8081-exec-6] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:32.309 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:32.309 TRACE [http-nio-8081-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:34.326 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:34.330 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:34.330 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:34.331 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:36.364 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:36.367 DEBUG [http-nio-8081-exec-5] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:36.367 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:36.368 TRACE [http-nio-8081-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:38.400 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:38.404 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:38.404 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:38.404 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:40.422 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:40.425 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:40.426 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:40.426 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:42.446 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:42.449 DEBUG [http-nio-8081-exec-9] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:42.449 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:42.450 TRACE [http-nio-8081-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:44.479 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:44.482 DEBUG [http-nio-8081-exec-10] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:44.482 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:44.483 TRACE [http-nio-8081-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:46.136 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:12:46.509 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:46.512 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:46.513 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:46.513 TRACE [http-nio-8081-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:12:47.788 INFO  [org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-1] c.s.mockqueue.ExcelMockRunService - [MOCK ENGINE] Excel Worker running | completed=122/122 run=b8071fda-f8a1-4130-9e93-565947228f66
+2026-11-18 15:12:47.788 INFO  [org.springframework.amqp.rabbit.RabbitListenerEndpointContainer#1-1] c.s.mockqueue.ExcelMockRunService - [MOCK ENGINE] AUTOMATION COMPLETED | source=EXCEL import=6a6b2c4e-197a-45d1-8bda-dc1ad43b2138 run=b8071fda-f8a1-4130-9e93-565947228f66 accountsUsed=100 publishedSimulated=122/122
+2026-11-18 15:12:48.536 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:48.542 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:12:48.543 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:12:48.543 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:13:01.148 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:13:01.656 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing GET /api/auth/me
+2026-11-18 15:13:01.659 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:13:01.660 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured GET /api/auth/me
+2026-11-18 15:13:01.660 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.auth.controller.AuthController#me(Authentication)
+2026-11-18 15:13:01.726 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces
+2026-11-18 15:13:01.731 DEBUG [http-nio-8081-exec-6] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:13:01.731 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces
+2026-11-18 15:13:01.732 TRACE [http-nio-8081-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.workspace.controller.WorkspaceController#list()
+2026-11-18 15:13:01.776 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports
+2026-11-18 15:13:01.780 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/social-accounts
+2026-11-18 15:13:01.781 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:13:01.782 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports
+2026-11-18 15:13:01.782 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.excelimport.controller.ExcelImportController#list(UUID)
+2026-11-18 15:13:01.784 DEBUG [http-nio-8081-exec-5] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:13:01.788 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/social-accounts
+2026-11-18 15:13:01.788 TRACE [http-nio-8081-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.socialaccount.controller.SocialAccountController#list(UUID)
+2026-11-18 15:13:03.447 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:13:03.450 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-18 15:13:03.451 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/excel-imports/6a6b2c4e-197a-45d1-8bda-dc1ad43b2138/mock-publishing/latest
+2026-11-18 15:13:03.451 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.mockqueue.ExcelMockRunController#latest(UUID, UUID)
+2026-11-18 15:13:16.151 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:13:31.160 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:13:46.176 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:14:01.182 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:14:16.184 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:14:31.190 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:14:46.198 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:15:01.205 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:15:16.209 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:15:31.225 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:15:46.228 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:16:01.245 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:16:16.257 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:16:31.273 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:16:46.286 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:17:01.301 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:17:16.318 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:17:31.327 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:17:46.337 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:18:01.344 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:18:16.359 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:18:31.400 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
+2026-11-18 15:18:46.418 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=false | threadsEnabled=false | mode=LIVE | bulkEnabled=false | automationLiveEnabled=true
