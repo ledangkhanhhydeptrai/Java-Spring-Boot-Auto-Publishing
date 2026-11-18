@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * MOCK-only Excel queue service. Persistent runs/jobs survive Spring restarts.
- * No external Meta API calls. Keep LIVE automation disabled in the MOCK profile.
+ * Dedicated Excel-only simulation. Persistent runs/jobs survive Spring restarts.
+ * Never calls Meta or alters publishing_jobs. Can coexist with LIVE only when explicitly opted in.
  */
 @Service
 public class ExcelMockRunService {
@@ -66,7 +66,7 @@ public class ExcelMockRunService {
                                AccessService access, RabbitTemplate rabbit, Environment environment,
                                JdbcTemplate jdbc, TransactionTemplate tx,
                                ObjectProvider<MockTerminalAutoLauncher> terminalLauncher,
-                               @Value("${socialhub.mock-queue.accounts:100}") int maxAccounts,
+                               @Value("${socialhub.mock-excel.accounts:100}") int maxAccounts,
                                @Value("${socialhub.mock-excel.max-jobs:1000}") int maxJobs) {
         this.imports = imports;
         this.rows = rows;
@@ -80,17 +80,47 @@ public class ExcelMockRunService {
         this.terminalLauncher = terminalLauncher;
     }
 
+    /**
+     * Excel simulation is opt-in and isolated from BOTH the generic synthetic MOCK
+     * load test and the LIVE publishing jobs. This service only writes mock_excel_*
+     * tables and sends to ExcelMockQueueConfig.QUEUE. The LIVE executors are not called.
+     * <p>
+     * Do NOT replace this guard with a blanket bypass when LIVE is enabled.
+     */
     private void requireSafeMode() {
-        if (!environment.getProperty("socialhub.mock-queue.enabled", Boolean.class, false)
-                || !"MOCK_ONLY".equals(environment.getProperty("socialhub.mock-queue.run-confirm", ""))
-                || !"MOCK".equalsIgnoreCase(environment.getProperty("app.facebook.publishing-mode", "MOCK"))
-                || environment.getProperty("app.automation.live.enabled", Boolean.class, false)
-                || environment.getProperty("app.automation.live.facebook-worker-enabled", Boolean.class, false)
-                || environment.getProperty("app.automation.live.threads-worker-enabled", Boolean.class, false)
-                || environment.getProperty("app.automation.queue.enabled", Boolean.class, false)
-                || environment.getProperty("app.automation.queue.dispatch-enabled", Boolean.class, false)
-                || environment.getProperty("app.automation.queue.live-dispatch-enabled", Boolean.class, false)) {
-            throw new ApiException(HttpStatus.CONFLICT, "MOCK-only run requires all LIVE publishers/dispatchers OFF");
+        boolean excelEnabled = environment.getProperty(
+                "socialhub.mock-excel.enabled", Boolean.class, false);
+        boolean legacySyntheticEnabled = environment.getProperty(
+                "socialhub.mock-queue.enabled", Boolean.class, false);
+        String confirmation = environment.getProperty(
+                "socialhub.mock-excel.run-confirm", "");
+        String publishingMode = environment.getProperty(
+                "app.facebook.publishing-mode", "MOCK");
+
+        boolean liveComponentsEnabled = environment.getProperty(
+                "app.automation.live.enabled", Boolean.class, false)
+                || environment.getProperty(
+                "app.automation.live.facebook-worker-enabled", Boolean.class, false)
+                || environment.getProperty(
+                "app.automation.live.threads-worker-enabled", Boolean.class, false)
+                || environment.getProperty(
+                "app.automation.queue.enabled", Boolean.class, false)
+                || environment.getProperty(
+                "app.automation.queue.dispatch-enabled", Boolean.class, false)
+                || environment.getProperty(
+                "app.automation.queue.live-dispatch-enabled", Boolean.class, false);
+        boolean liveMode = "LIVE".equalsIgnoreCase(publishingMode);
+        boolean hybridAuthorized = environment.getProperty(
+                "socialhub.mock-excel.allow-with-live", Boolean.class, false);
+
+        if (!excelEnabled || legacySyntheticEnabled
+                || !"EXCEL_SIMULATION_ONLY".equals(confirmation)
+                || !(liveMode || "MOCK".equalsIgnoreCase(publishingMode))
+                || (liveComponentsEnabled && !liveMode)
+                || ((liveMode || liveComponentsEnabled) && !hybridAuthorized)) {
+            throw new ApiException(HttpStatus.CONFLICT,
+                    "Excel MOCK blocked: enable dedicated Excel simulation, disable generic synthetic MOCK, "
+                            + "confirm EXCEL_SIMULATION_ONLY and explicitly authorize LIVE coexistence");
         }
     }
 
@@ -110,18 +140,23 @@ public class ExcelMockRunService {
                 (rs, i) -> rs.getObject("id", UUID.class), workspaceId, importId);
         if (!existing.isEmpty()) return view(existing.get(0));
 
-        // Run the JPA lookup inside a transaction so lazy Post relations are readable.
+        // Simulation reads the Post snapshots created by this Excel Import, regardless of
+        // later LIVE tracking states (e.g. MEDIA_READY / AUTO_SCHEDULED / PUBLISHED).
+        // A MOCK job only writes mock_excel_* tables; it must never update the Post,
+        // PublishingJob or ExcelImportRow records or call Meta. Keep the LIVE/MOCK guard above.
+        // Do not depend on processing_status == IMPORTED: media preparation or a prior
+        // LIVE publish may have legitimately advanced that field after the import.
         List<EligibleRow> eligible = tx.execute(status -> rows.findByExcelImportIdOrderBySourceRowNumberAsc(importId)
                 .stream()
-                .filter(r -> "IMPORTED".equals(r.getProcessingStatus()))
                 .filter(r -> r.getPost() != null && r.getPost().getContent() != null
                         && !r.getPost().getContent().isBlank())
                 .map(r -> new EligibleRow(r.getSourceRowNumber(), r.getPost().getId(),
                         r.getPost().getTopic(), r.getPost().getContent()))
                 .toList());
-        if (eligible == null) throw new IllegalStateException("Cannot read imported Excel rows");
+        if (eligible == null) throw new IllegalStateException("Cannot read Excel Import rows");
         if (eligible.isEmpty())
-            throw new ApiException(HttpStatus.BAD_REQUEST, "No imported/unpublished Excel rows available for MOCK demo");
+            throw new ApiException(HttpStatus.BAD_REQUEST,
+                    "No Excel rows with a linked Post and non-empty content available for MOCK demo");
         if (eligible.size() > maxJobs)
             throw new ApiException(HttpStatus.BAD_REQUEST, "Too many imported rows for demo; max " + maxJobs);
 

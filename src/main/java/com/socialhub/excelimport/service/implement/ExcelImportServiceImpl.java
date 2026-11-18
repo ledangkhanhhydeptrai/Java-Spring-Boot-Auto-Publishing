@@ -19,6 +19,9 @@ import com.socialhub.workspace.entity.Workspace;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +40,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ExcelImportServiceImpl implements ExcelImportService {
 
+    private static final Logger log = LoggerFactory.getLogger(ExcelImportServiceImpl.class);
     private static final int MAX_ROWS = 10_000;
     private static final long MAX_FILE_SIZE = 10L * 1024 * 1024;
 
@@ -49,6 +53,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
     private final PostRepository posts;
     private final SocialAccountRepository accounts;
     private final AccessService access;
+    private final JdbcTemplate jdbc;
 
     private record ImportRow(
             int rowNumber,
@@ -61,6 +66,9 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             String publishedUrl,
             String validationError
     ) {
+    }
+
+    private record PersistedCounts(long trackingRows, long linkedPostIds, long existingPosts) {
     }
 
     private record ParsedExcel(
@@ -285,7 +293,46 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         excelImport.setImportedRows(importedCount);
         excelImport.setSkippedRows(skippedCount);
 
+        // Flush all writes before reporting success; count the physical DB rows.
+        posts.flush();
+        importRowRepository.flush();
         imports.saveAndFlush(excelImport);
+
+        // This verifies the current transaction, not just the in-memory counters.
+        PersistedCounts persisted = jdbc.queryForObject("""
+                SELECT COUNT(*) AS tracking_rows,
+                       COUNT(r.post_id) AS linked_post_ids,
+                       COUNT(p.id) AS existing_posts
+                FROM excel_import_rows r
+                LEFT JOIN posts p ON p.id = r.post_id
+                WHERE r.import_id = ?
+                """, (rs, rowNum) -> new PersistedCounts(
+                rs.getLong("tracking_rows"),
+                rs.getLong("linked_post_ids"),
+                rs.getLong("existing_posts")
+        ), excelImport.getId());
+
+        String databaseName = jdbc.queryForObject("SELECT current_database()", String.class);
+        Integer databasePort = jdbc.queryForObject("SELECT inet_server_port()", Integer.class);
+        log.info("[EXCEL IMPORT AUDIT] import={} workspace={} db={} dbPort={} " +
+                        "expectedRows={} importedPosts={} skipped={} persistedRows={} linkedPostIds={} existingPosts={}",
+                excelImport.getId(), workspaceId, databaseName, databasePort,
+                rows.size(), importedCount, skippedCount,
+                persisted == null ? -1 : persisted.trackingRows(),
+                persisted == null ? -1 : persisted.linkedPostIds(),
+                persisted == null ? -1 : persisted.existingPosts());
+
+        if (persisted == null
+                || persisted.trackingRows() != rows.size()
+                || persisted.linkedPostIds() != importedCount
+                || persisted.existingPosts() != importedCount) {
+            // Roll back the entire import rather than recording 122 imports but zero Posts.
+            throw new IllegalStateException(
+                    "Excel Import consistency check failed for import=" + excelImport.getId()
+                            + ": expectedRows=" + rows.size()
+                            + ", expectedPosts=" + importedCount
+                            + ", persisted=" + persisted);
+        }
 
         return view(excelImport);
     }

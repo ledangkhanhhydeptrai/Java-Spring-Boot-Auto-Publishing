@@ -1,7 +1,6 @@
 
 package com.socialhub.excelimport.repository;
 
-import com.socialhub.excelimport.entity.ExcelImport;
 import com.socialhub.excelimport.entity.ExcelImportRow;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -19,7 +18,8 @@ public interface ExcelImportRowRepository
     List<ExcelImportRow> findByExcelImportIdOrderBySourceRowNumberAsc(
             UUID importId
     );
-    @EntityGraph(attributePaths = {"socialAccount"})
+
+    @EntityGraph(attributePaths = {"excelImport", "excelImport.socialAccount"})
     Optional<ExcelImportRow> findByIdAndExcelImport_Workspace_Id(
             UUID id,
             UUID workspaceId

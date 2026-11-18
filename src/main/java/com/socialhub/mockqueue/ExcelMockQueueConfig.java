@@ -6,9 +6,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration(proxyBeanMethods = false)
-@ConditionalOnProperty(name = "socialhub.mock-queue.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "socialhub.mock-excel.enabled", havingValue = "true")
 public class ExcelMockQueueConfig {
-    // Different queue from the synthetic load test and ALL LIVE queues.
+    // Dedicated queue, separate from synthetic-load and LIVE automation queues.
     public static final String QUEUE = "socialhub.mock.excel.v1";
-    @Bean public Queue excelMockQueue() { return new Queue(QUEUE, true, false, false); }
+
+    @Bean
+    public Queue excelMockQueue() {
+        return new Queue(QUEUE, true, false, false);
+    }
 }
