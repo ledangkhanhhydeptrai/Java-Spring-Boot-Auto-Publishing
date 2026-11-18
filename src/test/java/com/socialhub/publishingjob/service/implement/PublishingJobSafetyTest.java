@@ -1,6 +1,8 @@
+
 package com.socialhub.publishingjob.service.implement;
 
 import com.socialhub.common.ApiException;
+import com.socialhub.facebookoauth.repository.FacebookPageConnectionRepository;
 import com.socialhub.post.entity.Post;
 import com.socialhub.post.repository.PostRepository;
 import com.socialhub.publishingjob.entity.PublishingJob;
@@ -9,7 +11,9 @@ import com.socialhub.publishingreview.repository.PublishingReviewRepository;
 import com.socialhub.security.AccessService;
 import com.socialhub.socialaccount.repository.SocialAccountRepository;
 import com.socialhub.workspace.entity.Workspace;
+
 import jakarta.persistence.EntityManager;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,8 +25,11 @@ import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for temporarily disabled high-risk publishing operations.
+ *
  * No Spring context, database connection, scheduler, or Meta HTTP calls.
- * These tests require retry() and direct confirmPublished() to be disabled.
+ *
+ * These tests require retry() and direct confirmPublished()
+ * to be disabled.
  */
 class PublishingJobSafetyTest {
 
@@ -32,6 +39,8 @@ class PublishingJobSafetyTest {
     private AccessService access;
     private PublishingReviewRepository reviews;
     private EntityManager entityManager;
+    private FacebookPageConnectionRepository connections;
+
     private PublishingJobServiceImpl service;
 
     private UUID jobId;
@@ -46,9 +55,16 @@ class PublishingJobSafetyTest {
         access = mock(AccessService.class);
         reviews = mock(PublishingReviewRepository.class);
         entityManager = mock(EntityManager.class);
+        connections = mock(FacebookPageConnectionRepository.class);
 
         service = new PublishingJobServiceImpl(
-                jobs, posts, accounts, access, reviews, entityManager
+                jobs,
+                posts,
+                accounts,
+                access,
+                reviews,
+                entityManager,
+                connections
         );
 
         jobId = UUID.randomUUID();
@@ -56,6 +72,7 @@ class PublishingJobSafetyTest {
 
         Workspace workspace = mock(Workspace.class);
         when(workspace.getId()).thenReturn(workspaceId);
+
         Post post = mock(Post.class);
         when(post.getWorkspace()).thenReturn(workspace);
 
@@ -68,30 +85,56 @@ class PublishingJobSafetyTest {
 
     @Test
     void retry_existingJob_isBlockedWithoutChangingJob() {
-        when(jobs.findByIdForUpdate(jobId)).thenReturn(Optional.of(job));
+        when(jobs.findByIdForUpdate(jobId))
+                .thenReturn(Optional.of(job));
 
-        ApiException error = assertThrows(ApiException.class,
-                () -> service.retry(jobId));
+        ApiException error = assertThrows(
+                ApiException.class,
+                () -> service.retry(jobId)
+        );
+
         assertNotNull(error);
 
         verify(access).admin(workspaceId);
         verify(jobs, never()).save(any(PublishingJob.class));
-        verifyNoInteractions(reviews, posts, accounts, entityManager);
+
+        verifyNoInteractions(
+                reviews,
+                posts,
+                accounts,
+                entityManager
+        );
+
         assertEquals("NEEDS_REVIEW", job.getStatus());
         assertEquals(1, job.getAttemptCount());
     }
 
     @Test
     void confirmPublished_existingJob_isBlockedWithoutChangingJob() {
-        when(jobs.findByIdForUpdate(jobId)).thenReturn(Optional.of(job));
+        when(jobs.findByIdForUpdate(jobId))
+                .thenReturn(Optional.of(job));
 
-        ApiException error = assertThrows(ApiException.class,
-                () -> service.confirmPublished(jobId, "example_external_id", "https://example.com/post"));
+        ApiException error = assertThrows(
+                ApiException.class,
+                () -> service.confirmPublished(
+                        jobId,
+                        "example_external_id",
+                        "https://example.com/post"
+                )
+        );
+
         assertNotNull(error);
 
         verify(access).admin(workspaceId);
         verify(jobs, never()).save(any(PublishingJob.class));
-        verifyNoInteractions(reviews, posts, accounts, entityManager);
+
+        verifyNoInteractions(
+                reviews,
+                posts,
+                accounts,
+                entityManager
+        );
+
         assertEquals("NEEDS_REVIEW", job.getStatus());
         assertNull(job.getExternalPostId());
         assertNull(job.getPublishedUrl());
@@ -100,20 +143,47 @@ class PublishingJobSafetyTest {
 
     @Test
     void retry_missingJob_isRejectedWithoutChanges() {
-        when(jobs.findByIdForUpdate(jobId)).thenReturn(Optional.empty());
+        when(jobs.findByIdForUpdate(jobId))
+                .thenReturn(Optional.empty());
 
-        assertThrows(ApiException.class, () -> service.retry(jobId));
+        assertThrows(
+                ApiException.class,
+                () -> service.retry(jobId)
+        );
+
         verify(jobs, never()).save(any(PublishingJob.class));
-        verifyNoInteractions(access, reviews, posts, accounts, entityManager);
+
+        verifyNoInteractions(
+                access,
+                reviews,
+                posts,
+                accounts,
+                entityManager
+        );
     }
 
     @Test
     void confirmPublished_missingJob_isRejectedWithoutChanges() {
-        when(jobs.findByIdForUpdate(jobId)).thenReturn(Optional.empty());
+        when(jobs.findByIdForUpdate(jobId))
+                .thenReturn(Optional.empty());
 
-        assertThrows(ApiException.class,
-                () -> service.confirmPublished(jobId, "post_id", "https://example.com"));
+        assertThrows(
+                ApiException.class,
+                () -> service.confirmPublished(
+                        jobId,
+                        "post_id",
+                        "https://example.com"
+                )
+        );
+
         verify(jobs, never()).save(any(PublishingJob.class));
-        verifyNoInteractions(access, reviews, posts, accounts, entityManager);
+
+        verifyNoInteractions(
+                access,
+                reviews,
+                posts,
+                accounts,
+                entityManager
+        );
     }
 }

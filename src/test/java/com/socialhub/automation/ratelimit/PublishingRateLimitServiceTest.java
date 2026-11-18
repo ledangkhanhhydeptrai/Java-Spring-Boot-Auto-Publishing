@@ -1,6 +1,6 @@
 package com.socialhub.automation.ratelimit;
 
-import com.socialhub.automation.controller.ratelimit.PublishingRateLimitService;
+import com.socialhub.automation.ratelimit.PublishingRateLimitService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
