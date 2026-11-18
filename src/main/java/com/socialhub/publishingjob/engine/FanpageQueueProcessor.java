@@ -1184,16 +1184,28 @@ public class FanpageQueueProcessor {
                     attemptsUpdated,
                     "publishing_attempts"
             );
-            db.update("""
+            // Excel Auto Plan One/Bulk transitions imported rows to
+            // AUTO_SCHEDULED before the Facebook Worker publishes them.
+            // Synchronize Excel with the authoritative published Job values.
+            int excelRowsUpdated = db.update("""
                     UPDATE excel_import_rows e
                     SET processing_status = 'PUBLISHED',
-                        published_at = NOW(),
-                        published_url = ?
+                        published_at = j.published_at,
+                        published_url = j.published_url
                     FROM publishing_jobs j
                     WHERE j.id = ?
                       AND j.post_id = e.post_id
-                      AND e.processing_status IN ('IMPORTED', 'PUBLISHED')
-                    """, publishedUrl, job.id());
+                      AND j.status = 'PUBLISHED'
+                      AND e.processing_status IN (
+                          'IMPORTED', 'AUTO_SCHEDULED', 'PUBLISHED'
+                      )
+                    """, job.id());
+
+            // A regular post may have no linked Excel row, so 0 is allowed.
+            if (excelRowsUpdated > 0) {
+                log.info("[EXCEL TRACKING] Synced {} row(s) for published job={}",
+                        excelRowsUpdated, job.id());
+            }
 
             // Complete the parent bulk run in the same transaction as the
             // successful publication and Excel synchronization.
@@ -1363,4 +1375,3 @@ public class FanpageQueueProcessor {
         }
     }
 }
-

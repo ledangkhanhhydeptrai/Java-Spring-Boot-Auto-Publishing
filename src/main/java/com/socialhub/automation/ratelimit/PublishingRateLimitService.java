@@ -1,4 +1,4 @@
-package com.socialhub.automation.controller.ratelimit;
+package com.socialhub.automation.ratelimit;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
