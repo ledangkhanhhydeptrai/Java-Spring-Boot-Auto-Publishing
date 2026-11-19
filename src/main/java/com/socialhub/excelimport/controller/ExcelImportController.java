@@ -147,6 +147,19 @@ public class ExcelImportController {
         );
     }
 
+    /**
+     * Preview or confirm a batch of Excel dates. Preview never writes data.
+     * Confirmation schedules jobs but does not activate a Facebook Bulk Run.
+     */
+    @PostMapping("/{importId}/auto-plan/batch")
+    public ExcelAutoPublishService.BatchPlanResult autoPlanBatch(
+            @PathVariable UUID workspaceId,
+            @PathVariable UUID importId,
+            @RequestBody ExcelAutoPublishService.BatchPlanRequest request
+    ) {
+        return autoPublishService.planBatch(workspaceId, importId, request);
+    }
+
     @GetMapping("/{importId}/publish-progress")
     public java.util.Map<String, Integer> publishProgress(
             @PathVariable UUID workspaceId,

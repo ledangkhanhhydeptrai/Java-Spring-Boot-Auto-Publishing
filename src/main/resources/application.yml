@@ -41,7 +41,9 @@ app:
   # =========================
   jwt-secret: ${JWT_SECRET}
   jwt-expiration-minutes: ${JWT_EXPIRATION_MINUTES:1440}
-
+  account-vault:
+    bulk-preparation-enabled: ${ACCOUNT_VAULT_BULK_PREPARATION_ENABLED:false}
+    bulk-live-start-enabled: ${ACCOUNT_VAULT_BULK_LIVE_START_ENABLED:false}
   # =========================
   # CORS / COOKIES
   # =========================

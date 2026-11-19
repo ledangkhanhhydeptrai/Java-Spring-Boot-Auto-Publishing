@@ -5,11 +5,13 @@ import com.socialhub.publishingjob.bulk.dto.CreateFacebookBulkRunRequest;
 import com.socialhub.publishingjob.bulk.dto.FacebookBulkRunResponse;
 import com.socialhub.publishingjob.bulk.service.FacebookBulkRunService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @RestController
@@ -18,6 +20,9 @@ import java.util.UUID;
 public class FacebookBulkRunController {
 
     private final FacebookBulkRunService service;
+
+    public record RescheduleRequest(@NotNull OffsetDateTime scheduledAt) {
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -34,6 +39,29 @@ public class FacebookBulkRunController {
             @PathVariable UUID runId
     ) {
         return service.get(userId(authentication), runId);
+    }
+
+    /**
+     * Read-only diagnostics of feature flags; never starts a run.
+     */
+    @GetMapping("/{runId}/live-readiness")
+    public FacebookBulkRunService.LiveReadiness liveReadiness(
+            Authentication authentication,
+            @PathVariable UUID runId
+    ) {
+        return service.liveReadiness(userId(authentication), runId);
+    }
+
+    /**
+     * Change times of existing untouched DRAFT jobs; no duplicate jobs are created.
+     */
+    @PatchMapping("/{runId}/reschedule")
+    public FacebookBulkRunService.RescheduleResult reschedule(
+            Authentication authentication,
+            @PathVariable UUID runId,
+            @Valid @RequestBody RescheduleRequest request
+    ) {
+        return service.reschedule(userId(authentication), runId, request.scheduledAt());
     }
 
     @PostMapping("/{runId}/start")

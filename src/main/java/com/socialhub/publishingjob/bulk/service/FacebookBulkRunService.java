@@ -4,12 +4,18 @@ package com.socialhub.publishingjob.bulk.service;
 import com.socialhub.publishingjob.bulk.dto.CreateFacebookBulkRunRequest;
 import com.socialhub.publishingjob.bulk.dto.FacebookBulkRunResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +30,198 @@ public class FacebookBulkRunService {
     private final WorkspaceBulkPermissionService permissions;
     private static final org.slf4j.Logger log =
             org.slf4j.LoggerFactory.getLogger(FacebookBulkRunService.class);
+
+    // Guard LIVE at the shared service layer too. The direct controller calls start() here,
+    // so validating flags only in AccountVaultBulkPublishingService is not sufficient.
+    @Value("${app.account-vault.bulk-live-start-enabled:false}")
+    private boolean liveStartEnabled;
+
+    @Value("${app.automation.live.enabled:false}")
+    private boolean exactAutomationLiveEnabled;
+
+    @Value("${app.publisher-enabled:false}")
+    private boolean legacyPublisherEnabled;
+
+    @Value("${app.facebook.bulk-enabled:false}")
+    private boolean schedulerBulkEnabled;
+
+    @Value("${FACEBOOK_BULK_ENABLED:false}")
+    private boolean workerBulkEnabled;
+
+    @Value("${app.facebook.publishing-mode:MOCK}")
+    private String schedulerMode;
+
+    @Value("${FACEBOOK_PUBLISHING_MODE:MOCK}")
+    private String workerMode;
+
+    @Value("${META_BASE_URL:http://127.0.0.1:9090}")
+    private String graphBaseUrl;
+
+    public record RescheduleResult(UUID bulkRunId, String status, int updatedJobs,
+                                   OffsetDateTime firstScheduledAt,
+                                   OffsetDateTime lastScheduledAt) {
+    }
+
+    public record LiveReadiness(UUID bulkRunId, String runStatus,
+                                boolean enabled, List<String> blockingFlags) {
+    }
+
+    private record RescheduleJob(UUID id, OffsetDateTime scheduledAt,
+                                 OffsetDateTime tokenExpiresAt, boolean eligible) {
+    }
+
+    /**
+     * Move only untouched PENDING jobs in a DRAFT run. The original spacing is preserved.
+     * Transaction and row locks prevent a concurrent start/reschedule from splitting a run.
+     * No new jobs or bulk runs are inserted, and this method never calls Meta.
+     */
+    @Transactional
+    public RescheduleResult reschedule(UUID userId, UUID runId, OffsetDateTime newFirstScheduledAt) {
+        if (runId == null || newFirstScheduledAt == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "runId and scheduledAt required");
+        }
+
+        Instant now = Instant.now();
+        Instant proposedFirst = newFirstScheduledAt.toInstant();
+        if (!proposedFirst.isAfter(now.plus(2, ChronoUnit.MINUTES))
+                || proposedFirst.isAfter(now.plus(30, ChronoUnit.DAYS))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "scheduledAt must be more than 2 minutes ahead and within 30 days");
+        }
+
+        BulkRun run = findForUpdate(runId);
+        permissions.requireManager(run.workspaceId(), userId);
+        if (!"DRAFT".equals(run.status())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Only DRAFT bulk runs can be rescheduled");
+        }
+
+        // Lock all jobs in a fixed order. We validate bindings and publishing status before update.
+        List<RescheduleJob> runJobs = db.query("""
+                SELECT j.id, j.scheduled_at, c.token_expires_at,
+                       (j.status = 'PENDING'
+                        AND j.attempt_count = 0
+                        AND j.external_post_id IS NULL
+                        AND j.published_at IS NULL
+                        AND j.next_retry_at IS NULL
+                        AND j.processing_started_at IS NULL
+                        AND j.locked_until IS NULL
+                        AND p.workspace_id = ?
+                        AND a.workspace_id = ?
+                        AND a.platform = 'FACEBOOK_PAGE'
+                        AND a.status = 'CONNECTED'
+                        AND p.status IN ('READY', 'SCHEDULED')
+                        AND p.approval_status = 'APPROVED'
+                        AND j.facebook_connection_id IS NOT NULL
+                        AND c.id IS NOT NULL
+                        AND c.social_account_id = a.id
+                        AND c.status = 'CONNECTED'
+                        AND NULLIF(BTRIM(c.access_token_encrypted), '') IS NOT NULL
+                        AND NOT EXISTS (SELECT 1 FROM campaign_jobs cj
+                                        WHERE cj.publishing_job_id = j.id)
+                        AND NOT EXISTS (SELECT 1 FROM post_media m
+                                        WHERE m.post_id = p.id AND
+                                              (m.public_url IS NULL OR BTRIM(m.public_url) = ''))
+                       ) AS eligible
+                FROM facebook_bulk_run_jobs bj
+                JOIN publishing_jobs j ON j.id = bj.publishing_job_id
+                JOIN posts p ON p.id = j.post_id
+                JOIN social_accounts a ON a.id = j.social_account_id
+                LEFT JOIN facebook_page_connections c ON c.id = j.facebook_connection_id
+                WHERE bj.bulk_run_id = ?
+                ORDER BY j.id
+                FOR UPDATE OF j
+                """, (rs, rowNum) -> new RescheduleJob(
+                rs.getObject("id", UUID.class),
+                rs.getObject("scheduled_at", OffsetDateTime.class),
+                rs.getObject("token_expires_at", OffsetDateTime.class),
+                rs.getBoolean("eligible")
+        ), run.workspaceId(), run.workspaceId(), runId);
+
+        Integer linkedCount = db.queryForObject("""
+                SELECT COUNT(*) FROM facebook_bulk_run_jobs WHERE bulk_run_id = ?
+                """, Integer.class, runId);
+        if (linkedCount == null || linkedCount == 0 || runJobs.size() != linkedCount
+                || runJobs.size() > MAX_BULK_SIZE
+                || new HashSet<>(runJobs.stream().map(RescheduleJob::id).toList()).size() != runJobs.size()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Bulk run has invalid, duplicated, or missing jobs");
+        }
+        if (runJobs.stream().anyMatch(job -> !job.eligible() || job.scheduledAt() == null)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "One or more bulk jobs have been processed or are no longer eligible");
+        }
+
+        Instant oldFirst = runJobs.stream()
+                .map(job -> job.scheduledAt().toInstant())
+                .min(Instant::compareTo)
+                .orElseThrow();
+
+        OffsetDateTime last = newFirstScheduledAt;
+        for (RescheduleJob job : runJobs) {
+            Duration offset = Duration.between(oldFirst, job.scheduledAt().toInstant());
+            OffsetDateTime newDue = newFirstScheduledAt.plus(offset);
+            if (newDue.toInstant().isAfter(now.plus(30, ChronoUnit.DAYS))) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "Last job would be scheduled more than 30 days ahead");
+            }
+            if (job.tokenExpiresAt() != null && !job.tokenExpiresAt().isAfter(newDue)) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT,
+                        "A bound Facebook OAuth token expires before the new scheduled time");
+            }
+
+            int updated = db.update("""
+                    UPDATE publishing_jobs
+                    SET scheduled_at = ?
+                    WHERE id = ? AND status = 'PENDING' AND attempt_count = 0
+                      AND external_post_id IS NULL AND published_at IS NULL
+                      AND next_retry_at IS NULL AND processing_started_at IS NULL
+                      AND locked_until IS NULL
+                    """, newDue, job.id());
+            if (updated != 1) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT,
+                        "Job changed during reschedule; no changes committed");
+            }
+            if (newDue.isAfter(last)) last = newDue;
+        }
+
+        log.info("[BULK RESCHEDULE] runId={} updatedJobs={} first={} last={}",
+                runId, runJobs.size(), newFirstScheduledAt, last);
+        return new RescheduleResult(runId, "DRAFT", runJobs.size(), newFirstScheduledAt, last);
+    }
+
+    @Transactional(readOnly = true)
+    public LiveReadiness liveReadiness(UUID userId, UUID runId) {
+        if (runId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bulk Run ID is required");
+        }
+        BulkRun run = find(runId);
+        permissions.requireManager(run.workspaceId(), userId);
+        List<String> blockers = liveConfigurationBlockers();
+        return new LiveReadiness(runId, run.status(), blockers.isEmpty(), List.copyOf(blockers));
+    }
+
+    private List<String> liveConfigurationBlockers() {
+        List<String> blocking = new ArrayList<>();
+        if (!liveStartEnabled) blocking.add("app.account-vault.bulk-live-start-enabled");
+        if (exactAutomationLiveEnabled) blocking.add("app.automation.live.enabled must be false");
+        if (!legacyPublisherEnabled) blocking.add("app.publisher-enabled");
+        if (!schedulerBulkEnabled) blocking.add("app.facebook.bulk-enabled");
+        if (!workerBulkEnabled) blocking.add("FACEBOOK_BULK_ENABLED");
+        if (!"LIVE".equalsIgnoreCase(schedulerMode)) blocking.add("app.facebook.publishing-mode=LIVE");
+        if (!"LIVE".equalsIgnoreCase(workerMode)) blocking.add("FACEBOOK_PUBLISHING_MODE=LIVE");
+        if (!"https://graph.facebook.com".equals(graphBaseUrl))
+            blocking.add("META_BASE_URL=https://graph.facebook.com");
+        return blocking;
+    }
+
+    private void requireExplicitLiveConfiguration() {
+        List<String> blocking = liveConfigurationBlockers();
+        if (!blocking.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Facebook BULK LIVE is not enabled: " + String.join(", ", blocking));
+        }
+    }
 
     @Transactional
     public FacebookBulkRunResponse create(
@@ -313,6 +511,9 @@ public class FacebookBulkRunService {
 
             log.info("[BULK START] Workspace permission OK");
 
+            // The direct /api/facebook/bulk-runs/{runId}/start endpoint must NOT bypass LIVE flags.
+            requireExplicitLiveConfiguration();
+
             // 3. Chỉ cho phép start DRAFT
             if (!"DRAFT".equals(run.status())) {
                 throw new ResponseStatusException(
@@ -343,6 +544,19 @@ public class FacebookBulkRunService {
                 );
             }
 
+            // Serialize with reschedule and the publisher's updates of these jobs.
+            List<UUID> lockedJobs = db.query("""
+                    SELECT j.id FROM facebook_bulk_run_jobs bj
+                    JOIN publishing_jobs j ON j.id = bj.publishing_job_id
+                    WHERE bj.bulk_run_id = ?
+                    ORDER BY j.id
+                    FOR UPDATE OF j
+                    """, (rs, rowNum) -> rs.getObject("id", UUID.class), runId);
+            if (lockedJobs.size() != totalJobs) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT,
+                        "Bulk Run jobs changed or are missing");
+            }
+
             // 5. Kiểm tra lại điều kiện của các Job
             Integer invalidCount = db.queryForObject("""
                             SELECT COUNT(*)
@@ -358,6 +572,24 @@ public class FacebookBulkRunService {
                                    j.status <> 'PENDING'
                                    OR j.attempt_count <> 0
                                    OR j.external_post_id IS NOT NULL
+                                   OR j.published_at IS NOT NULL
+                                   OR j.next_retry_at IS NOT NULL
+                                   OR j.processing_started_at IS NOT NULL
+                                   OR j.locked_until IS NOT NULL
+                                   -- Never start a run whose due time is past / too close.
+                                   OR j.scheduled_at IS NULL
+                                   OR j.scheduled_at <= NOW() + INTERVAL '2 minutes'
+                                   OR j.scheduled_at > NOW() + INTERVAL '30 days'
+                                   -- Re-check immutable OAuth binding even via direct API.
+                                   OR j.facebook_connection_id IS NULL
+                                   OR NOT EXISTS (
+                                       SELECT 1 FROM facebook_page_connections c
+                                       WHERE c.id = j.facebook_connection_id
+                                         AND c.social_account_id = a.id
+                                         AND c.status = 'CONNECTED'
+                                         AND NULLIF(BTRIM(c.access_token_encrypted), '') IS NOT NULL
+                                         AND (c.token_expires_at IS NULL OR c.token_expires_at > j.scheduled_at)
+                                   )
                             
                                    -- Không cho phép Job thuộc Campaign.
                                    OR EXISTS (
@@ -406,7 +638,7 @@ public class FacebookBulkRunService {
             if (invalidCount == null || invalidCount > 0) {
                 throw new ResponseStatusException(
                         HttpStatus.CONFLICT,
-                        "Some bulk jobs are no longer eligible"
+                        "Some bulk jobs are not eligible, scheduled too soon, or lack a valid OAuth binding; reschedule/reconnect first"
                 );
             }
 
