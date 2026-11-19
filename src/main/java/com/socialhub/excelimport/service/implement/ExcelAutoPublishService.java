@@ -402,10 +402,13 @@ public class ExcelAutoPublishService {
         int perDay = request.maxPostsPerDay() == null ? 10 : request.maxPostsPerDay();
         // Deliberately default to one LIVE job per confirmation for initial testing.
         int maxRows = request.maxRows() == null ? 1 : request.maxRows();
-        if (interval < 3 || interval > 1440 || perDay < 1 || perDay > 100
+        if (interval < 1 || interval > 1440
+                || perDay < 1 || perDay > 100
                 || maxRows < 1 || maxRows > 500) {
-            throw new ApiException(HttpStatus.BAD_REQUEST,
-                    "intervalMinutes=3..1440, maxPostsPerDay=1..100, maxRows=1..500 required");
+            throw new ApiException(
+                    HttpStatus.BAD_REQUEST,
+                    "intervalMinutes=1..1440, maxPostsPerDay=1..100, maxRows=1..500 required"
+            );
         }
         long lastMinute = request.startTime().toSecondOfDay() / 60L
                 + (long) (perDay - 1) * interval;
