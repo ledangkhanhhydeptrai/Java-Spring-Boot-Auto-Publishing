@@ -36,6 +36,10 @@ cloudinary:
   api-secret: ${CLOUDINARY_API_SECRET}
 
 app:
+  google-sheets:
+    writeback-worker-enabled: true
+    writeback-delay-ms: 30000
+    writeback-initial-delay-ms: 10000
   # =========================
   # AUTHENTICATION / JWT
   # =========================

@@ -6,10 +6,8 @@ import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 import com.socialhub.publishingjob.dto.PublishingJobDto;
 import com.socialhub.publishingjob.service.interfaces.PublishingJobService;
 import com.socialhub.publishingreview.dto.PublishingReviewDto;
@@ -17,7 +15,14 @@ import com.socialhub.publishingreview.service.interfaces.PublishingReviewService
 
 @RestController
 @RequiredArgsConstructor
+
 public class PublishingJobController {
+    public record RescheduleBatchRequest(
+            List<UUID> jobIds,
+            java.time.OffsetDateTime startAt,
+            int intervalMinutes
+    ) {
+    }
 
     private final PublishingJobService publishingJobService;
     private final PublishingReviewService reviewService;
@@ -35,6 +40,23 @@ public class PublishingJobController {
         );
     }
 
+    public record ReschedulePendingRequest(
+            @jakarta.validation.constraints.NotNull
+            java.time.OffsetDateTime scheduledAt
+    ) {
+    }
+
+    @PatchMapping("/api/jobs/{jobId}/reschedule-pending")
+    public PublishingJobDto.View reschedulePending(
+            @PathVariable UUID jobId,
+            @Valid @RequestBody ReschedulePendingRequest request
+    ) {
+        return publishingJobService.reschedulePending(
+                jobId,
+                request.scheduledAt()
+        );
+    }
+
     @PostMapping("/api/posts/{postId}/jobs")
     public PublishingJobDto.View create(
             @PathVariable UUID postId,
@@ -44,6 +66,17 @@ public class PublishingJobController {
                 postId,
                 r.socialAccountId(),
                 r.scheduledAt()
+        );
+    }
+
+    @PatchMapping("/api/publishing-jobs/reschedule-batch")
+    public List<PublishingJobDto.View> rescheduleBatch(
+            @RequestBody RescheduleBatchRequest request
+    ) {
+        return publishingJobService.reschedulePendingBatch(
+                request.jobIds(),
+                request.startAt(),
+                request.intervalMinutes()
         );
     }
 

@@ -462,4 +462,158 @@ public class PublishingJobServiceImpl implements PublishingJobService {
         // Preserve attemptCount for the worker's next claim.
         return view(jobs.save(j));
     }
+
+    @Override
+    @Transactional
+    public PublishingJobDto.View reschedulePending(
+            UUID jobId,
+            OffsetDateTime scheduledAt
+    ) {
+        if (scheduledAt == null) {
+            throw new ApiException(
+                    HttpStatus.BAD_REQUEST,
+                    "scheduledAt is required"
+            );
+        }
+
+        OffsetDateTime now = OffsetDateTime.now();
+
+        // Đủ thời gian cho Bridge chuẩn bị Bulk Run.
+        if (!scheduledAt.isAfter(now.plusMinutes(5))
+                || scheduledAt.isAfter(now.plusDays(30))) {
+            throw new ApiException(
+                    HttpStatus.BAD_REQUEST,
+                    "Scheduled time must be more than 20 minutes ahead and within 30 days"
+            );
+        }
+
+        PublishingJob job = jobs.findByIdForUpdate(jobId)
+                .orElseThrow(() -> new ApiException(
+                        HttpStatus.NOT_FOUND,
+                        "Publishing Job not found"
+                ));
+
+        UUID workspaceId = job.getPost().getWorkspace().getId();
+        access.admin(workspaceId);
+
+        if (!"PENDING".equals(job.getStatus())
+                || (job.getAttemptCount() != null
+                && job.getAttemptCount() != 0)
+                || job.getExternalPostId() != null
+                || job.getPublishedAt() != null
+                || job.getPublishedUrl() != null
+                || job.getProcessingStartedAt() != null
+                || job.getNextRetryAt() != null
+                || job.getLockedUntil() != null) {
+            throw new ApiException(
+                    HttpStatus.CONFLICT,
+                    "Job has already been attempted or is not eligible for rescheduling"
+            );
+        }
+
+        Post post = job.getPost();
+        SocialAccount account = job.getSocialAccount();
+
+        if (!"FACEBOOK_PAGE".equals(account.getPlatform())
+                || !"CONNECTED".equals(account.getStatus())
+                || !workspaceId.equals(account.getWorkspace().getId())
+                || !"APPROVED".equals(post.getApprovalStatus())
+                || !"SCHEDULED".equals(post.getStatus())
+                || job.getFacebookConnection() == null) {
+            throw new ApiException(
+                    HttpStatus.CONFLICT,
+                    "Post, account or Facebook connection is not eligible"
+            );
+        }
+
+        // Không thay đổi Job đã thuộc Bulk Run hay Campaign.
+        Number linked = (Number) entityManager.createNativeQuery("""
+                        SELECT
+                            (SELECT COUNT(*)
+                             FROM facebook_bulk_run_jobs
+                             WHERE publishing_job_id = :jobId)
+                            +
+                            (SELECT COUNT(*)
+                             FROM campaign_jobs
+                             WHERE publishing_job_id = :jobId)
+                        """)
+                .setParameter("jobId", jobId)
+                .getSingleResult();
+
+        if (linked.longValue() != 0) {
+            throw new ApiException(
+                    HttpStatus.CONFLICT,
+                    "Job is already linked to a Bulk Run or Campaign"
+            );
+        }
+
+        // Ngăn lịch trùng hoặc cách nhau dưới một phút
+        // với các Job đang hoạt động cùng tài khoản.
+        Number conflicts = (Number) entityManager.createNativeQuery("""
+                        SELECT COUNT(*)
+                        FROM publishing_jobs other
+                        WHERE other.social_account_id = :accountId
+                          AND other.id <> :jobId
+                          AND other.status IN ('PENDING', 'PROCESSING', 'RETRY')
+                          AND other.scheduled_at > :startAt
+                          AND other.scheduled_at < :endAt
+                        """)
+                .setParameter("accountId", account.getId())
+                .setParameter("jobId", jobId)
+                .setParameter("startAt", scheduledAt.minusMinutes(1))
+                .setParameter("endAt", scheduledAt.plusMinutes(1))
+                .getSingleResult();
+
+        if (conflicts.longValue() > 0) {
+            throw new ApiException(
+                    HttpStatus.CONFLICT,
+                    "Another active Job is scheduled within one minute"
+            );
+        }
+
+        job.setScheduledAt(scheduledAt);
+
+        return view(jobs.saveAndFlush(job));
+    }
+
+    @Override
+    @Transactional
+    public List<PublishingJobDto.View> reschedulePendingBatch(
+            List<UUID> jobIds,
+            OffsetDateTime startAt,
+            int intervalMinutes
+    ) {
+        if (jobIds == null || jobIds.isEmpty()
+                || jobIds.size() > 50
+                || jobIds.contains(null)
+                || new java.util.HashSet<>(jobIds).size() != jobIds.size()) {
+            throw new ApiException(
+                    HttpStatus.BAD_REQUEST,
+                    "Provide 1..50 unique Job IDs"
+            );
+        }
+
+        if (startAt == null || intervalMinutes < 1
+                || intervalMinutes > 1440) {
+            throw new ApiException(
+                    HttpStatus.BAD_REQUEST,
+                    "Invalid startAt or intervalMinutes"
+            );
+        }
+
+        List<PublishingJobDto.View> results =
+                new java.util.ArrayList<>();
+
+        for (int i = 0; i < jobIds.size(); i++) {
+            OffsetDateTime scheduledAt =
+                    startAt.plusMinutes((long) i * intervalMinutes);
+
+            results.add(reschedulePending(
+                    jobIds.get(i),
+                    scheduledAt
+            ));
+        }
+
+        return List.copyOf(results);
+    }
 }

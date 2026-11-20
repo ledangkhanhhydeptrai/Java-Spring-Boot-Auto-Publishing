@@ -1,6 +1,7 @@
 package com.socialhub.excelimport.orchestrator.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.socialhub.googlesheets.service.GoogleSheetsQueueBridgeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,12 +38,14 @@ public class ExcelOrchestratorBackgroundWorker {
     private final TransactionTemplate transactions;
     private final ObjectMapper mapper;
     private final ExcelPublishingOrchestratorService orchestrator;
+    private final GoogleSheetsQueueBridgeService sheetsGuard;
     private final AtomicBoolean executing = new AtomicBoolean(false);
 
     private record Work(UUID id, UUID workspaceId, UUID importId, UUID operatorId,
-                        String requestJson, int requestedRows, int processedRows) {}
+                        String requestJson, int requestedRows, int processedRows) {
+    }
 
-    @Scheduled(fixedDelayString="${APP_EXCEL_ORCHESTRATOR_POLL_MS:5000}")
+    @Scheduled(fixedDelayString = "${APP_EXCEL_ORCHESTRATOR_POLL_MS:5000}")
     public void poll() {
         if (!workerEnabled || !executing.compareAndSet(false, true)) return;
         try {
@@ -56,14 +59,14 @@ public class ExcelOrchestratorBackgroundWorker {
                                FOR UPDATE SKIP LOCKED LIMIT 1)
                     RETURNING q.id,q.workspace_id,q.import_id,q.operator_id,
                               q.request_payload::text AS payload,q.requested_rows,q.processed_rows
-                    """, (rs,n) -> new Work(rs.getObject("id",UUID.class),
-                        rs.getObject("workspace_id",UUID.class),
-                        rs.getObject("import_id",UUID.class),
-                        rs.getObject("operator_id",UUID.class),rs.getString("payload"),
-                        rs.getInt("requested_rows"),rs.getInt("processed_rows")));
+                    """, (rs, n) -> new Work(rs.getObject("id", UUID.class),
+                    rs.getObject("workspace_id", UUID.class),
+                    rs.getObject("import_id", UUID.class),
+                    rs.getObject("operator_id", UUID.class), rs.getString("payload"),
+                    rs.getInt("requested_rows"), rs.getInt("processed_rows")));
             if (!claimed.isEmpty()) process(claimed.getFirst());
         } catch (Exception ex) {
-            log.error("[ORCHESTRATOR QUEUE] Poll failed",ex);
+            log.error("[ORCHESTRATOR QUEUE] Poll failed", ex);
         } finally {
             executing.set(false);
         }
@@ -88,7 +91,7 @@ public class ExcelOrchestratorBackgroundWorker {
                     payload.hasNonNull("timezone") ? payload.get("timezone").asText() : null,
                     work.requestedRows(),
                     payload.hasNonNull("jobsPerRun") ? payload.get("jobsPerRun").asInt() : 5,
-                    false,true,null);
+                    false, true, null);
             int processed = work.processedRows();
             int perRun = original.jobsPerRun() == null ? 5 : original.jobsPerRun();
             if (perRun < 1 || perRun > 5) throw new IllegalStateException("Invalid stored jobsPerRun");
@@ -97,25 +100,28 @@ public class ExcelOrchestratorBackgroundWorker {
                 Boolean manager = db.queryForObject("""
                         SELECT EXISTS(SELECT 1 FROM workspace_members
                          WHERE workspace_id=? AND user_id=? AND role IN ('OWNER','ADMIN'))
-                        """, Boolean.class,work.workspaceId(),work.operatorId());
-                if (!Boolean.TRUE.equals(manager)) throw new IllegalStateException("Operator no longer has admin rights");
+                        """, Boolean.class, work.workspaceId(), work.operatorId());
+                if (!Boolean.TRUE.equals(manager))
+                    throw new IllegalStateException("Operator no longer has admin rights");
 
-                int chunk = Math.min(perRun, work.requestedRows()-processed);
+                int chunk = Math.min(perRun, work.requestedRows() - processed);
                 var previewRequest = new ExcelPublishingOrchestratorService.Request(
-                        original.startDate(),original.startTime(),original.intervalMinutes(),
-                        original.maxPostsPerDay(),original.timezone(),chunk,perRun,true,false,null);
-                var preview = orchestrator.execute(work.workspaceId(),work.importId(),
+                        original.startDate(), original.startTime(), original.intervalMinutes(),
+                        original.maxPostsPerDay(), original.timezone(), chunk, perRun, true, false, null);
+                // Sheet-backed queues must match their confirmed snapshots before any LIVE writes.
+                sheetsGuard.verifyNext(work.id(), work.workspaceId(), work.importId(), original, chunk);
+                var preview = orchestrator.execute(work.workspaceId(), work.importId(),
                         work.operatorId(), previewRequest);
-                if (preview.selectedRows()!=chunk || preview.blocked()>0) {
+                if (preview.selectedRows() != chunk || preview.blocked() > 0) {
                     throw new IllegalStateException("Batch preview no longer has " + chunk
                             + " clean eligible rows; review the import and scheduled jobs");
                 }
                 var liveRequest = new ExcelPublishingOrchestratorService.Request(
-                        original.startDate(),original.startTime(),original.intervalMinutes(),
-                        original.maxPostsPerDay(),original.timezone(),chunk,perRun,false,true,
+                        original.startDate(), original.startTime(), original.intervalMinutes(),
+                        original.maxPostsPerDay(), original.timezone(), chunk, perRun, false, true,
                         preview.previewToken());
-                var result = orchestrator.execute(work.workspaceId(),work.importId(),
-                        work.operatorId(),liveRequest);
+                var result = orchestrator.execute(work.workspaceId(), work.importId(),
+                        work.operatorId(), liveRequest);
                 // Persist progress and newly-created Bulk Run IDs BEFORE another batch.
                 // A partial result MUST be persisted, but never retried automatically.
                 String resultJson = mapper.writeValueAsString(result);
@@ -125,20 +131,20 @@ public class ExcelOrchestratorBackgroundWorker {
                         db.update("""
                                 INSERT INTO excel_orchestrator_bulk_runs(queue_id,bulk_run_id)
                                 VALUES (?,?) ON CONFLICT DO NOTHING
-                                """,work.id(),run.bulkRunId());
+                                """, work.id(), run.bulkRunId());
                     }
                     db.update("""
-                            UPDATE excel_orchestrator_queue SET
-                                processed_rows=processed_rows+?, created_jobs=created_jobs+?,
-                                prepared_jobs=prepared_jobs+?, started_runs=started_runs+?,
-                                last_result=?::jsonb,updated_at=NOW()
-                            WHERE id=? AND status='RUNNING'
-                            """,created,created,result.preparedJobs(),
-                            result.startedRuns(),resultJson,work.id());
+                                    UPDATE excel_orchestrator_queue SET
+                                        processed_rows=processed_rows+?, created_jobs=created_jobs+?,
+                                        prepared_jobs=prepared_jobs+?, started_runs=started_runs+?,
+                                        last_result=?::jsonb,updated_at=NOW()
+                                    WHERE id=? AND status='RUNNING'
+                                    """, created, created, result.preparedJobs(),
+                            result.startedRuns(), resultJson, work.id());
                 });
                 processed += created;
-                if (!"RUNNING".equals(result.status()) || created!=chunk
-                        || result.preparedJobs()!=chunk || result.startedRuns()!=1) {
+                if (!"RUNNING".equals(result.status()) || created != chunk
+                        || result.preparedJobs() != chunk || result.startedRuns() != 1) {
                     throw new IllegalStateException("A batch ended partially: " + result.status()
                             + "; " + result.errors() + ". Inspect Bulk Runs before trying again");
                 }
@@ -147,16 +153,16 @@ public class ExcelOrchestratorBackgroundWorker {
                     UPDATE excel_orchestrator_queue
                     SET status='DISPATCHED',finished_at=NOW(),updated_at=NOW()
                     WHERE id=? AND status='RUNNING'
-                    """,work.id());
-            log.info("[ORCHESTRATOR QUEUE] Prepared {} LIVE jobs, run={}",processed,work.id());
+                    """, work.id());
+            log.info("[ORCHESTRATOR QUEUE] Prepared {} LIVE jobs, run={}", processed, work.id());
         } catch (Exception ex) {
-            log.error("[ORCHESTRATOR QUEUE] Review needed run={}",work.id(),ex);
-            String reason = ex.getMessage()==null?ex.getClass().getSimpleName():ex.getMessage();
+            log.error("[ORCHESTRATOR QUEUE] Review needed run={}", work.id(), ex);
+            String reason = ex.getMessage() == null ? ex.getClass().getSimpleName() : ex.getMessage();
             db.update("""
                     UPDATE excel_orchestrator_queue
                     SET status='REVIEW_REQUIRED',last_error=?,finished_at=NOW(),updated_at=NOW()
                     WHERE id=? AND status='RUNNING'
-                    """,reason.substring(0,Math.min(reason.length(),1800)),work.id());
+                    """, reason.substring(0, Math.min(reason.length(), 1800)), work.id());
         } finally {
             SecurityContextHolder.setContext(previous);
         }

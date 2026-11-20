@@ -518,8 +518,17 @@ public class ExcelAutoPublishService {
         for (ExcelImportRow source : chosen) {
             ZonedDateTime original = ZonedDateTime.of(source.getSourcePublishDate(),
                     batch.getPublishTime(), ZONE);
-            if (!original.toInstant().isAfter(earliestAllowed)) continue;
+            // Future original dates are never automatically rescheduled.
+            // If too close to prepare safely, block for review instead of
+            // silently treating a future date as expired.
+            if (!original.toInstant().isAfter(Instant.now())) continue;
             Post post = source.getPost();
+            if (!original.toInstant().isAfter(earliestAllowed)) {
+                planned.put(source.getId(), new BatchPlanRow(source.getId(), source.getSourceRowNumber(),
+                        post.getId(), "BLOCKED", original.toOffsetDateTime(), false,
+                        false, "Original future date is less than 5 minutes away; cannot safely prepare, leave it unchanged"));
+                continue;
+            }
             if (isOccupied(original.toInstant(), reserved, cfg.intervalMinutes())) {
                 planned.put(source.getId(), new BatchPlanRow(source.getId(), source.getSourceRowNumber(),
                         post.getId(), "BLOCKED", original.toOffsetDateTime(), false,

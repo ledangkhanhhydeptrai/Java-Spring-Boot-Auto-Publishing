@@ -163,7 +163,7 @@ public class ExcelBulkRunBridgeService {
                   AND j.next_retry_at IS NULL
                   AND j.processing_started_at IS NULL
                   AND j.locked_until IS NULL
-                  AND j.scheduled_at > NOW() + INTERVAL '15 minutes'
+                  AND j.scheduled_at > NOW() + INTERVAL '2 minutes'
                   AND j.scheduled_at < NOW() + INTERVAL '30 days'
                   AND NOT EXISTS (
                       SELECT 1 FROM facebook_bulk_run_jobs bj

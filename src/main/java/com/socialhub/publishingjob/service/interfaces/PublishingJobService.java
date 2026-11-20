@@ -19,6 +19,17 @@ public interface PublishingJobService {
     Page<PublishingJobDto.View> listWorkspaceJobs(UUID workspaceId, int page, int size,
                                                   String status, UUID postId);
 
+    PublishingJobDto.View reschedulePending(
+            UUID jobId,
+            OffsetDateTime scheduledAt
+    );
+
+    List<PublishingJobDto.View> reschedulePendingBatch(
+            List<UUID> jobIds,
+            OffsetDateTime startAt,
+            int intervalMinutes
+    );
+
     List<PublishingJobDto.View> list(UUID postId);
 
     PublishingJobDto.View cancel(UUID jobId);
