@@ -112,9 +112,11 @@ public class ExcelOrchestratorBackgroundWorker {
                 sheetsGuard.verifyNext(work.id(), work.workspaceId(), work.importId(), original, chunk);
                 var preview = orchestrator.execute(work.workspaceId(), work.importId(),
                         work.operatorId(), previewRequest);
-                if (preview.selectedRows() != chunk || preview.blocked() > 0) {
+                if (preview.selectedRows() != chunk || preview.blocked() > 0
+                        || !preview.errors().isEmpty()) {
                     throw new IllegalStateException("Batch preview no longer has " + chunk
-                            + " clean eligible rows; review the import and scheduled jobs");
+                            + " clean eligible rows with safe preparation lead time: "
+                            + preview.errors() + "; review before starting LIVE jobs");
                 }
                 var liveRequest = new ExcelPublishingOrchestratorService.Request(
                         original.startDate(), original.startTime(), original.intervalMinutes(),
@@ -144,7 +146,8 @@ public class ExcelOrchestratorBackgroundWorker {
                 });
                 processed += created;
                 if (!"RUNNING".equals(result.status()) || created != chunk
-                        || result.preparedJobs() != chunk || result.startedRuns() != 1) {
+                        || result.preparedJobs() != chunk || result.startedRuns() != 1
+                        || !result.errors().isEmpty()) {
                     throw new IllegalStateException("A batch ended partially: " + result.status()
                             + "; " + result.errors() + ". Inspect Bulk Runs before trying again");
                 }

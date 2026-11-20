@@ -19677,3 +19677,579 @@ This generated password is for development use only. Your security configuration
 2026-11-20 16:08:37.604 INFO  [SpringApplicationShutdownHook] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-11-20 16:08:37.639 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2026-11-20 16:08:37.657 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-11-20 16:09:49.545 INFO  [main] com.socialhub.SocialHubApplication - Starting SocialHubApplication using Java 25.0.2 with PID 34280 (D:\vox-social-media\SocialHub_Automation_2K_Phase1_SafePatch\SocialHub-Backend-Threads-AutoPublishing-v1\SocialHub-Backend\target\classes started by Khanhhy in D:\vox-social-media\SocialHub_Automation_2K_Phase1_SafePatch\SocialHub-Backend-Threads-AutoPublishing-v1\SocialHub-Backend)
+2026-11-20 16:09:49.580 INFO  [main] com.socialhub.SocialHubApplication - No active profile set, falling back to 1 default profile: "default"
+2026-11-20 16:09:56.116 INFO  [main] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-20 16:09:56.476 INFO  [main] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 340 ms. Found 16 JPA repository interfaces.
+2026-11-20 16:09:58.950 INFO  [main] o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
+2026-11-20 16:09:58.982 INFO  [main] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-11-20 16:09:58.983 INFO  [main] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.27]
+2026-11-20 16:09:59.234 INFO  [main] o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 9507 ms
+2026-11-20 16:10:00.790 INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-11-20 16:10:01.519 INFO  [main] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@4a944af9
+2026-11-20 16:10:01.521 INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-11-20 16:10:01.571 INFO  [main] org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5433/socialhub_test (PostgreSQL 13.23)
+2026-11-20 16:10:02.042 INFO  [main] o.f.core.internal.command.DbValidate - Successfully validated 30 migrations (execution time 00:00.374s)
+2026-11-20 16:10:02.071 INFO  [main] o.f.core.internal.command.DbMigrate - Current version of schema "public": 30
+2026-11-20 16:10:02.079 INFO  [main] o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2026-11-20 16:10:02.737 INFO  [main] org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-20 16:10:02.918 INFO  [main] org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.4.13.Final
+2026-11-20 16:10:03.942 INFO  [main] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-20 16:10:04.101 WARN  [main] org.hibernate.orm.core - HHH000511: The 13.23.0 version for [org.hibernate.dialect.PostgreSQLDialect] is no longer supported, hence certain features may not work properly.The minimum supported version is 14.0.0. Check the community dialects project for available legacy versions.
+2026-11-20 16:10:04.140 INFO  [main] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5433/socialhub_test]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 13.23
+	Default catalog/schema: socialhub_test/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-20 16:10:06.638 INFO  [main] org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-20 16:10:06.756 INFO  [main] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-20 16:10:07.109 INFO  [main] o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-11-20 16:10:14.801 INFO  [main] c.s.mockqueue.ExcelMockQueueWorker - [EXCEL MOCK] Dedicated worker initialized | queue=socialhub.mock.excel.v1
+2026-11-20 16:10:15.758 WARN  [main] o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 0f8711ab-b1cf-4b70-a25c-003a188bd3ea
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-20 16:10:15.772 INFO  [main] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-20 16:10:16.084 DEBUG [main] o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, CsrfFilter, LogoutFilter, , RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2026-11-20 16:10:16.328 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.a.b.AccountVaultBulkPublishingController:
+	{POST [/api/workspaces/{workspaceId}/account-vault/bulk-publishing/schedule]}: schedule(UUID,Authentication,BulkRequest)
+	{POST [/api/workspaces/{workspaceId}/account-vault/bulk-publishing/preview]}: preview(UUID,BulkRequest)
+	{POST [/api/workspaces/{workspaceId}/account-vault/bulk-publishing/facebook-runs/{runId}/start]}: startFacebook(UUID,UUID,Authentication)
+	{GET [/api/workspaces/{workspaceId}/account-vault/bulk-publishing/facebook-runs/{runId}/progress]}: progress(UUID,UUID,Authentication)
+2026-11-20 16:10:16.351 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.a.c.AccountVaultController:
+	{GET [/api/workspaces/{workspaceId}/account-vault/groups]}: groups(UUID)
+	{POST [/api/workspaces/{workspaceId}/account-vault/groups]}: createGroup(UUID,GroupInput)
+	{GET [/api/workspaces/{workspaceId}/account-vault/accounts/{accountId}]}: account(UUID,UUID)
+	{GET [/api/workspaces/{workspaceId}/account-vault/accounts]}: accounts(UUID,int,int,String,String,String)
+	{PUT [/api/workspaces/{workspaceId}/account-vault/groups/{groupId}/accounts/{accountId}]}: addAccount(UUID,UUID,UUID)
+	{DELETE [/api/workspaces/{workspaceId}/account-vault/groups/{groupId}]}: deleteGroup(UUID,UUID)
+	{GET [/api/workspaces/{workspaceId}/account-vault/groups/{groupId}/accounts]}: groupAccounts(UUID,UUID)
+	{DELETE [/api/workspaces/{workspaceId}/account-vault/groups/{groupId}/accounts/{accountId}]}: removeAccount(UUID,UUID,UUID)
+	{PUT [/api/workspaces/{workspaceId}/account-vault/groups/{groupId}]}: updateGroup(UUID,UUID,GroupInput)
+2026-11-20 16:10:16.371 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.a.c.AuthController:
+	{POST [/api/auth/register]}: register(Register,HttpServletResponse)
+	{GET [/api/auth/me]}: me(Authentication)
+	{POST [/api/auth/login]}: login(Login,String,HttpServletResponse)
+	{POST [/api/auth/logout]}: logout(HttpServletRequest,HttpServletResponse)
+	{GET [/api/auth/csrf]}: csrf(CsrfToken)
+2026-11-20 16:10:16.381 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.a.c.AutomationReadinessController:
+	{GET [/api/workspaces/{workspaceId}/automation/readiness]}: readiness(UUID)
+2026-11-20 16:10:16.383 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.a.h.AccountHealthController:
+	{GET [/api/workspaces/{workspaceId}/automation/accounts/health]}: accounts(UUID)
+2026-11-20 16:10:16.384 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.a.q.AutomationOutboxStatusController:
+	{GET [/api/workspaces/{workspaceId}/automation/queue/status]}: status(UUID)
+2026-11-20 16:10:16.389 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.c.c.CampaignController:
+	{GET [/api/campaigns]}: list(UUID)
+	{POST [/api/campaigns]}: create(Create)
+	{POST [/api/campaigns/{id}/pause]}: pause(UUID)
+	{POST [/api/campaigns/{id}/resume]}: resume(UUID)
+	{POST [/api/campaigns/{id}/jobs]}: addJob(UUID,AddJob)
+	{GET [/api/campaigns/{id}/progress]}: progress(UUID)
+	{GET [/api/campaigns/{id}]}: detail(UUID)
+2026-11-20 16:10:16.394 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.d.DryRunController:
+	{GET [/api/workspaces/{workspaceId}/dry-run/preview]}: preview(UUID)
+2026-11-20 16:10:16.397 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.d.DryRunExcelController:
+	{POST [/api/workspaces/{workspaceId}/dry-run/excel/preview], consumes [multipart/form-data]}: preview(UUID,MultipartFile)
+2026-11-20 16:10:16.400 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.d.DryRunQueueController:
+	{POST [/api/workspaces/{workspaceId}/dry-run/excel/simulate-queue], consumes [multipart/form-data]}: simulate(UUID,MultipartFile)
+2026-11-20 16:10:16.402 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.e.c.ExcelBulkImportController:
+	{POST [/api/workspaces/{workspaceId}/excel-imports/bulk], consumes [multipart/form-data]}: bulkImport(UUID,MultipartFile,List,LocalTime,boolean,boolean)
+2026-11-20 16:10:16.415 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.e.c.ExcelBulkRunBridgeController:
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/bulk-runs/prepare]}: prepare(Authentication,UUID,UUID,PrepareRequest)
+	{GET [/api/workspaces/{workspaceId}/excel-imports/{importId}/bulk-runs/preview]}: preview(UUID,UUID,int)
+2026-11-20 16:10:16.428 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.e.c.ExcelImportController:
+	{GET [/api/workspaces/{workspaceId}/excel-imports]}: list(UUID)
+	{POST [/api/workspaces/{workspaceId}/excel-imports], consumes [multipart/form-data]}: importExcel(UUID,MultipartFile,UUID,LocalTime,boolean)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/auto-plan/batch]}: autoPlanBatch(UUID,UUID,BatchPlanRequest)
+	{GET [/api/workspaces/{workspaceId}/excel-imports/{importId}/publish-progress]}: publishProgress(UUID,UUID)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/auto-plan/one]}: autoPlanOne(UUID,UUID,int,OffsetDateTime,boolean)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/export-published], consumes [multipart/form-data]}: exportPublished(UUID,UUID,MultipartFile)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/auto-plan]}: autoPlan(UUID,UUID)
+	{GET [/api/workspaces/{workspaceId}/excel-imports/{importId}]}: detail(UUID,UUID)
+2026-11-20 16:10:16.438 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.e.o.c.ExcelOrchestratorQueueController:
+	{GET [/api/workspaces/{workspaceId}/excel-imports/{importId}/orchestrator/queue/{queueId}]}: get(UUID,UUID,UUID)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/orchestrator/queue]}: confirm(Authentication,UUID,UUID,Request)
+2026-11-20 16:10:16.444 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.e.o.c.ExcelPublishingOrchestratorController:
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/orchestrator/run]}: run(Authentication,UUID,UUID,Request)
+2026-11-20 16:10:16.459 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.f.c.FacebookGroupController:
+	{GET [/api/workspaces/{workspaceId}/groups]}: list(UUID)
+	{POST [/api/workspaces/{workspaceId}/groups]}: create(UUID,Create)
+	{DELETE [/api/workspaces/{workspaceId}/groups/{id}]}: delete(UUID,UUID)
+2026-11-20 16:10:16.461 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.f.c.FacebookLivePreflightController:
+	{GET [/api/workspaces/{workspaceId}/facebook/preflight/jobs/{jobId}]}: checkJob(UUID,UUID)
+2026-11-20 16:10:16.463 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.f.c.FacebookOAuthController:
+	{GET [/api/facebook/oauth/start]}: start(UUID)
+	{GET [/api/facebook/oauth/callback]}: callback(String,String,String,HttpServletRequest,HttpServletResponse)
+	{GET [/api/facebook/oauth/bridge]}: bridge(String,HttpServletResponse)
+2026-11-20 16:10:16.466 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.f.c.FacebookPageConnectionController:
+	{GET [/api/workspaces/{workspaceId}/facebook-page-connections]}: list(UUID,UUID)
+	{GET [/api/workspaces/{workspaceId}/facebook-page-connections/jobs/{jobId}/binding]}: binding(UUID,UUID)
+	{POST [/api/workspaces/{workspaceId}/facebook-page-connections/jobs/{jobId}/bind]}: bind(UUID,UUID,BindRequest)
+	{POST [/api/workspaces/{workspaceId}/facebook-page-connections/{connectionId}/disconnect]}: disconnect(UUID,UUID)
+2026-11-20 16:10:16.477 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.g.c.GoogleSheetsController:
+	{POST [/api/workspaces/{workspaceId}/google-sheets/preview]}: preview(UUID,PreviewRequest)
+2026-11-20 16:10:16.478 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.g.c.GoogleSheetsPublishingBridgeController:
+	{GET [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/publishing-bridge/preview]}: preview(UUID,UUID,UUID,int,int)
+2026-11-20 16:10:16.481 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.g.c.GoogleSheetsQueueBridgeController:
+	{POST [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/publishing-bridge/queue/confirm]}: confirm(Authentication,UUID,UUID,ConfirmRequest)
+	{POST [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/publishing-bridge/queue/preview]}: preview(Authentication,UUID,UUID,UUID,Request)
+2026-11-20 16:10:16.487 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.g.c.GoogleSheetsSyncController:
+	{GET [/api/workspaces/{workspaceId}/google-sheets/connections]}: list(UUID)
+	{GET [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/rows]}: rows(UUID,UUID,int,int)
+	{POST [/api/workspaces/{workspaceId}/google-sheets/connections]}: connect(UUID,ConnectRequest)
+	{POST [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/sync]}: syncNow(UUID,UUID)
+	{PATCH [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/auto-sync]}: autoSync(UUID,UUID,boolean)
+2026-11-20 16:10:16.492 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.g.c.GoogleSheetsWritebackController:
+	{PATCH [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/writeback]}: enabled(UUID,UUID,boolean)
+	{POST [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/writeback/sync]}: sync(UUID,UUID,UUID,int,int,int,String)
+	{GET [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/writeback/preview]}: preview(UUID,UUID,UUID,int,int,int,String)
+2026-11-20 16:10:16.496 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.g.c.GroupPublishingTaskController:
+	{GET [/api/posts/{postId}/group-tasks]}: list(UUID)
+	{POST [/api/posts/{postId}/group-tasks/{id}/cancel]}: cancel(UUID,UUID)
+	{POST [/api/posts/{postId}/group-tasks]}: create(UUID,Create)
+	{POST [/api/posts/{postId}/group-tasks/{id}/confirm]}: confirm(UUID,UUID,Confirm)
+	{POST [/api/posts/{postId}/group-tasks/{id}/ready]}: ready(UUID,UUID)
+2026-11-20 16:10:16.499 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.g.w.GroupWorkerController:
+	{POST [/internal/group-worker/{id}/result]}: result(String,UUID,Result)
+	{POST [/internal/group-worker/claim]}: claim(String)
+2026-11-20 16:10:16.500 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.m.c.CloudinaryTestController:
+	{POST [/api/media-test/upload], consumes [multipart/form-data]}: upload(MultipartFile)
+2026-11-20 16:10:16.501 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.m.c.ExcelImportMediaBatchController:
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/media/process]}: process(UUID,UUID,int,Integer)
+2026-11-20 16:10:16.503 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.m.c.MediaProcessingController:
+	{POST [/api/posts/{postId}/media/process]}: process(UUID)
+2026-11-20 16:10:16.505 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.m.ExcelMockRunController:
+	{GET [/api/workspaces/{workspaceId}/excel-imports/{importId}/mock-publishing/runs/{runId}]}: status(UUID,UUID,UUID)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/mock-publishing/start]}: start(UUID,UUID)
+	{GET [/api/workspaces/{workspaceId}/excel-imports/{importId}/mock-publishing/latest]}: latest(UUID,UUID)
+2026-11-20 16:10:16.508 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.c.PostApprovalController:
+	{GET [/api/posts/{postId}/approval/history]}: history(UUID)
+	{POST [/api/posts/{postId}/approval/submit]}: submit(UUID)
+	{POST [/api/posts/{postId}/approval/reject]}: reject(UUID,Reject)
+	{GET [/api/posts/{postId}/approval/status]}: getStatus(UUID)
+	{POST [/api/posts/{postId}/approval/approve]}: approve(UUID)
+2026-11-20 16:10:16.510 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.c.PostMediaController:
+	{GET [/api/posts/{postId}/media]}: list(UUID)
+	{POST [/api/posts/{postId}/media]}: create(UUID,Create)
+	{DELETE [/api/posts/{postId}/media/{id}]}: delete(UUID,UUID)
+2026-11-20 16:10:16.513 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.c.PostController:
+	{PUT [/api/workspaces/{workspaceId}/posts/{id}]}: update(UUID,UUID,Update)
+	{GET [/api/workspaces/{workspaceId}/posts]}: list(UUID,int,int,String,String)
+	{POST [/api/workspaces/{workspaceId}/posts]}: create(UUID,Create)
+	{DELETE [/api/workspaces/{workspaceId}/posts/{id}]}: delete(UUID,UUID)
+	{GET [/api/workspaces/{workspaceId}/posts/{id}]}: detail(UUID,UUID)
+2026-11-20 16:10:16.516 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.c.PublishingAttemptController:
+	{GET [/api/jobs/{jobId}/attempts]}: list(UUID)
+2026-11-20 16:10:16.521 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.b.c.FacebookBulkRunController:
+	{GET [/api/facebook/bulk-runs/{runId}]}: get(Authentication,UUID)
+	{POST [/api/facebook/bulk-runs/{runId}/start]}: start(Authentication,UUID)
+	{POST [/api/facebook/bulk-runs/{runId}/cancel]}: cancel(Authentication,UUID)
+	{POST [/api/facebook/bulk-runs]}: create(Authentication,CreateFacebookBulkRunRequest)
+	{PATCH [/api/facebook/bulk-runs/{runId}/reschedule]}: reschedule(Authentication,UUID,RescheduleRequest)
+	{GET [/api/facebook/bulk-runs/{runId}/live-readiness]}: liveReadiness(Authentication,UUID)
+2026-11-20 16:10:16.549 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.c.PublishingJobController:
+	{GET [/api/posts/{postId}/jobs]}: list(UUID)
+	{POST [/api/jobs/{jobId}/cancel]}: cancel(UUID)
+	{POST [/api/posts/{postId}/jobs]}: create(UUID,Create)
+	{GET [/api/jobs/{jobId}/reviews]}: getReviews(UUID)
+	{POST [/api/jobs/{jobId}/confirm-not-published]}: confirmNotPublished(UUID,ConfirmNotPublished)
+	{PATCH [/api/publishing-jobs/reschedule-batch]}: rescheduleBatch(RescheduleBatchRequest)
+	{PATCH [/api/jobs/{jobId}/reschedule-pending]}: reschedulePending(UUID,ReschedulePendingRequest)
+	{POST [/api/jobs/{jobId}/confirm-published]}: confirmPublished(UUID,ConfirmPublished)
+	{GET [/api/workspaces/{workspaceId}/publishing-jobs]}: listWorkspaceJobs(UUID,int,int,String,UUID)
+	{POST [/api/jobs/{jobId}/retry]}: retry(UUID)
+2026-11-20 16:10:16.554 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.s.c.SocialAccountController:
+	{GET [/api/workspaces/{workspaceId}/social-accounts]}: list(UUID)
+	{POST [/api/workspaces/{workspaceId}/social-accounts]}: create(UUID,Create)
+	{DELETE [/api/workspaces/{workspaceId}/social-accounts/{id}]}: delete(UUID,UUID)
+2026-11-20 16:10:16.555 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.t.ThreadsBulkController:
+	{POST [/api/workspaces/{workspaceId}/threads/bulk-run]}: queue(UUID,BulkRequest)
+2026-11-20 16:10:16.560 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.t.ThreadsOAuthController:
+	{GET [/api/threads/oauth/start]}: start(UUID,HttpServletResponse)
+	{GET [/api/threads/oauth/callback]}: callback(String,String,String,HttpServletRequest,HttpServletResponse)
+	{GET [/api/threads/oauth/bridge]}: bridge(String,HttpServletResponse)
+2026-11-20 16:10:16.565 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.t.ThreadsPublishingController:
+	{POST [/api/threads/publishing/jobs/{jobId}/publish-now]}: publishNow(UUID)
+2026-11-20 16:10:16.567 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.w.c.WorkspaceMemberController:
+	{DELETE [/api/workspaces/{workspaceId}/members/{userId}]}: remove(UUID,UUID)
+	{POST [/api/workspaces/{workspaceId}/members]}: add(UUID,Add)
+	{GET [/api/workspaces/{workspaceId}/members]}: list(UUID)
+2026-11-20 16:10:16.570 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.w.c.WorkspaceController:
+	{GET [/api/workspaces]}: list()
+	{POST [/api/workspaces]}: create(Create)
+	{DELETE [/api/workspaces/{id}]}: delete(UUID)
+	{PUT [/api/workspaces/{id}]}: rename(UUID,Create)
+	{GET [/api/workspaces/{id}]}: detail(UUID)
+2026-11-20 16:10:16.592 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	o.s.b.w.a.e.BasicErrorController:
+	{ [/error]}: error(HttpServletRequest)
+	{ [/error], produces [text/html]}: errorHtml(HttpServletRequest,HttpServletResponse)
+2026-11-20 16:10:16.616 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	o.s.w.a.OpenApiWebMvcResource:
+	{GET [/v3/api-docs.yaml], produces [application/vnd.oai.openapi]}: openapiYaml(HttpServletRequest,String,Locale)
+	{GET [/v3/api-docs], produces [application/json]}: openapiJson(HttpServletRequest,String,Locale)
+2026-11-20 16:10:16.618 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	o.s.w.u.SwaggerWelcomeWebMvc:
+	{GET [/swagger-ui.html]}: redirectToUi(HttpServletRequest)
+2026-11-20 16:10:16.619 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	o.s.w.u.SwaggerConfigResource:
+	{GET [/v3/api-docs/swagger-config], produces [application/json]}: openapiJson(HttpServletRequest)
+2026-11-20 16:10:16.622 DEBUG [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 133 mappings in 'requestMappingHandlerMapping'
+2026-11-20 16:10:17.681 INFO  [main] o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoints beneath base path '/actuator'
+2026-11-20 16:10:17.929 INFO  [main] o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path '/'
+2026-11-20 16:10:17.959 INFO  [main] com.socialhub.SocialHubApplication - Started SocialHubApplication in 30.838 seconds (process running for 32.389)
+2026-11-20 16:10:18.077 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:10:18.111 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:10:18.112 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:10:18.153 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:10:18.154 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:10:18.154 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:10:53.033 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=21 unchanged=0 conflicts=0
+2026-11-20 16:10:53.037 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:10:53.041 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:10:53.041 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:10:53.051 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:10:53.052 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:10:53.052 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:11:08.062 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:11:08.138 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:11:08.138 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:11:08.148 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:11:08.149 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:11:08.149 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:11:30.987 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:11:30.989 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:11:30.993 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:11:30.994 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:11:31.005 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:11:31.005 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:11:31.005 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:11:46.009 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:11:46.014 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:11:46.014 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:11:46.025 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:11:46.026 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:11:46.026 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:12:09.484 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:12:09.487 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:12:09.489 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:12:09.489 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:12:09.499 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:12:09.499 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:12:09.499 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:12:24.506 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:12:24.509 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:12:24.510 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:12:24.520 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:12:24.520 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:12:24.520 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:12:47.163 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:12:47.210 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:12:47.212 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:12:47.213 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:12:47.221 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:12:47.221 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:12:47.222 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:13:02.235 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:13:02.238 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:13:02.238 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:13:02.248 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:13:02.248 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:13:02.248 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:13:25.118 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:13:25.120 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:13:25.122 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:13:25.122 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:13:25.129 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:13:25.129 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:13:25.129 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:13:40.140 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:13:40.142 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:13:40.142 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:13:40.145 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:13:40.145 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:13:40.145 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:14:02.996 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:14:02.997 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:14:02.999 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:14:02.999 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:14:03.000 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:14:03.000 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:14:03.000 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:14:18.005 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:14:18.007 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:14:18.007 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:14:18.010 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:14:18.010 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:14:18.011 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:14:40.879 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:14:40.880 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:14:40.881 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:14:40.881 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:14:40.883 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:14:40.884 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:14:40.884 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:14:55.894 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:14:55.895 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:14:55.895 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:14:55.897 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:14:55.897 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:14:55.897 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:15:18.672 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:15:18.673 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:15:18.675 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:15:18.675 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:15:18.678 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:15:18.678 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:15:18.678 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:15:33.688 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:15:33.689 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:15:33.689 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:15:33.692 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:15:33.692 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:15:33.692 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:15:56.682 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:15:56.683 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:15:56.684 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:15:56.684 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:15:56.686 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:15:56.686 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:15:56.686 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:16:11.700 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:16:11.701 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:16:11.701 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:16:11.704 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:16:11.704 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:16:11.704 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:16:34.607 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:16:34.608 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:16:34.610 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:16:34.610 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:16:34.612 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:16:34.612 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:16:34.612 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:16:49.623 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:16:49.625 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:16:49.625 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:16:49.627 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:16:49.628 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:16:49.628 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:17:12.921 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:17:12.922 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:17:12.923 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:17:12.923 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:17:12.924 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:17:12.924 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:17:12.924 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:17:27.929 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:17:27.932 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:17:27.933 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:17:27.941 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:17:27.941 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:17:27.942 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:17:50.850 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:17:50.852 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:17:50.853 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:17:50.853 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:17:50.856 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:17:50.856 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:17:50.856 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:18:05.861 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:18:05.863 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:18:05.863 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:18:05.865 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:18:05.865 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:18:05.865 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:18:28.705 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:18:28.706 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:18:28.707 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:18:28.713 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:18:28.715 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:18:28.716 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:18:28.716 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:18:43.734 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:18:43.849 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:18:43.850 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:18:43.854 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:18:43.855 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:18:43.855 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:19:06.758 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:19:06.759 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:19:06.760 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:19:06.760 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:19:06.763 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:19:06.764 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:19:06.764 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:19:21.767 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:19:21.768 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:19:21.768 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:19:21.771 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:19:21.771 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:19:21.771 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:19:44.499 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:19:44.499 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:19:44.501 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:19:44.502 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:19:44.504 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:19:44.504 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:19:44.504 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:19:59.513 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:19:59.516 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:19:59.516 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:19:59.519 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:19:59.519 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:19:59.520 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:20:22.105 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:20:22.106 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:20:22.108 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:20:22.109 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:20:22.111 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:20:22.112 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:20:22.112 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:20:37.114 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:20:37.116 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:20:37.116 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:20:37.120 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:20:37.120 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:20:37.120 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:21:00.517 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:21:00.518 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:21:00.519 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:21:00.519 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:21:00.522 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:21:00.522 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:21:00.522 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:21:15.523 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:21:15.524 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:21:15.524 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:21:15.526 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:21:15.526 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:21:15.526 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:21:39.435 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:21:39.435 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:21:39.437 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:21:39.437 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:21:39.440 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:21:39.440 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:21:39.440 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:21:54.455 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:21:54.458 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:21:54.458 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:21:54.461 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:21:54.461 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:21:54.461 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:22:18.123 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:22:18.124 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:22:18.129 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:22:18.129 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:22:18.132 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:22:18.132 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:22:18.132 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:22:33.134 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:22:33.152 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:22:33.152 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:22:33.183 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:22:33.183 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:22:33.183 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:22:57.789 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:22:57.791 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:22:57.793 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:22:57.793 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:22:57.798 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:22:57.798 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:22:57.798 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:23:12.801 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:23:12.803 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:23:12.804 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:23:12.808 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:23:12.808 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:23:12.809 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:23:35.643 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:23:35.645 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:23:35.645 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:23:35.645 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:23:35.675 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:23:35.675 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:23:35.675 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:23:50.678 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:23:50.681 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:23:50.681 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:23:50.683 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:23:50.683 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:23:50.683 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:24:13.663 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:24:13.665 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:24:13.667 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:24:13.667 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:24:13.673 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:24:13.673 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:24:13.673 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:24:28.675 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:24:28.678 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:24:28.678 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:24:28.683 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:24:28.683 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:24:28.683 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:24:52.563 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=21 written=0 unchanged=21 conflicts=0
+2026-11-20 16:24:52.564 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=false | mode=LIVE | bulkEnabled=true | automationLiveEnabled=false
+2026-11-20 16:24:52.575 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-20 16:24:52.576 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=true | multiJob=false | liveJobId=41305d32-c347-42db-8694-79ceb680aadf | batchSize=5
+2026-11-20 16:24:52.579 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-20 16:24:52.579 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-20 16:24:52.579 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [THREADS] Publisher disabled
+2026-11-20 16:25:03.569 INFO  [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-11-20 16:25:03.679 INFO  [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-11-20 16:25:03.889 INFO  [SpringApplicationShutdownHook] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-11-20 16:25:03.946 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-11-20 16:25:03.971 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

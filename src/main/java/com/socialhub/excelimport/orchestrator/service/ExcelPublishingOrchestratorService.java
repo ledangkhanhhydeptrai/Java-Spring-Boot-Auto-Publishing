@@ -17,6 +17,10 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.HexFormat;
 import java.util.List;
@@ -37,6 +41,11 @@ public class ExcelPublishingOrchestratorService {
     // Limits the LIVE impact and avoids long HTTP calls while media is fetched.
     private static final int MAX_ROWS_PER_CONFIRMATION = 50;
     private static final int MAX_JOBS_PER_BULK_RUN = 5;
+
+    // Lead time for completing Cloudinary/Drive preparation and creating/starting Bulk Runs.
+    // Jobs keep their source future schedule; too-close schedules are rejected, not shifted.
+    @Value("${app.excel.orchestrator.minimum-preparation-minutes:10}")
+    private long minimumPreparationMinutes;
 
     private final AccessService access;
     private final JdbcTemplate db;
@@ -106,12 +115,13 @@ public class ExcelPublishingOrchestratorService {
         var plannedPreview = autoPlan.planBatch(workspaceId, importId, previewRequest);
         String token = token(workspaceId, importId, rows, jobsPerRun,
                 plannedPreview.previewToken());
+        List<String> scheduleWarnings = validateLeadTime(plannedPreview);
         if (dry) {
             return new Result(workspaceId, importId, true, token,
                     plannedPreview.selectedRows(), 0, plannedPreview.blocked(),
                     plannedPreview.alreadyPlanned(), plannedPreview.notSelected(), 0, 0,
-                    countUnplanned(workspaceId, importId), List.of(), plannedPreview.errors(),
-                    "PREVIEW");
+                    countUnplanned(workspaceId, importId), List.of(),
+                    mergeErrors(plannedPreview.errors(), scheduleWarnings), "PREVIEW");
         }
         if (!Boolean.TRUE.equals(request.confirmLive())) {
             throw new ApiException(HttpStatus.BAD_REQUEST,
@@ -122,6 +132,11 @@ public class ExcelPublishingOrchestratorService {
                 request.previewToken().getBytes(StandardCharsets.UTF_8))) {
             throw new ApiException(HttpStatus.CONFLICT,
                     "Preview changed; run dryRun=true again and use its token");
+        }
+        if (!scheduleWarnings.isEmpty()) {
+            throw new ApiException(HttpStatus.CONFLICT,
+                    "Schedule is too close for safe preparation: " + scheduleWarnings.getFirst()
+                            + ". Choose a later start time and preview again");
         }
         if (plannedPreview.selectedRows() == 0 || plannedPreview.blocked() > 0) {
             throw new ApiException(HttpStatus.CONFLICT,
@@ -137,45 +152,95 @@ public class ExcelPublishingOrchestratorService {
         int prepared = 0;
         int started = 0;
 
-        // Max 50 Jobs, partitioned into <=5 per Facebook Bulk Run.
-        // A preview is recomputed before each create to avoid reusing already-linked Jobs.
-        for (int n = 0; n < rows; n += jobsPerRun) {
-            ExcelBulkRunBridgeService.Preview bulkPreview;
-            try {
-                bulkPreview = bridge.preview(workspaceId, importId, jobsPerRun);
-            } catch (RuntimeException ex) {
-                errors.add("Bulk preview error: " + shortError(ex));
-                break;
-            }
-            if (bulkPreview.selectedJobs() == 0) break;
-            try {
-                var preparedRun = bridge.prepare(workspaceId, importId, operatorId,
-                        new ExcelBulkRunBridgeService.PrepareRequest(
-                                jobsPerRun, bulkPreview.previewToken(), true));
-                UUID runId = preparedRun.bulkRunId();
-                prepared += preparedRun.selectedJobs();
-                // Persist the DRAFT run ID in the response before attempting START.
-                // If START fails, callers can reconcile it rather than creating duplicates.
-                runs.add(new RunResult(runId, "DRAFT", preparedRun.selectedJobs()));
-                // Explicit confirmation from this request is what authorizes start.
-                FacebookBulkRunResponse startedRun = bulkRuns.start(operatorId, runId);
-                started++;
-                runs.set(runs.size() - 1,
-                        new RunResult(runId, startedRun.status(), startedRun.totalJobs()));
-            } catch (RuntimeException ex) {
-                // Never retry START blindly; a DRAFT Run may have been created.
-                errors.add("Bulk run setup/start stopped: " + shortError(ex) +
-                        ". Inspect facebook_bulk_runs before retrying.");
-                break;
+        // Bind each run to the exact source rows JUST created in this confirmation.
+        // The bridge normally selects the oldest eligible jobs from an entire import;
+        // without this guard, an unrelated older PENDING job can be started instead.
+        Set<Integer> expectedRows = new LinkedHashSet<>();
+        for (var item : committed.rows()) {
+            if ("JOB_CREATED".equals(item.action())) expectedRows.add(item.sourceRowNumber());
+        }
+        if (expectedRows.size() != committed.createdJobs()) {
+            errors.add("Created jobs do not match unique batch rows; inspect jobs before retrying");
+        }
+
+        // Media processing can take time. Re-check remaining lead time AFTER job creation
+        // but BEFORE starting any run. A partial batch must never be reported successful.
+        if (errors.isEmpty()) {
+            Set<Integer> remainingRows = new LinkedHashSet<>(expectedRows);
+            while (!remainingRows.isEmpty()) {
+                int maxForThisRun = Math.min(jobsPerRun, remainingRows.size());
+                ExcelBulkRunBridgeService.Preview bulkPreview;
+                try {
+                    bulkPreview = bridge.preview(workspaceId, importId, maxForThisRun);
+                } catch (RuntimeException ex) {
+                    errors.add("Bulk preview error: " + shortError(ex));
+                    break;
+                }
+
+                Set<Integer> selectedRows = new LinkedHashSet<>();
+                for (var candidate : bulkPreview.jobs()) {
+                    selectedRows.add(candidate.sourceRowNumber());
+                }
+                if (bulkPreview.selectedJobs() != maxForThisRun
+                        || selectedRows.size() != maxForThisRun
+                        || !remainingRows.containsAll(selectedRows)) {
+                    errors.add("Bulk eligibility mismatch; expected " + maxForThisRun
+                            + " jobs from the newly created batch, got "
+                            + bulkPreview.selectedJobs() + " jobs at rows " + selectedRows
+                            + ". No further Bulk Run started; review unlinked jobs");
+                    break;
+                }
+                try {
+                    var preparedRun = bridge.prepare(workspaceId, importId, operatorId,
+                            new ExcelBulkRunBridgeService.PrepareRequest(
+                                    maxForThisRun, bulkPreview.previewToken(), true));
+                    UUID runId = preparedRun.bulkRunId();
+                    prepared += preparedRun.selectedJobs();
+                    runs.add(new RunResult(runId, "DRAFT", preparedRun.selectedJobs()));
+                    // The request's explicit LIVE confirmation authorizes starting this run.
+                    FacebookBulkRunResponse startedRun = bulkRuns.start(operatorId, runId);
+                    started++;
+                    runs.set(runs.size() - 1,
+                            new RunResult(runId, startedRun.status(), startedRun.totalJobs()));
+                    remainingRows.removeAll(selectedRows);
+                } catch (RuntimeException ex) {
+                    // A DRAFT may exist, and a START might have been accepted remotely.
+                    // Reconcile before attempting further operations; never blind retry.
+                    errors.add("Bulk setup/start stopped: " + shortError(ex)
+                            + ". Inspect facebook_bulk_runs before retrying");
+                    break;
+                }
             }
         }
         int remaining = countUnplanned(workspaceId, importId);
         String status = errors.isEmpty() && committed.createdJobs() == prepared
+                && started == runs.size()
                 ? "RUNNING" : "PARTIAL_REVIEW_REQUIRED";
         return new Result(workspaceId, importId, false, token,
                 committed.selectedRows(), committed.createdJobs(), committed.blocked(),
                 committed.alreadyPlanned(), committed.notSelected(), prepared, started,
                 remaining, List.copyOf(runs), List.copyOf(errors), status);
+    }
+
+    private List<String> validateLeadTime(ExcelAutoPublishService.BatchPlanResult preview) {
+        List<String> errors = new ArrayList<>();
+        Instant threshold = Instant.now().plus(Duration.ofMinutes(
+                Math.max(3, minimumPreparationMinutes)));
+        for (var row : preview.rows()) {
+            if (!("KEEP_ORIGINAL".equals(row.action())
+                    || "RESCHEDULED".equals(row.action()))) continue;
+            if (row.scheduledAt() == null || !row.scheduledAt().toInstant().isAfter(threshold)) {
+                errors.add("row " + row.sourceRowNumber() + " must be scheduled after "
+                        + threshold + " (preparation lead time)");
+            }
+        }
+        return errors;
+    }
+
+    private static List<String> mergeErrors(List<String> original, List<String> additional) {
+        List<String> result = new ArrayList<>(original);
+        result.addAll(additional);
+        return List.copyOf(result);
     }
 
     private ExcelAutoPublishService.BatchPlanRequest planRequest(
@@ -192,8 +257,8 @@ public class ExcelPublishingOrchestratorService {
                 JOIN excel_imports e ON e.id = r.import_id
                 JOIN posts p ON p.id = r.post_id
                 WHERE e.workspace_id = ? AND e.id = ?
-                  AND r.processing_status NOT IN ('PUBLISHED', 'AUTO_SCHEDULED')
-                  AND r.processing_status NOT LIKE 'SKIPPED_%'
+                  AND (r.processing_status IS NULL OR r.processing_status NOT IN ('PUBLISHED', 'AUTO_SCHEDULED'))
+                  AND (r.processing_status IS NULL OR r.processing_status NOT LIKE 'SKIPPED_%')
                   AND NOT EXISTS (
                     SELECT 1 FROM publishing_jobs j
                     WHERE j.post_id = p.id AND j.social_account_id = e.social_account_id
