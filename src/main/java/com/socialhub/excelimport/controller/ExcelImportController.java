@@ -5,6 +5,7 @@ import com.socialhub.excelimport.dto.ExcelImportDto;
 import com.socialhub.excelimport.service.interfaces.ExcelImportService;
 import com.socialhub.excelimport.service.implement.ExcelPublishExportService;
 import com.socialhub.excelimport.service.implement.ExcelAutoPublishService;
+import com.socialhub.excelimport.service.implement.ExcelThreadsBridgeService;
 import com.socialhub.mockqueue.ExcelMockRunService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class ExcelImportController {
     private final ExcelImportService service;
     private final ExcelPublishExportService excelPublishExportService;
     private final ExcelAutoPublishService autoPublishService;
+    private final ExcelThreadsBridgeService threadsBridgeService;
     private final ExcelMockRunService excelMockRunService;
 
     @Value("${socialhub.mock-excel.auto-start:false}")
@@ -158,6 +160,19 @@ public class ExcelImportController {
             @RequestBody ExcelAutoPublishService.BatchPlanRequest request
     ) {
         return autoPublishService.planBatch(workspaceId, importId, request);
+    }
+
+    /**
+     * Reuse the original Excel/Google Sheets Post for a second publishing platform.
+     * Read-only preview by default; explicit confirmation creates Threads Jobs.
+     */
+    @PostMapping("/{importId}/threads-plan")
+    public ExcelThreadsBridgeService.Result threadsPlan(
+            @PathVariable UUID workspaceId,
+            @PathVariable UUID importId,
+            @RequestBody ExcelThreadsBridgeService.Request request
+    ) {
+        return threadsBridgeService.plan(workspaceId, importId, request);
     }
 
     @GetMapping("/{importId}/publish-progress")

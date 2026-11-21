@@ -1,4 +1,5 @@
 
+
 package com.socialhub.excelimport.service.implement;
 
 import com.socialhub.common.ApiException;
@@ -64,6 +65,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             LocalDate publishDate,
             String status,
             String publishedUrl,
+            String facebookPublishedUrl,
             String validationError
     ) {
     }
@@ -198,16 +200,38 @@ public class ExcelImportServiceImpl implements ExcelImportService {
 
         for (ImportRow row : rows) {
 
-            // 1. Chống đăng trùng: ưu tiên dấu hiệu đã xuất bản.
-            // Chỉ cần trạng thái Đã đăng HOẶC có link bài đã đăng
-            // thì không import thành Post mới, dù cột trạng thái có sai.
-            boolean alreadyPublished = "Đã đăng".equals(row.status())
-                    || !row.publishedUrl().isBlank();
+            // Google Sheets: G is the SHARED status; H is Threads URL and I is
+            // Facebook URL. G=Đã đăng alone must NOT imply that both platforms
+            // have published the content.
+            boolean threadsLinked = isThreadsUrl(row.publishedUrl());
+            boolean facebookLinked = isFacebookUrl(row.facebookPublishedUrl())
+                    || isFacebookUrl(row.publishedUrl()); // legacy H exports
+            boolean sharedPublished = "Đã đăng".equals(row.status());
+
+            // For an ambiguous previously-published row with no platform URL,
+            // fail closed instead of risking a duplicate public post.
+            boolean ambiguousPublished = sharedPublished
+                    && !threadsLinked && !facebookLinked;
+            boolean alreadyPublished = "THREADS".equals(platform)
+                    ? threadsLinked || ambiguousPublished
+                    : facebookLinked || ambiguousPublished;
+
+            // Unknown content in H/I is also a conflict: do not auto-publish.
+            boolean unknownLink = (!row.publishedUrl().isBlank()
+                    && !threadsLinked && !isFacebookUrl(row.publishedUrl()))
+                    || (!row.facebookPublishedUrl().isBlank()
+                    && !isFacebookUrl(row.facebookPublishedUrl()));
+            if (unknownLink) {
+                saveImportRow(excelImport, row, "SKIPPED_INVALID",
+                        "Unknown published URL in H/I; manual review required", null);
+                skippedCount++;
+                continue;
+            }
 
             if (alreadyPublished) {
-                String reason = !row.publishedUrl().isBlank()
-                        ? "Có link bài đã đăng: bỏ qua để tránh tạo bài trùng"
-                        : "Dòng đã được đánh dấu Đã đăng";
+                String reason = ambiguousPublished
+                        ? "G=Đã đăng but H/I have no platform evidence; manual review"
+                        : "Target platform already has a published URL";
 
                 saveImportRow(
                         excelImport,
@@ -222,7 +246,8 @@ public class ExcelImportServiceImpl implements ExcelImportService {
             }
 
             // 2. Trạng thái không hợp lệ.
-            if (!"Chưa đăng".equals(row.status())) {
+            if (!"Chưa đăng".equals(row.status())
+                    && !"Đã đăng".equals(row.status())) {
                 saveImportRow(
                         excelImport,
                         row,
@@ -231,6 +256,30 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                         null
                 );
 
+                skippedCount++;
+                continue;
+            }
+
+            // Prevent a second Post for the same account + sheet + source row
+            // + content, even if a later exported XLSX has a different hash.
+            // Existing Jobs must be resumed, not imported again.
+            Boolean previousPost = jdbc.queryForObject("""
+                            SELECT EXISTS (
+                              SELECT 1 FROM excel_import_rows old_row
+                              JOIN excel_imports old_import ON old_import.id = old_row.import_id
+                              JOIN posts old_post ON old_post.id = old_row.post_id
+                              WHERE old_import.workspace_id = ?
+                                AND old_import.social_account_id = ?
+                                AND old_import.source_sheet_name = ?
+                                AND old_row.source_row_number = ?
+                                AND old_post.content = ?
+                            )
+                            """, Boolean.class, workspaceId, socialAccountId,
+                    parsed.sheetName(), row.rowNumber(), row.content());
+            if (Boolean.TRUE.equals(previousPost)) {
+                saveImportRow(excelImport, row, "SKIPPED_ALREADY_IMPORTED",
+                        "Existing Post for this account/sheet/row/content; use it instead of creating a duplicate",
+                        null);
                 skippedCount++;
                 continue;
             }
@@ -480,6 +529,13 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                         formatter
                 );
 
+                // I is optional for older Excel templates. New shared-sheet
+                // exports keep Threads link in H and Facebook link in I.
+                Integer facebookColumn = columns.get("link facebook");
+                String facebookPublishedUrl = facebookColumn == null
+                        ? ""
+                        : cellText(row, facebookColumn, formatter);
+
                 Cell dateCell = row.getCell(
                         columns.get("ngày đăng")
                 );
@@ -510,6 +566,7 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                         publishDate,
                         status,
                         publishedUrl,
+                        facebookPublishedUrl,
                         validationError
                 ));
             }
@@ -575,6 +632,32 @@ public class ExcelImportServiceImpl implements ExcelImportService {
                 value.trim().toLowerCase(Locale.ROOT),
                 Normalizer.Form.NFC
         ).replaceAll("\\s+", " ");
+    }
+
+    private boolean isThreadsUrl(String raw) {
+        return matchesHost(raw, "threads.net", "threads.com");
+    }
+
+    private boolean isFacebookUrl(String raw) {
+        return matchesHost(raw, "facebook.com", "fb.com");
+    }
+
+    private boolean matchesHost(String raw, String... domains) {
+        if (raw == null || raw.isBlank()) return false;
+        try {
+            java.net.URI uri = java.net.URI.create(raw.trim());
+            if (!"https".equalsIgnoreCase(uri.getScheme())) return false;
+            String host = uri.getHost();
+            if (host == null) return false;
+            String normalized = host.toLowerCase(Locale.ROOT);
+            for (String domain : domains) {
+                if (normalized.equals(domain) || normalized.endsWith("." + domain))
+                    return true;
+            }
+            return false;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
     }
 
     private String normalizeStatus(String value) {
@@ -673,7 +756,15 @@ public class ExcelImportServiceImpl implements ExcelImportService {
         item.setProcessingStatus(processingStatus);
         item.setReason(reason);
         item.setPost(post);
-        item.setSourcePublishedUrl(row.publishedUrl());
+        // SourcePublishedUrl is a single legacy field. Preserve the target
+        // platform permalink when available; never save a Threads URL as
+        // evidence of a Facebook publication or vice versa.
+        String targetPlatform = excelImport.getSocialAccount().getPlatform();
+        String platformUrl = "THREADS".equals(targetPlatform)
+                ? (isThreadsUrl(row.publishedUrl()) ? row.publishedUrl() : "")
+                : (isFacebookUrl(row.facebookPublishedUrl()) ? row.facebookPublishedUrl()
+                : isFacebookUrl(row.publishedUrl()) ? row.publishedUrl() : "");
+        item.setSourcePublishedUrl(platformUrl);
 
         importRowRepository.save(item);
     }

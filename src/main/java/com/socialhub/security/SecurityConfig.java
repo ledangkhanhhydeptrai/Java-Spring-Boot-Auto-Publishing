@@ -86,7 +86,12 @@ public class SecurityConfig {
 
                                 // Group Worker
                                 "/internal/group-worker/**",
-
+                                "/*.png",
+                                "/*.jpg",
+                                "/*.jpeg",
+                                "/*.webp",
+                                "/*.ico",
+                                "/favicon.ico",
                                 // Swagger
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",

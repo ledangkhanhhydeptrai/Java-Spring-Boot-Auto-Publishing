@@ -28,10 +28,10 @@ import java.util.*;
 
 /**
  * Two-platform, opt-in Google Sheets writeback.
- * F = actual publish day only for overdue rescheduled Facebook jobs.
+ * F = actual publish day only for overdue rescheduled published jobs (Facebook preferred).
  * G = common published status (at least one platform). H = Threads URL; I = Facebook URL.
  * Never creates or modifies J/K status columns; user data there is preserved.
- * Only DB-published jobs with exact matching existing Excel Post content are eligible.
+ * Only DB-published jobs linked to the same imported Post and matching Sheet content are eligible.
  * No posts, jobs, queues or publishing APIs are created/called here.
  */
 @Slf4j
@@ -63,8 +63,8 @@ public class GoogleSheetsWritebackService {
     private record Connection(UUID id, UUID workspaceId, String spreadsheetId, String tabName) {
     }
 
-    private record Candidate(int row, String content, String sourceThreadsUrl,
-                             String facebookId, String threadsId,
+    private record Candidate(int row, String content,
+                             String facebookId, String threadsId, String threadsPublishedUrl,
                              LocalDate originalDate, OffsetDateTime scheduledAt,
                              OffsetDateTime publishedAt) {
     }
@@ -137,9 +137,9 @@ public class GoogleSheetsWritebackService {
         for (EnabledLink link : links) {
             try {
                 Connection c = connection(link.workspaceId(), link.connectionId());
-                // Find *every* published Facebook source row for this exact linked import.
-                // Do not repeatedly process only the earliest 50 rows: later rows must
-                // still progress even when many earlier rows are already synchronized.
+                // Discover BOTH platforms for an imported Post. A Facebook-linked import
+                // can also have a published Threads job on the SAME Post and workspace.
+                // A published Threads job needs a real permalink, not merely a numeric ID.
                 List<Integer> publishedRows = db.query("""
                                 SELECT DISTINCT s.source_row_number
                                 FROM google_sheet_staged_rows s
@@ -153,17 +153,23 @@ public class GoogleSheetsWritebackService {
                                  AND p.content = s.content
                                 JOIN publishing_jobs j
                                   ON j.post_id = p.id
-                                 AND j.social_account_id = e.social_account_id
                                 JOIN social_accounts a
                                   ON a.id = j.social_account_id
+                                 AND a.workspace_id = e.workspace_id
                                 WHERE s.connection_id = ?
                                   AND s.present_in_sheet = TRUE
                                   AND s.source_row_number BETWEEN 2 AND 10001
                                   AND e.id = ? AND e.workspace_id = ?
-                                  AND a.workspace_id = e.workspace_id
-                                  AND a.platform = 'FACEBOOK_PAGE'
                                   AND j.status = 'PUBLISHED'
-                                  AND j.external_post_id IS NOT NULL
+                                  AND (
+                                       (a.platform = 'FACEBOOK_PAGE'
+                                        AND j.social_account_id = e.social_account_id
+                                        AND j.external_post_id IS NOT NULL)
+                                    OR (a.platform = 'THREADS'
+                                        AND j.external_post_id IS NOT NULL
+                                        AND (j.published_url LIKE 'https://www.threads.com/%'
+                                          OR j.published_url LIKE 'https://www.threads.net/%'))
+                                  )
                                 ORDER BY s.source_row_number
                                 """, (rs, n) -> rs.getInt(1),
                         link.connectionId(), link.importId(), link.workspaceId());
@@ -172,11 +178,10 @@ public class GoogleSheetsWritebackService {
                 for (int offset = 0; offset < publishedRows.size(); offset += BATCH_LIMIT) {
                     List<Integer> batch = publishedRows.subList(
                             offset, Math.min(offset + BATCH_LIMIT, publishedRows.size()));
-                    // Ranges include at most 50 Facebook-published candidates
-                    // due to the ordered, consecutive grouping above.
+                    // Process at most 50 published source rows per batch.
                     Report report = execute(c, link.importId(),
                             batch.getFirst(), batch.getLast(), BATCH_LIMIT,
-                            "FACEBOOK_PAGE", false);
+                            "ALL", false);
                     written += report.written();
                     unchanged += report.unchanged();
                     conflicts += report.conflicts();
@@ -207,50 +212,63 @@ public class GoogleSheetsWritebackService {
     }
 
     private List<Candidate> candidates(Connection c, UUID importId, int fromRow, int toRow) {
-        // Join exactly one published FB job to its original import row so that
-        // source_publish_date, scheduled_at and published_at cannot come from
-        // different publishing attempts. Never use the mutable Sheet F date
-        // as the original scheduling date.
+        // Both platforms must belong to the SAME imported Post and workspace.
+        // Do not cross-match only on text: different Posts may legitimately have
+        // identical content, and Threads permalinks must not be assigned to those.
+        // The original (immutable) Excel date is read from excel_import_rows.
         return db.query("""
-                        SELECT s.source_row_number, s.content, s.source_published_url,
+                        SELECT s.source_row_number, s.content,
                                fb.external_post_id AS facebook_id,
-                               (SELECT j.external_post_id FROM excel_import_rows r
-                                JOIN excel_imports e ON e.id=r.import_id AND e.id=? AND e.workspace_id=?
-                                JOIN posts p ON p.id=r.post_id AND p.workspace_id=? AND p.content=s.content
-                                JOIN publishing_jobs j ON j.post_id=p.id AND j.status='PUBLISHED'
-                                JOIN social_accounts a ON a.id=j.social_account_id AND a.platform='THREADS'
-                                   AND a.workspace_id=?
-                                WHERE r.source_row_number=s.source_row_number AND j.external_post_id IS NOT NULL
-                                ORDER BY j.published_at DESC NULLS LAST, j.id DESC LIMIT 1) AS threads_id,
-                               fb.source_publish_date, fb.scheduled_at, fb.published_at
+                               th.external_post_id AS threads_id,
+                               th.published_url AS threads_published_url,
+                               r.source_publish_date,
+                               COALESCE(fb.scheduled_at, th.scheduled_at) AS scheduled_at,
+                               COALESCE(fb.published_at, th.published_at) AS published_at
                         FROM google_sheet_staged_rows s
+                        JOIN excel_import_rows r
+                          ON r.source_row_number = s.source_row_number
+                         AND r.import_id = ?
+                        JOIN excel_imports e
+                          ON e.id = r.import_id AND e.workspace_id = ?
+                        JOIN posts p
+                          ON p.id = r.post_id AND p.workspace_id = e.workspace_id
+                         AND p.content = s.content
                         LEFT JOIN LATERAL (
-                            SELECT j.external_post_id, r.source_publish_date,
-                                   j.scheduled_at, j.published_at
-                            FROM excel_import_rows r
-                            JOIN excel_imports e ON e.id=r.import_id AND e.id=? AND e.workspace_id=?
-                            JOIN posts p ON p.id=r.post_id AND p.workspace_id=? AND p.content=s.content
-                            JOIN publishing_jobs j ON j.post_id=p.id AND j.status='PUBLISHED'
-                               AND j.social_account_id=e.social_account_id
-                            JOIN social_accounts a ON a.id=j.social_account_id
-                               AND a.platform='FACEBOOK_PAGE' AND a.workspace_id=?
-                            WHERE r.source_row_number=s.source_row_number
+                            SELECT j.external_post_id, j.scheduled_at, j.published_at
+                            FROM publishing_jobs j
+                            JOIN social_accounts a ON a.id = j.social_account_id
+                            WHERE j.post_id = p.id AND j.status = 'PUBLISHED'
+                              AND a.platform = 'FACEBOOK_PAGE'
+                              AND a.workspace_id = e.workspace_id
+                              AND j.social_account_id = e.social_account_id
                               AND j.external_post_id IS NOT NULL
                             ORDER BY j.published_at DESC NULLS LAST, j.id DESC LIMIT 1
                         ) fb ON TRUE
-                        WHERE s.connection_id=? AND s.present_in_sheet=true
+                        LEFT JOIN LATERAL (
+                            SELECT j.external_post_id, j.published_url,
+                                   j.scheduled_at, j.published_at
+                            FROM publishing_jobs j
+                            JOIN social_accounts a ON a.id = j.social_account_id
+                            WHERE j.post_id = p.id AND j.status = 'PUBLISHED'
+                              AND a.platform = 'THREADS'
+                              AND a.workspace_id = e.workspace_id
+                              AND j.external_post_id IS NOT NULL
+                              AND (j.published_url LIKE 'https://www.threads.com/%'
+                                OR j.published_url LIKE 'https://www.threads.net/%')
+                            ORDER BY j.published_at DESC NULLS LAST, j.id DESC LIMIT 1
+                        ) th ON TRUE
+                        WHERE s.connection_id = ? AND s.present_in_sheet = TRUE
                           AND s.source_row_number BETWEEN ? AND ?
+                          AND (fb.external_post_id IS NOT NULL OR th.published_url IS NOT NULL)
                         ORDER BY s.source_row_number LIMIT 10000
                         """, (rs, n) -> new Candidate(
                         rs.getInt("source_row_number"), rs.getString("content"),
-                        rs.getString("source_published_url"), rs.getString("facebook_id"),
-                        rs.getString("threads_id"),
+                        rs.getString("facebook_id"), rs.getString("threads_id"),
+                        rs.getString("threads_published_url"),
                         rs.getObject("source_publish_date", LocalDate.class),
                         rs.getObject("scheduled_at", OffsetDateTime.class),
                         rs.getObject("published_at", OffsetDateTime.class)),
-                importId, c.workspaceId(), c.workspaceId(), c.workspaceId(),
-                importId, c.workspaceId(), c.workspaceId(), c.workspaceId(),
-                c.id(), fromRow, toRow);
+                importId, c.workspaceId(), c.id(), fromRow, toRow);
     }
 
     private synchronized Report execute(Connection c, UUID importId, int fromRow, int toRow,
@@ -264,12 +282,12 @@ public class GoogleSheetsWritebackService {
         boolean doThreads = "THREADS".equals(platform) || "ALL".equals(platform);
         for (Candidate item : candidates(c, importId, fromRow, toRow)) {
             if (rows.size() + conflicts >= limit) break;
-            boolean legacyThreads = looksLikeThreadsLink(item.sourceThreadsUrl());
             boolean fbPublished = item.facebookId() != null;
-            boolean threadsPublished = item.threadsId() != null;
-            if (!(doFb && fbPublished) && !(doThreads && (threadsPublished || legacyThreads))) continue;
+            // Only a real published permalink from a PUBLISHED Threads Job proves delivery.
+            boolean threadsPublished = looksLikeThreadsLink(item.threadsPublishedUrl());
+            if (!(doFb && fbPublished) && !(doThreads && threadsPublished)) continue;
             String fbUrl = facebookUrl(item.facebookId());
-            String threadsUrl = threadsUrl(item.threadsId());
+            String threadsUrl = threadsPublished ? item.threadsPublishedUrl() : null;
             // Only report or update a row when evidence for the requested platform exists.
             try {
                 String scopedToken = token == null ? oauthToken() : token;
@@ -283,12 +301,13 @@ public class GoogleSheetsWritebackService {
                 String currentG = cell(existing, 6);
                 String currentH = cell(existing, 7), currentI = cell(existing, 8);
 
-                // Date-only writeback for an actually published FB job whose
-                // original Excel date was earlier than its replacement schedule.
-                // Future original schedules remain unchanged even after publication.
-                // Never update F when the original date or job timestamps are missing.
+                // Prefer the Facebook publication date if both platforms have a
+                // published Job; otherwise Threads-only imports can update F too.
+                // Only overdue/rescheduled original dates qualify. Future dates stay.
                 String newF = currentF;
-                if (doFb && fbUrl != null && item.originalDate() != null
+                boolean dateEligible = (doFb && fbUrl != null)
+                        || (doThreads && threadsPublished && !fbPublished);
+                if (dateEligible && item.originalDate() != null
                         && item.scheduledAt() != null && item.publishedAt() != null) {
                     LocalDate scheduledDay = item.scheduledAt()
                             .atZoneSameInstant(VIETNAM_ZONE).toLocalDate();
@@ -338,18 +357,19 @@ public class GoogleSheetsWritebackService {
                     unchanged++;
                     if (!dryRun) {
                         if (doFb && fbUrl != null) audit(c, item.row(), "FACEBOOK_PAGE", item.facebookId(), fbUrl);
-                        if (doThreads && (threadsPublished || looksLikeThreadsLink(currentH)))
-                            audit(c, item.row(), "THREADS", item.threadsId(), newH);
+                        if (doThreads && threadsPublished)
+                            audit(c, item.row(), "THREADS", item.threadsId(), threadsUrl);
                     }
                     continue;
                 }
                 if (dryRun) continue;
-                validateHeaders(c, scopedToken);
+                // Do not create/validate the Facebook I header for Threads-only writes.
+                if (doFb && fbUrl != null) validateHeaders(c, scopedToken);
                 writeCells(c, item.row(), existing, newF, newG, newH, newI, scopedToken);
                 written++;
                 if (doFb && fbUrl != null) audit(c, item.row(), "FACEBOOK_PAGE", item.facebookId(), fbUrl);
-                if (doThreads && (threadsPublished || looksLikeThreadsLink(newH)))
-                    audit(c, item.row(), "THREADS", item.threadsId(), newH);
+                if (doThreads && threadsPublished)
+                    audit(c, item.row(), "THREADS", item.threadsId(), threadsUrl);
             } catch (Exception e) {
                 conflicts++;
                 errors.add("row " + item.row() + ": " + shortMessage(e));
@@ -466,16 +486,12 @@ public class GoogleSheetsWritebackService {
     }
 
     private static boolean looksLikeFacebookLink(String text) {
-        return text.startsWith("https://www.facebook.com/") || text.startsWith("https://facebook.com/");
+        return text != null && (text.startsWith("https://www.facebook.com/") || text.startsWith("https://facebook.com/"));
     }
 
     private static boolean looksLikeThreadsLink(String text) {
-        return text.startsWith("https://www.threads.com/") || text.startsWith("https://www.threads.net/");
-    }
-
-    private static String threadsUrl(String id) {
-        if (id == null) return null;
-        return looksLikeThreadsLink(id) ? id : null;
+        return text != null && (text.startsWith("https://www.threads.com/")
+                || text.startsWith("https://www.threads.net/"));
     }
 
     private static String facebookUrl(String id) {
