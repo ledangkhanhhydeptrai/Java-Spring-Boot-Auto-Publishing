@@ -91,6 +91,7 @@ public class SecurityConfig {
                                 "/*.jpeg",
                                 "/*.webp",
                                 "/*.ico",
+                                "/*.mp4",
                                 "/favicon.ico",
                                 // Swagger
                                 "/swagger-ui.html",
