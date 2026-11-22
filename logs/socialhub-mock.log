@@ -2474,3 +2474,691 @@ This generated password is for development use only. Your security configuration
 2026-11-22 10:22:07.431 INFO  [SpringApplicationShutdownHook] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2026-11-22 10:22:07.437 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2026-11-22 10:22:07.440 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-11-22 10:22:22.281 INFO  [main] com.socialhub.SocialHubApplication - Starting SocialHubApplication using Java 25.0.2 with PID 11988 (D:\vox-social-media\SocialHub_Automation_2K_Phase1_SafePatch\SocialHub-Backend-Threads-AutoPublishing-v1\SocialHub-Backend\target\classes started by Khanhhy in D:\vox-social-media\SocialHub_Automation_2K_Phase1_SafePatch\SocialHub-Backend-Threads-AutoPublishing-v1\SocialHub-Backend)
+2026-11-22 10:22:22.300 INFO  [main] com.socialhub.SocialHubApplication - No active profile set, falling back to 1 default profile: "default"
+2026-11-22 10:22:31.063 INFO  [main] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-22 10:22:31.334 INFO  [main] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 255 ms. Found 16 JPA repository interfaces.
+2026-11-22 10:22:33.950 INFO  [main] o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
+2026-11-22 10:22:34.035 INFO  [main] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-11-22 10:22:34.036 INFO  [main] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.27]
+2026-11-22 10:22:34.241 INFO  [main] o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 11853 ms
+2026-11-22 10:22:35.484 INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-11-22 10:22:35.884 INFO  [main] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7853363c
+2026-11-22 10:22:35.885 INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-11-22 10:22:35.947 INFO  [main] org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5433/socialhub_test (PostgreSQL 13.23)
+2026-11-22 10:22:37.096 INFO  [main] o.f.core.internal.command.DbValidate - Successfully validated 31 migrations (execution time 00:01.032s)
+2026-11-22 10:22:37.117 INFO  [main] o.f.core.internal.command.DbMigrate - Current version of schema "public": 31
+2026-11-22 10:22:37.121 INFO  [main] o.f.core.internal.command.DbMigrate - Schema "public" is up to date. No migration necessary.
+2026-11-22 10:22:37.542 INFO  [main] org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-22 10:22:37.687 INFO  [main] org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.4.13.Final
+2026-11-22 10:22:38.333 INFO  [main] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-22 10:22:38.469 WARN  [main] org.hibernate.orm.core - HHH000511: The 13.23.0 version for [org.hibernate.dialect.PostgreSQLDialect] is no longer supported, hence certain features may not work properly.The minimum supported version is 14.0.0. Check the community dialects project for available legacy versions.
+2026-11-22 10:22:38.496 INFO  [main] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5433/socialhub_test]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 13.23
+	Default catalog/schema: socialhub_test/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-22 10:22:40.818 INFO  [main] org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-22 10:22:41.043 INFO  [main] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-22 10:22:41.358 INFO  [main] o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-11-22 10:22:45.802 INFO  [main] c.s.mockqueue.ExcelMockQueueWorker - [EXCEL MOCK] Dedicated worker initialized | queue=socialhub.mock.excel.v1
+2026-11-22 10:22:46.326 WARN  [main] o.s.b.s.a.UserDetailsServiceAutoConfiguration - 
+
+Using generated security password: 9d259064-7ab9-44fc-a1f0-91caac99b4e3
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-11-22 10:22:46.344 INFO  [main] o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-11-22 10:22:46.812 DEBUG [main] o.s.s.web.DefaultSecurityFilterChain - Will secure any request with filters: DisableEncodeUrlFilter, WebAsyncManagerIntegrationFilter, SecurityContextHolderFilter, HeaderWriterFilter, CorsFilter, CsrfFilter, LogoutFilter, , RequestCacheAwareFilter, SecurityContextHolderAwareRequestFilter, AnonymousAuthenticationFilter, SessionManagementFilter, ExceptionTranslationFilter, AuthorizationFilter
+2026-11-22 10:22:46.968 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.a.b.AccountVaultBulkPublishingController:
+	{POST [/api/workspaces/{workspaceId}/account-vault/bulk-publishing/schedule]}: schedule(UUID,Authentication,BulkRequest)
+	{POST [/api/workspaces/{workspaceId}/account-vault/bulk-publishing/facebook-runs/{runId}/start]}: startFacebook(UUID,UUID,Authentication)
+	{POST [/api/workspaces/{workspaceId}/account-vault/bulk-publishing/preview]}: preview(UUID,BulkRequest)
+	{GET [/api/workspaces/{workspaceId}/account-vault/bulk-publishing/facebook-runs/{runId}/progress]}: progress(UUID,UUID,Authentication)
+2026-11-22 10:22:46.984 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.a.c.AccountVaultController:
+	{GET [/api/workspaces/{workspaceId}/account-vault/groups]}: groups(UUID)
+	{POST [/api/workspaces/{workspaceId}/account-vault/groups]}: createGroup(UUID,GroupInput)
+	{GET [/api/workspaces/{workspaceId}/account-vault/accounts/{accountId}]}: account(UUID,UUID)
+	{DELETE [/api/workspaces/{workspaceId}/account-vault/groups/{groupId}]}: deleteGroup(UUID,UUID)
+	{DELETE [/api/workspaces/{workspaceId}/account-vault/groups/{groupId}/accounts/{accountId}]}: removeAccount(UUID,UUID,UUID)
+	{PUT [/api/workspaces/{workspaceId}/account-vault/groups/{groupId}]}: updateGroup(UUID,UUID,GroupInput)
+	{GET [/api/workspaces/{workspaceId}/account-vault/groups/{groupId}/accounts]}: groupAccounts(UUID,UUID)
+	{PUT [/api/workspaces/{workspaceId}/account-vault/groups/{groupId}/accounts/{accountId}]}: addAccount(UUID,UUID,UUID)
+	{GET [/api/workspaces/{workspaceId}/account-vault/accounts]}: accounts(UUID,int,int,String,String,String)
+2026-11-22 10:22:47.032 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.a.c.AuthController:
+	{POST [/api/auth/register]}: register(Register,HttpServletResponse)
+	{GET [/api/auth/me]}: me(Authentication)
+	{GET [/api/auth/csrf]}: csrf(CsrfToken)
+	{POST [/api/auth/logout]}: logout(HttpServletRequest,HttpServletResponse)
+	{POST [/api/auth/login]}: login(Login,String,HttpServletResponse)
+2026-11-22 10:22:47.039 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.a.c.AutomationReadinessController:
+	{GET [/api/workspaces/{workspaceId}/automation/readiness]}: readiness(UUID)
+2026-11-22 10:22:47.040 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.a.h.AccountHealthController:
+	{GET [/api/workspaces/{workspaceId}/automation/accounts/health]}: accounts(UUID)
+2026-11-22 10:22:47.041 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.a.q.AutomationOutboxStatusController:
+	{GET [/api/workspaces/{workspaceId}/automation/queue/status]}: status(UUID)
+2026-11-22 10:22:47.047 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.c.c.CampaignController:
+	{GET [/api/campaigns]}: list(UUID)
+	{POST [/api/campaigns]}: create(Create)
+	{POST [/api/campaigns/{id}/pause]}: pause(UUID)
+	{POST [/api/campaigns/{id}/resume]}: resume(UUID)
+	{POST [/api/campaigns/{id}/jobs]}: addJob(UUID,AddJob)
+	{GET [/api/campaigns/{id}/progress]}: progress(UUID)
+	{GET [/api/campaigns/{id}]}: detail(UUID)
+2026-11-22 10:22:47.051 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.d.DryRunController:
+	{GET [/api/workspaces/{workspaceId}/dry-run/preview]}: preview(UUID)
+2026-11-22 10:22:47.054 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.d.DryRunExcelController:
+	{POST [/api/workspaces/{workspaceId}/dry-run/excel/preview], consumes [multipart/form-data]}: preview(UUID,MultipartFile)
+2026-11-22 10:22:47.058 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.d.DryRunQueueController:
+	{POST [/api/workspaces/{workspaceId}/dry-run/excel/simulate-queue], consumes [multipart/form-data]}: simulate(UUID,MultipartFile)
+2026-11-22 10:22:47.059 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.e.c.ExcelBulkImportController:
+	{POST [/api/workspaces/{workspaceId}/excel-imports/bulk], consumes [multipart/form-data]}: bulkImport(UUID,MultipartFile,List,LocalTime,boolean,boolean)
+2026-11-22 10:22:47.065 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.e.c.ExcelBulkRunBridgeController:
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/bulk-runs/prepare]}: prepare(Authentication,UUID,UUID,PrepareRequest)
+	{GET [/api/workspaces/{workspaceId}/excel-imports/{importId}/bulk-runs/preview]}: preview(UUID,UUID,int)
+2026-11-22 10:22:47.069 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.e.c.ExcelImportController:
+	{GET [/api/workspaces/{workspaceId}/excel-imports]}: list(UUID)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/auto-plan]}: autoPlan(UUID,UUID)
+	{POST [/api/workspaces/{workspaceId}/excel-imports], consumes [multipart/form-data]}: importExcel(UUID,MultipartFile,UUID,LocalTime,boolean)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/auto-plan/one]}: autoPlanOne(UUID,UUID,int,OffsetDateTime,boolean)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/export-published], consumes [multipart/form-data]}: exportPublished(UUID,UUID,MultipartFile)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/auto-plan/batch]}: autoPlanBatch(UUID,UUID,BatchPlanRequest)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/threads-plan]}: threadsPlan(UUID,UUID,Request)
+	{GET [/api/workspaces/{workspaceId}/excel-imports/{importId}/publish-progress]}: publishProgress(UUID,UUID)
+	{GET [/api/workspaces/{workspaceId}/excel-imports/{importId}]}: detail(UUID,UUID)
+2026-11-22 10:22:47.080 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.e.o.c.ExcelOrchestratorQueueController:
+	{GET [/api/workspaces/{workspaceId}/excel-imports/{importId}/orchestrator/queue/{queueId}]}: get(UUID,UUID,UUID)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/orchestrator/queue]}: confirm(Authentication,UUID,UUID,Request)
+2026-11-22 10:22:47.081 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.e.o.c.ExcelPublishingOrchestratorController:
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/orchestrator/run]}: run(Authentication,UUID,UUID,Request)
+2026-11-22 10:22:47.085 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.f.c.FacebookGroupController:
+	{GET [/api/workspaces/{workspaceId}/groups]}: list(UUID)
+	{POST [/api/workspaces/{workspaceId}/groups]}: create(UUID,Create)
+	{DELETE [/api/workspaces/{workspaceId}/groups/{id}]}: delete(UUID,UUID)
+2026-11-22 10:22:47.089 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.f.c.FacebookLivePreflightController:
+	{GET [/api/workspaces/{workspaceId}/facebook/preflight/jobs/{jobId}]}: checkJob(UUID,UUID)
+2026-11-22 10:22:47.091 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.f.c.FacebookOAuthController:
+	{GET [/api/facebook/oauth/start]}: start(UUID)
+	{GET [/api/facebook/oauth/callback]}: callback(String,String,String,HttpServletRequest,HttpServletResponse)
+	{GET [/api/facebook/oauth/bridge]}: bridge(String,HttpServletResponse)
+2026-11-22 10:22:47.097 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.f.c.FacebookPageConnectionController:
+	{GET [/api/workspaces/{workspaceId}/facebook-page-connections]}: list(UUID,UUID)
+	{GET [/api/workspaces/{workspaceId}/facebook-page-connections/jobs/{jobId}/binding]}: binding(UUID,UUID)
+	{POST [/api/workspaces/{workspaceId}/facebook-page-connections/jobs/{jobId}/bind]}: bind(UUID,UUID,BindRequest)
+	{POST [/api/workspaces/{workspaceId}/facebook-page-connections/{connectionId}/disconnect]}: disconnect(UUID,UUID)
+2026-11-22 10:22:47.101 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.g.c.GoogleSheetsController:
+	{POST [/api/workspaces/{workspaceId}/google-sheets/preview]}: preview(UUID,PreviewRequest)
+2026-11-22 10:22:47.106 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.g.c.GoogleSheetsQueueBridgeController:
+	{POST [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/publishing-bridge/queue/confirm]}: confirm(Authentication,UUID,UUID,ConfirmRequest)
+	{POST [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/publishing-bridge/queue/preview]}: preview(Authentication,UUID,UUID,UUID,Request)
+2026-11-22 10:22:47.109 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.g.c.GoogleSheetsSyncController:
+	{GET [/api/workspaces/{workspaceId}/google-sheets/connections]}: list(UUID)
+	{GET [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/rows]}: rows(UUID,UUID,int,int)
+	{POST [/api/workspaces/{workspaceId}/google-sheets/connections]}: connect(UUID,ConnectRequest)
+	{POST [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/sync]}: syncNow(UUID,UUID)
+	{PATCH [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/auto-sync]}: autoSync(UUID,UUID,boolean)
+2026-11-22 10:22:47.113 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.g.c.GoogleSheetsWritebackController:
+	{PATCH [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/writeback]}: enabled(UUID,UUID,boolean)
+	{POST [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/writeback/sync]}: sync(UUID,UUID,UUID,int,int,int,String)
+	{GET [/api/workspaces/{workspaceId}/google-sheets/connections/{connectionId}/writeback/preview]}: preview(UUID,UUID,UUID,int,int,int,String)
+2026-11-22 10:22:47.117 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.g.c.GroupPublishingTaskController:
+	{GET [/api/posts/{postId}/group-tasks]}: list(UUID)
+	{POST [/api/posts/{postId}/group-tasks/{id}/cancel]}: cancel(UUID,UUID)
+	{POST [/api/posts/{postId}/group-tasks]}: create(UUID,Create)
+	{POST [/api/posts/{postId}/group-tasks/{id}/confirm]}: confirm(UUID,UUID,Confirm)
+	{POST [/api/posts/{postId}/group-tasks/{id}/ready]}: ready(UUID,UUID)
+2026-11-22 10:22:47.120 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.g.w.GroupWorkerController:
+	{POST [/internal/group-worker/{id}/result]}: result(String,UUID,Result)
+	{POST [/internal/group-worker/claim]}: claim(String)
+2026-11-22 10:22:47.121 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.m.c.CloudinaryTestController:
+	{POST [/api/media-test/upload], consumes [multipart/form-data]}: upload(MultipartFile)
+2026-11-22 10:22:47.123 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.m.c.ExcelImportMediaBatchController:
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/media/process]}: process(UUID,UUID,int,Integer)
+2026-11-22 10:22:47.125 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.m.c.MediaProcessingController:
+	{POST [/api/posts/{postId}/media/process]}: process(UUID)
+2026-11-22 10:22:47.128 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.m.ExcelMockRunController:
+	{GET [/api/workspaces/{workspaceId}/excel-imports/{importId}/mock-publishing/runs/{runId}]}: status(UUID,UUID,UUID)
+	{POST [/api/workspaces/{workspaceId}/excel-imports/{importId}/mock-publishing/start]}: start(UUID,UUID)
+	{GET [/api/workspaces/{workspaceId}/excel-imports/{importId}/mock-publishing/latest]}: latest(UUID,UUID)
+2026-11-22 10:22:47.141 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.c.PostApprovalController:
+	{GET [/api/posts/{postId}/approval/history]}: history(UUID)
+	{POST [/api/posts/{postId}/approval/submit]}: submit(UUID)
+	{POST [/api/posts/{postId}/approval/reject]}: reject(UUID,Reject)
+	{GET [/api/posts/{postId}/approval/status]}: getStatus(UUID)
+	{POST [/api/posts/{postId}/approval/approve]}: approve(UUID)
+2026-11-22 10:22:47.147 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.c.PostMediaController:
+	{GET [/api/posts/{postId}/media]}: list(UUID)
+	{POST [/api/posts/{postId}/media]}: create(UUID,Create)
+	{DELETE [/api/posts/{postId}/media/{id}]}: delete(UUID,UUID)
+2026-11-22 10:22:47.156 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.c.PostController:
+	{PUT [/api/workspaces/{workspaceId}/posts/{id}]}: update(UUID,UUID,Update)
+	{GET [/api/workspaces/{workspaceId}/posts]}: list(UUID,int,int,String,String)
+	{POST [/api/workspaces/{workspaceId}/posts]}: create(UUID,Create)
+	{DELETE [/api/workspaces/{workspaceId}/posts/{id}]}: delete(UUID,UUID)
+	{GET [/api/workspaces/{workspaceId}/posts/{id}]}: detail(UUID,UUID)
+2026-11-22 10:22:47.160 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.c.PublishingAttemptController:
+	{GET [/api/jobs/{jobId}/attempts]}: list(UUID)
+2026-11-22 10:22:47.166 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.b.c.FacebookBulkRunController:
+	{GET [/api/facebook/bulk-runs/{runId}]}: get(Authentication,UUID)
+	{POST [/api/facebook/bulk-runs/{runId}/start]}: start(Authentication,UUID)
+	{POST [/api/facebook/bulk-runs/{runId}/cancel]}: cancel(Authentication,UUID)
+	{POST [/api/facebook/bulk-runs]}: create(Authentication,CreateFacebookBulkRunRequest)
+	{PATCH [/api/facebook/bulk-runs/{runId}/reschedule]}: reschedule(Authentication,UUID,RescheduleRequest)
+	{GET [/api/facebook/bulk-runs/{runId}/live-readiness]}: liveReadiness(Authentication,UUID)
+2026-11-22 10:22:47.171 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.p.c.PublishingJobController:
+	{GET [/api/posts/{postId}/jobs]}: list(UUID)
+	{POST [/api/jobs/{jobId}/cancel]}: cancel(UUID)
+	{POST [/api/posts/{postId}/jobs]}: create(UUID,Create)
+	{GET [/api/jobs/{jobId}/reviews]}: getReviews(UUID)
+	{GET [/api/workspaces/{workspaceId}/publishing-jobs]}: listWorkspaceJobs(UUID,int,int,String,UUID)
+	{PATCH [/api/publishing-jobs/reschedule-batch]}: rescheduleBatch(RescheduleBatchRequest)
+	{POST [/api/jobs/{jobId}/confirm-not-published]}: confirmNotPublished(UUID,ConfirmNotPublished)
+	{POST [/api/jobs/{jobId}/confirm-published]}: confirmPublished(UUID,ConfirmPublished)
+	{PATCH [/api/jobs/{jobId}/reschedule-pending]}: reschedulePending(UUID,ReschedulePendingRequest)
+	{POST [/api/jobs/{jobId}/retry]}: retry(UUID)
+2026-11-22 10:22:47.175 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.s.c.SocialAccountController:
+	{GET [/api/workspaces/{workspaceId}/social-accounts]}: list(UUID)
+	{POST [/api/workspaces/{workspaceId}/social-accounts]}: create(UUID,Create)
+	{DELETE [/api/workspaces/{workspaceId}/social-accounts/{id}]}: delete(UUID,UUID)
+2026-11-22 10:22:47.179 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.t.ThreadsBulkController:
+	{POST [/api/workspaces/{workspaceId}/threads/bulk-run]}: queue(UUID,BulkRequest)
+2026-11-22 10:22:47.180 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.t.ThreadsOAuthController:
+	{GET [/api/threads/oauth/start]}: start(UUID,HttpServletResponse)
+	{GET [/api/threads/oauth/callback]}: callback(String,String,String,HttpServletRequest,HttpServletResponse)
+	{GET [/api/threads/oauth/bridge]}: bridge(String,HttpServletResponse)
+2026-11-22 10:22:47.181 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.t.ThreadsPublishingController:
+	{POST [/api/threads/publishing/jobs/{jobId}/publish-now]}: publishNow(UUID)
+2026-11-22 10:22:47.182 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.w.c.WorkspaceMemberController:
+	{DELETE [/api/workspaces/{workspaceId}/members/{userId}]}: remove(UUID,UUID)
+	{POST [/api/workspaces/{workspaceId}/members]}: add(UUID,Add)
+	{GET [/api/workspaces/{workspaceId}/members]}: list(UUID)
+2026-11-22 10:22:47.185 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	c.s.w.c.WorkspaceController:
+	{GET [/api/workspaces]}: list()
+	{POST [/api/workspaces]}: create(Create)
+	{DELETE [/api/workspaces/{id}]}: delete(UUID)
+	{PUT [/api/workspaces/{id}]}: rename(UUID,Create)
+	{GET [/api/workspaces/{id}]}: detail(UUID)
+2026-11-22 10:22:47.187 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	o.s.b.w.a.e.BasicErrorController:
+	{ [/error]}: error(HttpServletRequest)
+	{ [/error], produces [text/html]}: errorHtml(HttpServletRequest,HttpServletResponse)
+2026-11-22 10:22:47.197 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	o.s.w.a.OpenApiWebMvcResource:
+	{GET [/v3/api-docs.yaml], produces [application/vnd.oai.openapi]}: openapiYaml(HttpServletRequest,String,Locale)
+	{GET [/v3/api-docs], produces [application/json]}: openapiJson(HttpServletRequest,String,Locale)
+2026-11-22 10:22:47.199 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	o.s.w.u.SwaggerWelcomeWebMvc:
+	{GET [/swagger-ui.html]}: redirectToUi(HttpServletRequest)
+2026-11-22 10:22:47.200 TRACE [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 
+	o.s.w.u.SwaggerConfigResource:
+	{GET [/v3/api-docs/swagger-config], produces [application/json]}: openapiJson(HttpServletRequest)
+2026-11-22 10:22:47.204 DEBUG [main] o.s.w.s.m.m.a.RequestMappingHandlerMapping - 133 mappings in 'requestMappingHandlerMapping'
+2026-11-22 10:22:48.099 INFO  [main] o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoints beneath base path '/actuator'
+2026-11-22 10:22:48.190 INFO  [main] o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path '/'
+2026-11-22 10:22:48.216 INFO  [main] com.socialhub.SocialHubApplication - Started SocialHubApplication in 27.613 seconds (process running for 38.732)
+2026-11-22 10:22:48.264 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:22:48.264 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:22:48.265 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:22:48.333 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:22:48.333 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:22:48.333 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:22:48.341 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:23:26.121 WARN  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 errors=[row 243: Google Sheets read HTTP 429, row 244: Google Sheets read HTTP 429, row 245: Google Sheets read HTTP 429, row 246: Google Sheets read HTTP 429, row 247: Google Sheets read HTTP 429, row 248: Google Sheets read HTTP 429, row 249: Google Sheets read HTTP 429, row 250: Google Sheets read HTTP 429]
+2026-11-22 10:23:26.122 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=71 written=0 unchanged=63 conflicts=8
+2026-11-22 10:23:26.127 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:23:26.127 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:23:26.127 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:23:26.133 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:23:26.133 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:23:26.133 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:23:26.136 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:23:27.695 WARN  [scheduling-1] c.s.g.s.GoogleSheetsSyncService - [SHEETS SYNC] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 failed: Google Sheets API temporarily unavailable or rate limited
+2026-11-22 10:23:41.148 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:23:41.150 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:23:41.156 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:23:41.170 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:23:41.171 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:23:41.171 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:23:41.175 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:24:23.788 WARN  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 errors=[row 243: Google Sheets read HTTP 429, row 244: Google Sheets read HTTP 429, row 245: Google Sheets read HTTP 429, row 246: Google Sheets read HTTP 429, row 247: Google Sheets read HTTP 429, row 248: Google Sheets read HTTP 429, row 249: Google Sheets read HTTP 429, row 250: Google Sheets read HTTP 429]
+2026-11-22 10:24:23.790 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=71 written=0 unchanged=63 conflicts=8
+2026-11-22 10:24:23.859 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:24:23.860 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:24:23.860 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:24:23.871 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:24:23.871 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:24:23.872 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:24:23.880 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:24:38.979 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:24:38.979 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:24:38.980 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:24:39.029 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:24:39.029 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:24:39.029 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:24:39.034 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:25:01.855 INFO  [http-nio-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-11-22 10:25:01.857 INFO  [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-11-22 10:25:01.873 INFO  [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet - Completed initialization in 15 ms
+2026-11-22 10:25:01.946 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /vidlark-veo-3-1-lite-f960688b.mp4
+2026-11-22 10:25:02.517 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:02.528 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /vidlark-veo-3-1-lite-f960688b.mp4
+2026-11-22 10:25:04.011 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/auth/me
+2026-11-22 10:25:04.055 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:04.057 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/auth/me
+2026-11-22 10:25:04.064 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.auth.controller.AuthController#me(Authentication)
+2026-11-22 10:25:04.698 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces
+2026-11-22 10:25:04.754 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:04.764 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces
+2026-11-22 10:25:04.779 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.workspace.controller.WorkspaceController#list()
+2026-11-22 10:25:05.108 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/publishing-jobs?page=0&size=10
+2026-11-22 10:25:05.115 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:05.116 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/publishing-jobs?page=0&size=1&status=FAILED
+2026-11-22 10:25:05.117 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/publishing-jobs?page=0&size=10
+2026-11-22 10:25:05.119 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.publishingjob.controller.PublishingJobController#listWorkspaceJobs(UUID, int, int, String, UUID)
+2026-11-22 10:25:05.119 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/publishing-jobs?page=0&size=1&status=NEEDS_REVIEW
+2026-11-22 10:25:05.121 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts?page=0&size=1
+2026-11-22 10:25:05.125 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/publishing-jobs?page=0&size=1&status=PENDING
+2026-11-22 10:25:05.144 DEBUG [http-nio-8081-exec-6] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:05.144 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:05.145 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/publishing-jobs?page=0&size=1&status=FAILED
+2026-11-22 10:25:05.146 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/publishing-jobs?page=0&size=1&status=PENDING
+2026-11-22 10:25:05.146 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.publishingjob.controller.PublishingJobController#listWorkspaceJobs(UUID, int, int, String, UUID)
+2026-11-22 10:25:05.147 TRACE [http-nio-8081-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.publishingjob.controller.PublishingJobController#listWorkspaceJobs(UUID, int, int, String, UUID)
+2026-11-22 10:25:05.151 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/publishing-jobs?page=0&size=1&status=PUBLISHED
+2026-11-22 10:25:05.208 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:05.208 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/publishing-jobs?page=0&size=1&status=NEEDS_REVIEW
+2026-11-22 10:25:05.210 DEBUG [http-nio-8081-exec-9] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:05.210 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.publishingjob.controller.PublishingJobController#listWorkspaceJobs(UUID, int, int, String, UUID)
+2026-11-22 10:25:05.210 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts?page=0&size=1
+2026-11-22 10:25:05.220 DEBUG [http-nio-8081-exec-5] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:05.221 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/publishing-jobs?page=0&size=1&status=PUBLISHED
+2026-11-22 10:25:05.227 TRACE [http-nio-8081-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.post.controller.PostController#list(UUID, int, int, String, String)
+2026-11-22 10:25:05.240 TRACE [http-nio-8081-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.publishingjob.controller.PublishingJobController#listWorkspaceJobs(UUID, int, int, String, UUID)
+2026-11-22 10:25:05.416 WARN  [http-nio-8081-exec-6] o.s.d.w.c.SpringDataJackson3Configuration$PageModule$WarningLoggingModifier - Serializing PageImpl instances as-is is not supported, meaning that there is no guarantee about the stability of the resulting JSON structure!
+	For a stable JSON structure, please use Spring Data's PagedModel (globally via @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO))
+	or Spring HATEOAS and Spring Data's PagedResourcesAssembler as documented in https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.pageables.
+
+2026-11-22 10:25:05.791 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/f1f08d6f-3cd8-4fea-b380-bb4d164087d1
+2026-11-22 10:25:05.801 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/7a6e7d8a-1d26-480a-ab8c-9d3ccede275d
+2026-11-22 10:25:05.807 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/e6d29819-5f01-4e96-9744-f2790bfd4d68
+2026-11-22 10:25:05.808 DEBUG [http-nio-8081-exec-10] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:05.808 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/f1f08d6f-3cd8-4fea-b380-bb4d164087d1
+2026-11-22 10:25:05.811 TRACE [http-nio-8081-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.post.controller.PostController#detail(UUID, UUID)
+2026-11-22 10:25:05.811 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/cf6c700b-4e2f-49f9-b35c-78a91b2ad614
+2026-11-22 10:25:05.816 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:05.817 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/7a6e7d8a-1d26-480a-ab8c-9d3ccede275d
+2026-11-22 10:25:05.821 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.post.controller.PostController#detail(UUID, UUID)
+2026-11-22 10:25:05.827 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/92ce5c57-26d4-4adc-af15-c484568df31c
+2026-11-22 10:25:05.844 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/7e4f67ea-7fca-4a8d-84f5-1f692db0786a
+2026-11-22 10:25:05.844 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/91a86161-f3fe-44f2-ad80-2fe9b9b2d390
+2026-11-22 10:25:05.855 DEBUG [http-nio-8081-exec-6] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:05.856 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/91a86161-f3fe-44f2-ad80-2fe9b9b2d390
+2026-11-22 10:25:05.859 TRACE [http-nio-8081-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.post.controller.PostController#detail(UUID, UUID)
+2026-11-22 10:25:05.870 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:05.874 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/7e4f67ea-7fca-4a8d-84f5-1f692db0786a
+2026-11-22 10:25:05.875 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.post.controller.PostController#detail(UUID, UUID)
+2026-11-22 10:25:05.886 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/c4bfd270-5cb4-48bd-ada2-cb2cc4d874f2
+2026-11-22 10:25:05.897 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:05.899 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/c4bfd270-5cb4-48bd-ada2-cb2cc4d874f2
+2026-11-22 10:25:05.818 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/5f8d8fd0-5a69-46ed-a59b-13d8a178e02e
+2026-11-22 10:25:05.907 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.post.controller.PostController#detail(UUID, UUID)
+2026-11-22 10:25:05.936 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:05.945 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:05.945 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/92ce5c57-26d4-4adc-af15-c484568df31c
+2026-11-22 10:25:05.946 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.post.controller.PostController#detail(UUID, UUID)
+2026-11-22 10:25:05.957 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:05.958 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/cf6c700b-4e2f-49f9-b35c-78a91b2ad614
+2026-11-22 10:25:05.959 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.post.controller.PostController#detail(UUID, UUID)
+2026-11-22 10:25:05.987 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/e6d29819-5f01-4e96-9744-f2790bfd4d68
+2026-11-22 10:25:05.991 TRACE [http-nio-8081-exec-1] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.post.controller.PostController#detail(UUID, UUID)
+2026-11-22 10:25:06.167 DEBUG [http-nio-8081-exec-5] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:06.171 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/5f8d8fd0-5a69-46ed-a59b-13d8a178e02e
+2026-11-22 10:25:06.231 TRACE [http-nio-8081-exec-5] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.post.controller.PostController#detail(UUID, UUID)
+2026-11-22 10:25:16.944 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts?page=0&size=10
+2026-11-22 10:25:16.945 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts?page=0&size=7
+2026-11-22 10:25:16.944 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts?page=0&size=6
+2026-11-22 10:25:16.989 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:16.990 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts?page=0&size=7
+2026-11-22 10:25:16.991 DEBUG [http-nio-8081-exec-10] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:16.991 TRACE [http-nio-8081-exec-2] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.post.controller.PostController#list(UUID, int, int, String, String)
+2026-11-22 10:25:16.991 DEBUG [http-nio-8081-exec-10] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts?page=0&size=6
+2026-11-22 10:25:16.993 TRACE [http-nio-8081-exec-10] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.post.controller.PostController#list(UUID, int, int, String, String)
+2026-11-22 10:25:17.045 DEBUG [http-nio-8081-exec-9] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:17.046 DEBUG [http-nio-8081-exec-9] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts?page=0&size=10
+2026-11-22 10:25:17.050 TRACE [http-nio-8081-exec-9] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.post.controller.PostController#list(UUID, int, int, String, String)
+2026-11-22 10:25:21.223 WARN  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 errors=[row 243: Google Sheets read HTTP 429, row 244: Google Sheets read HTTP 429, row 245: Google Sheets read HTTP 429, row 246: Google Sheets read HTTP 429, row 247: Google Sheets read HTTP 429, row 248: Google Sheets read HTTP 429, row 249: Google Sheets read HTTP 429, row 250: Google Sheets read HTTP 429]
+2026-11-22 10:25:21.225 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=71 written=0 unchanged=63 conflicts=8
+2026-11-22 10:25:21.228 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:25:21.228 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:25:21.228 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:25:21.235 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:25:21.235 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:25:21.235 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:25:21.239 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:25:36.249 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:25:36.249 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:25:36.249 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:25:36.256 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:25:36.257 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:25:36.257 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:25:36.260 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:25:36.487 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing OPTIONS /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts
+2026-11-22 10:25:36.496 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing POST /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts
+2026-11-22 10:25:36.508 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:36.509 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured POST /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts
+2026-11-22 10:25:36.510 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.post.controller.PostController#create(UUID, Create)
+2026-11-22 10:25:36.925 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts?page=0&size=6
+2026-11-22 10:25:36.935 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:36.936 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts?page=0&size=6
+2026-11-22 10:25:36.937 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.post.controller.PostController#list(UUID, int, int, String, String)
+2026-11-22 10:25:46.031 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing GET /.well-known/appspecific/com.chrome.devtools.json
+2026-11-22 10:25:46.130 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Securing GET /swagger-ui/swagger-ui.css.map
+2026-11-22 10:25:46.364 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:46.364 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured GET /.well-known/appspecific/com.chrome.devtools.json
+2026-11-22 10:25:46.390 DEBUG [http-nio-8081-exec-1] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:25:46.391 DEBUG [http-nio-8081-exec-1] o.s.security.web.FilterChainProxy - Secured GET /swagger-ui/swagger-ui.css.map
+2026-11-22 10:26:09.064 WARN  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 errors=[row 180: Google Sheets read HTTP 429, row 181: Google Sheets read HTTP 429, row 182: Google Sheets read HTTP 429, row 183: Google Sheets read HTTP 429, row 184: Google Sheets read HTTP 429, row 185: Google Sheets read HTTP 429, row 186: Google Sheets read HTTP 429, row 187: Google Sheets read HTTP 429, row 188: Google Sheets read HTTP 429, row 189: Google Sheets read HTTP 429, row 190: Google Sheets read HTTP 429, row 191: Google Sheets read HTTP 429, row 192: Google Sheets read HTTP 429, row 193: Google Sheets read HTTP 429, row 194: Google Sheets read HTTP 429, row 195: Google Sheets read HTTP 429, row 196: Google Sheets read HTTP 429, row 197: Google Sheets read HTTP 429]
+2026-11-22 10:26:16.985 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=71 written=0 unchanged=53 conflicts=18
+2026-11-22 10:26:16.988 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:26:16.988 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:26:16.988 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:26:16.995 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:26:16.995 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:26:16.995 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:26:17.002 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:26:32.009 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:26:32.009 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:26:32.010 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:26:32.103 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:26:32.104 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:26:32.106 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:26:32.111 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:26:54.419 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Securing GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/2f55b852-a585-4d09-9c4e-bee3bb499a5d
+2026-11-22 10:26:54.457 DEBUG [http-nio-8081-exec-6] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:26:54.458 DEBUG [http-nio-8081-exec-6] o.s.security.web.FilterChainProxy - Secured GET /api/workspaces/5b98521c-1513-4039-936f-b17d8d8516db/posts/2f55b852-a585-4d09-9c4e-bee3bb499a5d
+2026-11-22 10:26:54.459 TRACE [http-nio-8081-exec-6] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.post.controller.PostController#detail(UUID, UUID)
+2026-11-22 10:26:54.531 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Securing GET /api/posts/2f55b852-a585-4d09-9c4e-bee3bb499a5d/approval/status
+2026-11-22 10:26:54.568 DEBUG [http-nio-8081-exec-7] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:26:54.575 DEBUG [http-nio-8081-exec-7] o.s.security.web.FilterChainProxy - Secured GET /api/posts/2f55b852-a585-4d09-9c4e-bee3bb499a5d/approval/status
+2026-11-22 10:26:54.535 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Securing GET /api/posts/2f55b852-a585-4d09-9c4e-bee3bb499a5d/approval/history
+2026-11-22 10:26:54.577 TRACE [http-nio-8081-exec-7] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.postapproval.controller.PostApprovalController#getStatus(UUID)
+2026-11-22 10:26:54.593 DEBUG [http-nio-8081-exec-3] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:26:54.595 DEBUG [http-nio-8081-exec-3] o.s.security.web.FilterChainProxy - Secured GET /api/posts/2f55b852-a585-4d09-9c4e-bee3bb499a5d/approval/history
+2026-11-22 10:26:54.597 TRACE [http-nio-8081-exec-3] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.postapproval.controller.PostApprovalController#history(UUID)
+2026-11-22 10:27:05.460 WARN  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 errors=[row 187: Google Sheets read HTTP 429, row 188: Google Sheets read HTTP 429, row 189: Google Sheets read HTTP 429, row 190: Google Sheets read HTTP 429, row 191: Google Sheets read HTTP 429, row 192: Google Sheets read HTTP 429, row 193: Google Sheets read HTTP 429, row 194: Google Sheets read HTTP 429, row 195: Google Sheets read HTTP 429, row 196: Google Sheets read HTTP 429, row 197: Google Sheets read HTTP 429, row 198: Google Sheets read HTTP 429, row 199: Google Sheets read HTTP 429, row 200: Google Sheets read HTTP 429, row 201: Google Sheets read HTTP 429, row 202: Google Sheets read HTTP 429, row 203: Google Sheets read HTTP 429, row 204: Google Sheets read HTTP 429, row 205: Google Sheets read HTTP 429, row 206: Google Sheets read HTTP 429, row 207: Google Sheets read HTTP 429, row 208: Google Sheets read HTTP 429, row 209: Google Sheets read HTTP 429, row 210: Google Sheets read HTTP 429, row 211: Google Sheets read HTTP 429, row 212: Google Sheets read HTTP 429, row 213: Google Sheets read HTTP 429, row 214: Google Sheets read HTTP 429, row 215: Google Sheets read HTTP 429, row 216: Google Sheets read HTTP 429]
+2026-11-22 10:27:12.908 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Securing POST /api/posts/2f55b852-a585-4d09-9c4e-bee3bb499a5d/media
+2026-11-22 10:27:12.913 DEBUG [http-nio-8081-exec-8] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:27:12.914 DEBUG [http-nio-8081-exec-8] o.s.security.web.FilterChainProxy - Secured POST /api/posts/2f55b852-a585-4d09-9c4e-bee3bb499a5d/media
+2026-11-22 10:27:12.915 TRACE [http-nio-8081-exec-8] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.postmedia.controller.PostMediaController#create(UUID, Create)
+2026-11-22 10:27:13.193 WARN  [http-nio-8081-exec-8] org.hibernate.orm.jdbc.error - HHH000247: ErrorCode: 0, SQLState: 23514
+2026-11-22 10:27:13.193 WARN  [http-nio-8081-exec-8] org.hibernate.orm.jdbc.error - ERROR: new row for relation "post_media" violates check constraint "chk_media_type"
+  Detail: Failing row contains (669026c6-cfe7-46f8-a9c5-862b62a709cc, 2f55b852-a585-4d09-9c4e-bee3bb499a5d, https://res.cloudinary.com/dnmk3xqy0/video/upload/v1795279504/vi..., https://res.cloudinary.com/dnmk3xqy0/video/upload/v1795279504/vi..., REEL, 0, 2026-11-22 10:27:12.984745+07).
+2026-11-22 10:27:14.066 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=71 written=0 unchanged=41 conflicts=30
+2026-11-22 10:27:14.068 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:27:14.068 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:27:14.069 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:27:14.085 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:27:14.087 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:27:14.087 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:27:14.091 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:27:29.125 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:27:29.125 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:27:29.126 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:27:29.130 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:27:29.130 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:27:29.131 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:27:29.137 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:28:12.593 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=71 written=0 unchanged=71 conflicts=0
+2026-11-22 10:28:12.607 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:28:12.607 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:28:12.607 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:28:12.611 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:28:12.611 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:28:12.611 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:28:12.618 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:28:27.623 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:28:27.623 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:28:27.623 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:28:27.657 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:28:27.658 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:28:27.658 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:28:27.661 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:29:01.582 WARN  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 errors=[row 193: Google Sheets read HTTP 429, row 194: Google Sheets read HTTP 429, row 195: Google Sheets read HTTP 429, row 196: Google Sheets read HTTP 429, row 197: Google Sheets read HTTP 429, row 198: Google Sheets read HTTP 429, row 199: Google Sheets read HTTP 429, row 200: Google Sheets read HTTP 429, row 201: Google Sheets read HTTP 429, row 202: Google Sheets read HTTP 429, row 203: Google Sheets read HTTP 429, row 204: Google Sheets read HTTP 429, row 205: Google Sheets read HTTP 429, row 206: Google Sheets read HTTP 429, row 207: Google Sheets read HTTP 429, row 208: Google Sheets read HTTP 429]
+2026-11-22 10:29:10.115 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=71 written=0 unchanged=55 conflicts=16
+2026-11-22 10:29:10.115 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:29:10.115 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:29:10.115 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:29:10.120 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:29:10.120 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:29:10.120 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:29:10.125 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:29:25.141 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:29:25.143 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:29:25.143 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:29:25.151 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:29:25.151 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:29:25.151 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:29:25.156 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:29:59.618 WARN  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 errors=[row 204: Google Sheets read HTTP 429, row 205: Google Sheets read HTTP 429, row 206: Google Sheets read HTTP 429, row 207: Google Sheets read HTTP 429, row 208: Google Sheets read HTTP 429, row 209: Google Sheets read HTTP 429, row 210: Google Sheets read HTTP 429, row 211: Google Sheets read HTTP 429, row 212: Google Sheets read HTTP 429, row 213: Google Sheets read HTTP 429, row 214: Google Sheets read HTTP 429, row 215: Google Sheets read HTTP 429, row 216: Google Sheets read HTTP 429, row 217: Google Sheets read HTTP 429, row 218: Google Sheets read HTTP 429, row 219: Google Sheets read HTTP 429, row 220: Google Sheets read HTTP 429]
+2026-11-22 10:30:07.662 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=71 written=0 unchanged=54 conflicts=17
+2026-11-22 10:30:07.664 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:30:07.664 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:30:07.664 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:30:07.668 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:30:07.668 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:30:07.668 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:30:07.673 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:30:22.693 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:30:22.696 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:30:22.696 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:30:22.717 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:30:22.717 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:30:22.717 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:30:22.720 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:30:56.785 WARN  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 errors=[row 210: Google Sheets read HTTP 429, row 211: Google Sheets read HTTP 429, row 212: Google Sheets read HTTP 429, row 213: Google Sheets read HTTP 429, row 214: Google Sheets read HTTP 429, row 215: Google Sheets read HTTP 429, row 216: Google Sheets read HTTP 429, row 217: Google Sheets read HTTP 429, row 218: Google Sheets read HTTP 429, row 219: Google Sheets read HTTP 429, row 220: Google Sheets read HTTP 429, row 221: Google Sheets read HTTP 429, row 222: Google Sheets read HTTP 429, row 223: Google Sheets read HTTP 429, row 224: Google Sheets read HTTP 429, row 225: Google Sheets read HTTP 429]
+2026-11-22 10:31:05.185 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=71 written=0 unchanged=55 conflicts=16
+2026-11-22 10:31:05.188 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:31:05.188 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:31:05.188 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:31:05.191 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:31:05.191 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:31:05.191 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:31:05.196 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:31:20.198 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:31:20.198 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:31:20.198 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:31:20.202 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:31:20.202 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:31:20.202 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:31:20.206 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:31:54.001 WARN  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 errors=[row 216: Google Sheets read HTTP 429, row 217: Google Sheets read HTTP 429, row 218: Google Sheets read HTTP 429, row 219: Google Sheets read HTTP 429, row 220: Google Sheets read HTTP 429, row 221: Google Sheets read HTTP 429, row 222: Google Sheets read HTTP 429, row 223: Google Sheets read HTTP 429, row 224: Google Sheets read HTTP 429, row 225: Google Sheets read HTTP 429, row 226: Google Sheets read HTTP 429, row 227: Google Sheets read HTTP 429, row 228: Google Sheets read HTTP 429, row 229: Google Sheets read HTTP 429]
+2026-11-22 10:32:02.517 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=71 written=0 unchanged=57 conflicts=14
+2026-11-22 10:32:02.520 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:32:02.520 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:32:02.520 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:32:02.523 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:32:02.524 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:32:02.524 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:32:02.528 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:32:17.535 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:32:17.535 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:32:17.536 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:32:17.539 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:32:17.539 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:32:17.539 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:32:17.542 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:32:52.375 WARN  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 errors=[row 222: Google Sheets read HTTP 429, row 223: Google Sheets read HTTP 429, row 224: Google Sheets read HTTP 429, row 225: Google Sheets read HTTP 429, row 226: Google Sheets read HTTP 429, row 227: Google Sheets read HTTP 429, row 228: Google Sheets read HTTP 429, row 229: Google Sheets read HTTP 429]
+2026-11-22 10:32:59.670 WARN  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 errors=[row 230: Google Sheets read HTTP 429, row 231: Google Sheets read HTTP 429, row 232: Google Sheets read HTTP 429, row 233: Google Sheets read HTTP 429, row 234: Google Sheets read HTTP 429, row 235: Google Sheets read HTTP 429, row 236: Google Sheets read HTTP 429, row 237: Google Sheets read HTTP 429, row 238: Google Sheets read HTTP 429, row 239: Google Sheets read HTTP 429, row 240: Google Sheets read HTTP 429, row 241: Google Sheets read HTTP 429, row 242: Google Sheets read HTTP 429, row 243: Google Sheets read HTTP 429, row 244: Google Sheets read HTTP 429, row 245: Google Sheets read HTTP 429, row 246: Google Sheets read HTTP 429]
+2026-11-22 10:32:59.671 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=71 written=0 unchanged=46 conflicts=25
+2026-11-22 10:32:59.673 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:32:59.674 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:32:59.674 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:32:59.677 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:32:59.677 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:32:59.677 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:32:59.681 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:33:14.686 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:33:14.688 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:33:14.688 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:33:14.692 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:33:14.692 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:33:14.692 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:33:14.696 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:33:27.964 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Securing GET /vidlark-veo-3-1-lite-f960688b.mp4
+2026-11-22 10:33:28.083 DEBUG [http-nio-8081-exec-5] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:33:28.085 DEBUG [http-nio-8081-exec-5] o.s.security.web.FilterChainProxy - Secured GET /vidlark-veo-3-1-lite-f960688b.mp4
+2026-11-22 10:33:39.325 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Securing POST /api/posts/2f55b852-a585-4d09-9c4e-bee3bb499a5d/media
+2026-11-22 10:33:39.330 DEBUG [http-nio-8081-exec-4] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:33:39.332 DEBUG [http-nio-8081-exec-4] o.s.security.web.FilterChainProxy - Secured POST /api/posts/2f55b852-a585-4d09-9c4e-bee3bb499a5d/media
+2026-11-22 10:33:39.334 TRACE [http-nio-8081-exec-4] o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.socialhub.postmedia.controller.PostMediaController#create(UUID, Create)
+2026-11-22 10:33:39.458 WARN  [http-nio-8081-exec-4] org.hibernate.orm.jdbc.error - HHH000247: ErrorCode: 0, SQLState: 23514
+2026-11-22 10:33:39.458 WARN  [http-nio-8081-exec-4] org.hibernate.orm.jdbc.error - ERROR: new row for relation "post_media" violates check constraint "chk_media_type"
+  Detail: Failing row contains (a3a9a198-1765-4935-84f8-887e3a38f8ef, 2f55b852-a585-4d09-9c4e-bee3bb499a5d, https://res.cloudinary.com/dnmk3xqy0/video/upload/v1795318415/so..., https://res.cloudinary.com/dnmk3xqy0/video/upload/v1795318415/so..., REEL, 0, 2026-11-22 10:33:39.393823+07).
+2026-11-22 10:33:56.335 WARN  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 errors=[row 237: Google Sheets read HTTP 429, row 238: Google Sheets read HTTP 429, row 239: Google Sheets read HTTP 429, row 240: Google Sheets read HTTP 429, row 241: Google Sheets read HTTP 429, row 242: Google Sheets read HTTP 429, row 243: Google Sheets read HTTP 429, row 244: Google Sheets read HTTP 429, row 245: Google Sheets read HTTP 429, row 246: Google Sheets read HTTP 429, row 247: Google Sheets read HTTP 429, row 248: Google Sheets read HTTP 429, row 249: Google Sheets read HTTP 429, row 250: Google Sheets read HTTP 429]
+2026-11-22 10:33:56.335 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=71 written=0 unchanged=57 conflicts=14
+2026-11-22 10:33:56.337 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:33:56.337 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:33:56.337 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:33:56.339 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:33:56.339 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:33:56.339 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:33:56.341 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:34:11.352 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:34:11.352 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:34:11.352 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:34:11.356 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:34:11.356 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:34:11.356 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:34:11.361 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:34:37.830 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Securing GET /vidlark-veo-3-1-lite-f960688b.mp4
+2026-11-22 10:34:37.842 DEBUG [http-nio-8081-exec-2] o.s.s.w.c.CsrfAuthenticationStrategy - Replaced CSRF Token
+2026-11-22 10:34:37.844 DEBUG [http-nio-8081-exec-2] o.s.security.web.FilterChainProxy - Secured GET /vidlark-veo-3-1-lite-f960688b.mp4
+2026-11-22 10:34:53.070 WARN  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 errors=[row 243: Google Sheets read HTTP 429, row 244: Google Sheets read HTTP 429, row 245: Google Sheets read HTTP 429, row 246: Google Sheets read HTTP 429, row 247: Google Sheets read HTTP 429, row 248: Google Sheets read HTTP 429, row 249: Google Sheets read HTTP 429, row 250: Google Sheets read HTTP 429]
+2026-11-22 10:34:53.070 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=71 written=0 unchanged=63 conflicts=8
+2026-11-22 10:34:53.072 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:34:53.072 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:34:53.072 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:34:53.074 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:34:53.074 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:34:53.074 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:34:53.077 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:35:08.081 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:35:08.081 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:35:08.081 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:35:08.085 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:35:08.085 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:35:08.085 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:35:08.088 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:35:50.572 WARN  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 errors=[row 243: Google Sheets read HTTP 429, row 244: Google Sheets read HTTP 429, row 245: Google Sheets read HTTP 429, row 246: Google Sheets read HTTP 429, row 247: Google Sheets read HTTP 429, row 248: Google Sheets read HTTP 429, row 249: Google Sheets read HTTP 429, row 250: Google Sheets read HTTP 429]
+2026-11-22 10:35:50.573 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=71 written=0 unchanged=63 conflicts=8
+2026-11-22 10:35:50.574 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:35:50.574 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:35:50.574 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:35:50.578 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:35:50.578 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:35:50.578 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:35:50.581 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:36:05.592 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:36:05.592 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:36:05.592 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:36:05.597 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:36:05.597 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:36:05.597 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:36:05.600 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:36:48.485 WARN  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 errors=[row 243: Google Sheets read HTTP 429, row 244: Google Sheets read HTTP 429, row 245: Google Sheets read HTTP 429, row 246: Google Sheets read HTTP 429, row 247: Google Sheets read HTTP 429, row 248: Google Sheets read HTTP 429, row 249: Google Sheets read HTTP 429, row 250: Google Sheets read HTTP 429]
+2026-11-22 10:36:48.486 INFO  [scheduling-1] c.s.g.s.GoogleSheetsWritebackService - [SHEETS WRITEBACK] connection=b601c2bb-4cb8-43c6-97cb-d7ef1e0c57c5 import=02ef32e1-986a-462d-a197-0f1c2ac6c0f9 publishedRows=71 written=0 unchanged=63 conflicts=8
+2026-11-22 10:36:48.488 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] tick | facebookEnabled=true | threadsEnabled=true | mode=LIVE | bulkEnabled=false | automationLiveEnabled=false
+2026-11-22 10:36:48.488 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling FanpageQueueProcessor.processBatch()
+2026-11-22 10:36:48.489 INFO  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] mode=LIVE | bulk=false | multiJob=false | liveJobId=39a68c74-ea7a-4b1a-94b8-67c51018a3c5 | batchSize=5
+2026-11-22 10:36:48.492 WARN  [scheduling-1] c.s.p.engine.FanpageQueueProcessor - [FANPAGE WORKER] No eligible job found
+2026-11-22 10:36:48.492 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] FanpageQueueProcessor.processBatch() finished
+2026-11-22 10:36:48.492 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Calling ThreadsPublishingService.processDueBatch()
+2026-11-22 10:36:48.496 INFO  [scheduling-1] c.s.p.s.implement.PublisherScheduler - [SCHEDULER] Threads batch finished | processed=0
+2026-11-22 10:36:53.052 INFO  [SpringApplicationShutdownHook] o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-11-22 10:36:53.091 INFO  [tomcat-shutdown] o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-11-22 10:36:53.151 INFO  [SpringApplicationShutdownHook] o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-11-22 10:36:53.179 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-11-22 10:36:53.185 INFO  [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-11-22 10:36:58.838 INFO  [main] com.socialhub.SocialHubApplication - Starting SocialHubApplication using Java 25.0.2 with PID 30808 (D:\vox-social-media\SocialHub_Automation_2K_Phase1_SafePatch\SocialHub-Backend-Threads-AutoPublishing-v1\SocialHub-Backend\target\classes started by Khanhhy in D:\vox-social-media\SocialHub_Automation_2K_Phase1_SafePatch\SocialHub-Backend-Threads-AutoPublishing-v1\SocialHub-Backend)
+2026-11-22 10:36:58.842 INFO  [main] com.socialhub.SocialHubApplication - No active profile set, falling back to 1 default profile: "default"
+2026-11-22 10:37:06.658 INFO  [main] o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-11-22 10:37:06.846 INFO  [main] o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 177 ms. Found 16 JPA repository interfaces.
+2026-11-22 10:37:08.120 INFO  [main] o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
+2026-11-22 10:37:08.151 INFO  [main] o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-11-22 10:37:08.152 INFO  [main] o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.27]
+2026-11-22 10:37:08.401 INFO  [main] o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 9479 ms
+2026-11-22 10:37:09.118 INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-11-22 10:37:09.460 INFO  [main] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@46994f26
+2026-11-22 10:37:09.463 INFO  [main] com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-11-22 10:37:09.496 INFO  [main] org.flywaydb.core.FlywayExecutor - Database: jdbc:postgresql://localhost:5433/socialhub_test (PostgreSQL 13.23)
+2026-11-22 10:37:10.186 INFO  [main] o.f.core.internal.command.DbValidate - Successfully validated 32 migrations (execution time 00:00.597s)
+2026-11-22 10:37:10.202 INFO  [main] o.f.core.internal.command.DbMigrate - Current version of schema "public": 31
+2026-11-22 10:37:10.213 INFO  [main] o.f.core.internal.command.DbMigrate - Migrating schema "public" to version "32 - allow reel post media"
+2026-11-22 10:37:10.274 INFO  [main] o.f.core.internal.command.DbMigrate - Successfully applied 1 migration to schema "public", now at version v32 (execution time 00:00.047s)
+2026-11-22 10:37:10.520 INFO  [main] org.hibernate.orm.jpa - HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-11-22 10:37:10.598 INFO  [main] org.hibernate.orm.core - HHH000001: Hibernate ORM core version 7.4.13.Final
+2026-11-22 10:37:11.344 INFO  [main] o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-11-22 10:37:11.457 WARN  [main] org.hibernate.orm.core - HHH000511: The 13.23.0 version for [org.hibernate.dialect.PostgreSQLDialect] is no longer supported, hence certain features may not work properly.The minimum supported version is 14.0.0. Check the community dialects project for available legacy versions.
+2026-11-22 10:37:11.490 INFO  [main] o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:5433/socialhub_test]
+	Database driver: PostgreSQL JDBC Driver
+	Database dialect: PostgreSQLDialect
+	Database version: 13.23
+	Default catalog/schema: socialhub_test/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: none
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-22 10:37:18.526 INFO  [main] org.hibernate.orm.core - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-11-22 10:37:18.995 INFO  [main] o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-11-22 10:37:19.880 INFO  [main] o.s.d.j.r.q.QueryEnhancerFactories - Hibernate is in classpath; If applicable, HQL parser will be used.
