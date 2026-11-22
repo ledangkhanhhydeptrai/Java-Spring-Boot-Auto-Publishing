@@ -5,22 +5,17 @@ import java.util.List;
 import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
 import com.socialhub.common.ApiException;
 import com.socialhub.security.AccessService;
-
 import com.socialhub.post.entity.Post;
 import com.socialhub.post.repository.PostRepository;
-
 import com.socialhub.postmedia.entity.PostMedia;
 import com.socialhub.postmedia.repository.PostMediaRepository;
 
@@ -150,7 +145,7 @@ public class PostMediaController {
                 ? 0
                 : r.displayOrder();
 
-        if (!List.of("IMAGE", "VIDEO").contains(m.mediaType)
+        if (!List.of("IMAGE", "VIDEO", "REEL").contains(m.mediaType)
                 || m.displayOrder < 0) {
 
             throw new ApiException(
@@ -194,7 +189,7 @@ public class PostMediaController {
 
         repo.delete(m);
 
-        // Deleting an image also invalidates approval.
+        // Deleting media also invalidates approval.
         revokeApproval(p);
     }
 }

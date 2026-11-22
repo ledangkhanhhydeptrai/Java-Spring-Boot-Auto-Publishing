@@ -99,8 +99,12 @@ public class ThreadsPublishingService {
                       )
                       AND COALESCE(j.scheduled_at,j.created_at)<=NOW()
                       AND NOT EXISTS (SELECT 1 FROM post_media m WHERE m.post_id=p.id
-                          AND (m.public_url IS NULL OR BTRIM(m.public_url) = '' OR m.media_type <> 'IMAGE'))
+                          AND (m.public_url IS NULL OR BTRIM(m.public_url) = '' OR m.media_type NOT IN ('IMAGE','VIDEO')))
                       AND (SELECT COUNT(*) FROM post_media m WHERE m.post_id=p.id) <= 20
+                      AND (
+                          NOT EXISTS (SELECT 1 FROM post_media vm WHERE vm.post_id=p.id AND vm.media_type='VIDEO')
+                          OR (SELECT COUNT(*) FROM post_media vm WHERE vm.post_id=p.id) = 1
+                      )
                       AND (NOT EXISTS (SELECT 1 FROM campaign_jobs cj WHERE cj.publishing_job_id=j.id)
                            OR EXISTS (SELECT 1 FROM campaign_jobs cj JOIN campaigns c ON c.id=cj.campaign_id
                                       WHERE cj.publishing_job_id=j.id AND c.status='RUNNING'))
@@ -190,8 +194,12 @@ public class ThreadsPublishingService {
                       AND j.status='PENDING'
                       AND COALESCE(j.scheduled_at,j.created_at)<=NOW()
                       AND NOT EXISTS (SELECT 1 FROM post_media m WHERE m.post_id=p.id
-                          AND (m.public_url IS NULL OR BTRIM(m.public_url) = '' OR m.media_type <> 'IMAGE'))
+                          AND (m.public_url IS NULL OR BTRIM(m.public_url) = '' OR m.media_type NOT IN ('IMAGE','VIDEO')))
                       AND (SELECT COUNT(*) FROM post_media m WHERE m.post_id=p.id) <= 20
+                      AND (
+                          NOT EXISTS (SELECT 1 FROM post_media vm WHERE vm.post_id=p.id AND vm.media_type='VIDEO')
+                          OR (SELECT COUNT(*) FROM post_media vm WHERE vm.post_id=p.id) = 1
+                      )
                       AND (NOT EXISTS (SELECT 1 FROM campaign_jobs cj WHERE cj.publishing_job_id=j.id)
                            OR EXISTS (SELECT 1 FROM campaign_jobs cj JOIN campaigns c ON c.id=cj.campaign_id
                                       WHERE cj.publishing_job_id=j.id AND c.status='RUNNING'))
@@ -206,7 +214,7 @@ public class ThreadsPublishingService {
             return c;
         });
         if (claim == null) throw new ApiException(HttpStatus.CONFLICT,
-                "Job must be PENDING, eligible, due now, approved and have 0-20 ready images");
+                "Job must be PENDING, eligible, due now, approved, and contain images or one video");
 
         boolean requestStarted = false;
         try {
@@ -226,7 +234,10 @@ public class ThreadsPublishingService {
             log.info("[THREADS] Creating container | jobId={}", claim.jobId());
             String creationId = createThreadsContainer(base, token, claim.text(), claim.jobId(), claim.attempt());
             log.info("[THREADS] Container created | jobId={}, creationId={}", claim.jobId(), creationId);
-            awaitContainerReady(creationId, token, claim.jobId());
+            // Video encoding can take longer than image processing.
+            boolean videoPost = getPostMedia(claim.jobId()).stream()
+                    .anyMatch(m -> "VIDEO".equals(m.mediaType()));
+            awaitContainerReady(creationId, token, claim.jobId(), videoPost ? 60 : 6);
             log.info("[THREADS] Publishing container | jobId={}, creationId={}", claim.jobId(), creationId);
             JsonNode published = post(base + "/threads_publish",
                     "creation_id=" + enc(creationId), token, claim.jobId(), claim.attempt());
@@ -364,26 +375,33 @@ public class ThreadsPublishingService {
             throws Exception {
         List<MediaItem> media = getPostMedia(jobId);
         if (media.size() > 20) throw new IllegalArgumentException("Threads carousel supports at most 20 images");
+        long videoCount = media.stream().filter(m -> "VIDEO".equals(m.mediaType())).count();
+        if (videoCount > 0 && (videoCount != 1 || media.size() != 1)) {
+            throw new IllegalArgumentException("Use one VIDEO per Threads post; mixed media is not supported yet");
+        }
         for (MediaItem item : media) {
-            if (!"IMAGE".equals(item.mediaType()))
+            if (!"IMAGE".equals(item.mediaType()) && !"VIDEO".equals(item.mediaType()))
                 throw new IllegalArgumentException("Unsupported Threads media type");
             if (item.publicUrl() == null || item.publicUrl().isBlank())
-                throw new IllegalArgumentException("Threads image publicUrl is missing");
-            URI imageUri = URI.create(item.publicUrl());
-            if (!"https".equalsIgnoreCase(imageUri.getScheme())
-                    || imageUri.getHost() == null
-                    || !"res.cloudinary.com".equalsIgnoreCase(imageUri.getHost())
-                    || imageUri.getUserInfo() != null || imageUri.getPort() != -1)
-                throw new IllegalArgumentException("Use a public Cloudinary HTTPS image URL");
+                throw new IllegalArgumentException("Threads media publicUrl is missing");
+            URI uri = URI.create(item.publicUrl());
+            if (!"https".equalsIgnoreCase(uri.getScheme())
+                    || uri.getHost() == null
+                    || !"res.cloudinary.com".equalsIgnoreCase(uri.getHost())
+                    || uri.getUserInfo() != null || uri.getPort() != -1 || uri.getFragment() != null)
+                throw new IllegalArgumentException("Use a public Cloudinary HTTPS media URL");
         }
         if (media.isEmpty()) {
             return requireContainerId(post(base + "/threads",
                     "media_type=TEXT&text=" + enc(text), token, jobId, attempt));
         }
         if (media.size() == 1) {
+            MediaItem item = media.getFirst();
+            String body = "VIDEO".equals(item.mediaType())
+                    ? "media_type=VIDEO&video_url=" + enc(item.publicUrl())
+                    : "media_type=IMAGE&image_url=" + enc(item.publicUrl());
             return requireContainerId(post(base + "/threads",
-                    "media_type=IMAGE&image_url=" + enc(media.getFirst().publicUrl())
-                            + "&text=" + enc(text), token, jobId, attempt));
+                    body + "&text=" + enc(text), token, jobId, attempt));
         }
         List<String> children = new ArrayList<>();
         for (MediaItem item : media) {
@@ -473,7 +491,10 @@ public class ThreadsPublishingService {
     }
 
     private void awaitContainerReady(String creationId, String token, UUID jobId) throws Exception {
-        final int maxChecks = 6;
+        awaitContainerReady(creationId, token, jobId, 6);
+    }
+
+    private void awaitContainerReady(String creationId, String token, UUID jobId, int maxChecks) throws Exception {
         final long intervalMillis = 2000L;
         for (int check = 1; check <= maxChecks; check++) {
             JsonNode response = getContainerStatus(creationId, token);

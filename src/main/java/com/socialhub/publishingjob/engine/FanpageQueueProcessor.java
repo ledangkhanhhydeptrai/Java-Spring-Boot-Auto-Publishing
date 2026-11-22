@@ -39,6 +39,7 @@ public class FanpageQueueProcessor {
 
     private static final String MOCK_URL = "http://127.0.0.1:9090";
     private static final String LIVE_URL = "https://graph.facebook.com";
+    private static final String VIDEO_LIVE_URL = "https://graph-video.facebook.com";
 
     private final JdbcTemplate db;
     private final ObjectMapper json;
@@ -84,6 +85,15 @@ public class FanpageQueueProcessor {
 
     @Value("${FACEBOOK_MAX_IMAGES_PER_POST:10}")
     private int maxImagesPerPost;
+
+    // Facebook Reels use a separate START -> RUPLOAD -> FINISH API.
+    // Explicitly disabled by default and independent of standard video publishing.
+    @Value("${app.facebook.reels-publishing-enabled:false}")
+    private boolean reelsPublishingEnabled;
+
+    // Separate opt-in: video uploads are never used by photo/bulk jobs by accident.
+    @Value("${app.facebook.video-publishing-enabled:false}")
+    private boolean videoPublishingEnabled;
 
     // Optional, Page-scoped multi-Facebook selection. Both values must be set together.
     // If unset, LIVE publishing continues using the previously tested legacy Page token.
@@ -827,13 +837,33 @@ public class FanpageQueueProcessor {
             }
 
             List<String> imageUrls = new java.util.ArrayList<>();
+            String videoUrl = null;
+            String reelUrl = null;
             for (Map<String, Object> media : mediaRows) {
-                if (!"IMAGE".equals(media.get("media_type"))) {
-                    throw new IllegalStateException("Only IMAGE media is supported");
-                }
+                String type = (String) media.get("media_type");
                 String url = (String) media.get("public_url");
                 validatePublicImageUrl(url);
-                imageUrls.add(url);
+                if ("VIDEO".equals(type)) {
+                    if (videoUrl != null || mediaRows.size() != 1) {
+                        throw new IllegalStateException("Only one VIDEO, without images, is supported");
+                    }
+                    videoUrl = url;
+                } else if ("REEL".equals(type)) {
+                    if (reelUrl != null || mediaRows.size() != 1) {
+                        throw new IllegalStateException("Only one REEL, without images, is supported");
+                    }
+                    reelUrl = url;
+                } else if ("IMAGE".equals(type)) {
+                    imageUrls.add(url);
+                } else {
+                    throw new IllegalStateException("Unsupported media type: " + type);
+                }
+            }
+            if (videoUrl != null && (isBulkProcessing() || !videoPublishingEnabled || !isLive())) {
+                throw new IllegalStateException("Page VIDEO requires single LIVE mode and app.facebook.video-publishing-enabled=true");
+            }
+            if (reelUrl != null && (isBulkProcessing() || !reelsPublishingEnabled || !isLive())) {
+                throw new IllegalStateException("Page REEL requires single LIVE mode and app.facebook.reels-publishing-enabled=true");
             }
             // MOCK photo publishing is permitted only against the fixed localhost
             // mock endpoint validated by validateConfiguration().
@@ -897,6 +927,47 @@ public class FanpageQueueProcessor {
             String requestBody;
             String accessToken = "&access_token=" + formEncode(token);
             RestClient client = createClient();
+
+            if (reelUrl != null) {
+                // Do not mark PUBLISHED merely because Meta accepted FINISH.
+                // Meta may still encode the Reel asynchronously. No blind retries.
+                requireApprovedForPublish(job);
+                extendLease(job);
+                requestMayHaveBeenSent = true;
+                String reelId = publishPageReel(client, pageId, token, content, reelUrl, job);
+                markNeedsReview(job, "Facebook Reel FINISH accepted (video_id=" + reelId
+                        + "); verify status/permalink before completing publication");
+                log.info("[FACEBOOK REELS] finish accepted job={} videoId={} needs review", job.id(), reelId);
+                return;
+            }
+
+            if (videoUrl != null) {
+                // Upload/processing is asynchronous at Meta. An upload ID is NOT proof
+                // the Page video has become public. Do not mark PUBLISHED here.
+                // We intentionally keep the post in NEEDS_REVIEW until actual
+                // publication is reconciled via Meta video status/permalink.
+                requireApprovedForPublish(job);
+                extendLease(job);
+                requestMayHaveBeenSent = true;
+                RestClient videoClient = RestClient.builder()
+                        .baseUrl(VIDEO_LIVE_URL)
+                        .requestFactory(new JdkClientHttpRequestFactory(
+                                HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10))
+                                        .followRedirects(HttpClient.Redirect.NEVER).build()))
+                        .build();
+                String body = "file_url=" + formEncode(videoUrl)
+                        + "&description=" + formEncode(content) + accessToken;
+                JsonNode response = sendMetaPost(videoClient, pageId, "/videos", body);
+                String videoId = response.path("id").asText("");
+                if (!videoId.matches("[0-9]+")) {
+                    throw new IllegalStateException("Page video upload returned no numeric ID");
+                }
+                // No blind retry after a request has reached Meta.
+                markNeedsReview(job, "Video uploaded to Meta (id=" + videoId
+                        + "); check processing and public permalink before confirming publication");
+                log.info("[FANPAGE VIDEO] upload accepted; job={} videoId={} needs review", job.id(), videoId);
+                return;
+            }
 
             if (imageUrls.isEmpty()) {
                 endpoint = "/feed";
@@ -1068,6 +1139,60 @@ public class FanpageQueueProcessor {
 
     private String formEncode(String value) {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Meta Page Reels hosted-video flow: START, CDN upload, FINISH.
+     * Uses a dedicated media type REEL, never VIDEO/IMAGE, and never marks the
+     * publishing job PUBLISHED before external verification. A network error
+     * after START is an ambiguous outcome and requires manual reconciliation.
+     */
+    private String publishPageReel(RestClient client, String pageId, String token,
+                                   String description, String publicVideoUrl, ClaimedJob job)
+            throws Exception {
+        // Restrict CDN sources to the same configured trusted Cloudinary host.
+        URI source = URI.create(publicVideoUrl);
+        if (!"https".equalsIgnoreCase(source.getScheme())
+                || !"res.cloudinary.com".equalsIgnoreCase(source.getHost())
+                || source.getPort() != -1 || source.getUserInfo() != null
+                || source.getFragment() != null) {
+            throw new IllegalArgumentException("REEL requires a public Cloudinary HTTPS video URL");
+        }
+        String auth = "&access_token=" + formEncode(token);
+        requireApprovedForPublish(job);
+        JsonNode started = sendMetaPost(client, pageId, "/video_reels", "upload_phase=start" + auth);
+        String videoId = started.path("video_id").asText("");
+        if (!videoId.matches("[0-9]+")) {
+            throw new IllegalStateException("Reels START did not return a numeric video_id");
+        }
+        log.info("[FACEBOOK REELS] START accepted job={} videoId={}", job.id(), videoId);
+        extendLease(job);
+        requireApprovedForPublish(job);
+        java.net.http.HttpRequest upload = java.net.http.HttpRequest.newBuilder(
+                        URI.create("https://rupload.facebook.com/video-upload/" + graphVersion + "/" + videoId))
+                .timeout(Duration.ofSeconds(120))
+                .header("Authorization", "OAuth " + token)
+                .header("file_url", publicVideoUrl)
+                .POST(java.net.http.HttpRequest.BodyPublishers.noBody())
+                .build();
+        java.net.http.HttpResponse<String> uploaded = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(10))
+                .followRedirects(HttpClient.Redirect.NEVER)
+                .build().send(upload, java.net.http.HttpResponse.BodyHandlers.ofString());
+        if (uploaded.statusCode() / 100 != 2) {
+            throw new IllegalStateException("Reels upload failed HTTP " + uploaded.statusCode()
+                    + " for video_id=" + videoId + "; reconcile before retrying");
+        }
+        log.info("[FACEBOOK REELS] upload accepted job={} videoId={}", job.id(), videoId);
+        extendLease(job);
+        requireApprovedForPublish(job);
+        String finish = "upload_phase=finish&video_id=" + formEncode(videoId)
+                + "&video_state=PUBLISHED&description=" + formEncode(description) + auth;
+        JsonNode finished = sendMetaPost(client, pageId, "/video_reels", finish);
+        if (finished.has("success") && !finished.path("success").asBoolean(false)) {
+            throw new IllegalStateException("Reels FINISH returned success=false for video_id=" + videoId);
+        }
+        return videoId;
     }
 
     private JsonNode sendMetaPost(RestClient client, String pageId, String endpoint, String requestBody)

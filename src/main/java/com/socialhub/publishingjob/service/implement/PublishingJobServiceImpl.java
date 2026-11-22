@@ -514,17 +514,24 @@ public class PublishingJobServiceImpl implements PublishingJobService {
         Post post = job.getPost();
         SocialAccount account = job.getSocialAccount();
 
+
         if (!"FACEBOOK_PAGE".equals(account.getPlatform())
                 || !"CONNECTED".equals(account.getStatus())
                 || !workspaceId.equals(account.getWorkspace().getId())
                 || !"APPROVED".equals(post.getApprovalStatus())
-                || !"SCHEDULED".equals(post.getStatus())
-                || job.getFacebookConnection() == null) {
+                || (!"READY".equals(post.getStatus())
+                && !"SCHEDULED".equals(post.getStatus()))
+                || job.getFacebookConnection() == null
+                || !"CONNECTED".equals(job.getFacebookConnection().getStatus())
+                || !account.getId().equals(
+                job.getFacebookConnection().getSocialAccount().getId())) {
+
             throw new ApiException(
                     HttpStatus.CONFLICT,
                     "Post, account or Facebook connection is not eligible"
             );
         }
+
 
         // Không thay đổi Job đã thuộc Bulk Run hay Campaign.
         Number linked = (Number) entityManager.createNativeQuery("""

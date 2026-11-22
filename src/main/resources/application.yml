@@ -132,6 +132,12 @@ app:
     bulk-enabled: ${FACEBOOK_BULK_ENABLED:false}
     multi-job-enabled: ${FACEBOOK_MULTI_JOB_ENABLED:false}
 
+    # Video thông thường trên Facebook Page
+    video-publishing-enabled: ${FACEBOOK_VIDEO_PUBLISHING_ENABLED:false}
+
+    # Facebook Reels
+    reels-publishing-enabled: ${FACEBOOK_REELS_PUBLISHING_ENABLED:false}
+
 # =========================
 # SPRING ACTUATOR
 # =========================
