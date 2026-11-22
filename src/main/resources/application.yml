@@ -135,8 +135,18 @@ app:
     # Video thông thường trên Facebook Page
     video-publishing-enabled: ${FACEBOOK_VIDEO_PUBLISHING_ENABLED:false}
 
-    # Facebook Reels
+    # =========================
+    # FACEBOOK REELS
+    # =========================
+
+    # Cho phép đăng Facebook Reels
     reels-publishing-enabled: ${FACEBOOK_REELS_PUBLISHING_ENABLED:false}
+
+    # Tự động kiểm tra Reel đã xuất bản trên Facebook
+    reels-auto-verify-enabled: ${FACEBOOK_REELS_AUTO_VERIFY_ENABLED:false}
+
+    # Chu kỳ kiểm tra: 60 giây
+    reels-verify-poll-ms: ${FACEBOOK_REELS_VERIFY_POLL_MS:60000}
 
 # =========================
 # SPRING ACTUATOR
@@ -160,6 +170,7 @@ springdoc:
     path: /swagger-ui.html
     operations-sorter: method
     tags-sorter: alpha
+    filter: true
     csrf:
       enabled: true
       cookie-name: XSRF-TOKEN

@@ -351,6 +351,29 @@ public class FanpageQueueProcessor {
                                   AND a.platform = 'FACEBOOK_PAGE'
                                   AND a.status = 'CONNECTED'
                                   AND p.status IN ('READY', 'SCHEDULED')
+                            
+                                  -- Facebook video/reel uploads can complete asynchronously.
+                                  -- Never claim a second attempt for these media types,
+                                  -- even if a review mistakenly re-queued the job.
+                                  AND (
+                                      j.attempt_count = 0
+                                      OR NOT EXISTS (
+                                          SELECT 1 FROM post_media video_media
+                                          WHERE video_media.post_id = j.post_id
+                                            AND video_media.media_type IN ('REEL', 'VIDEO')
+                                      )
+                                  )
+                            
+                                  -- Once Meta has accepted a Reel FINISH or video upload,
+                                  -- a later review/retry must never send the same job again.
+                                  AND NOT EXISTS (
+                                      SELECT 1 FROM publishing_attempts historical
+                                      WHERE historical.publishing_job_id = j.id
+                                        AND (
+                                            historical.error_message LIKE 'Facebook Reel FINISH accepted%'
+                                            OR historical.error_message LIKE 'Video uploaded to Meta%'
+                                        )
+                                  )
                                   AND p.approval_status = 'APPROVED'
                                   AND (
                                       (j.attempt_count = 0
@@ -1123,7 +1146,6 @@ public class FanpageQueueProcessor {
                 INSERT INTO facebook_feed_publish_progress
                     (publishing_job_id, attempt_number, status)
                 VALUES (?, ?, 'REQUEST_STARTED')
-                ON CONFLICT (publishing_job_id, attempt_number) DO NOTHING
                 """, job.id(), job.attempt());
     }
 
@@ -1165,6 +1187,13 @@ public class FanpageQueueProcessor {
         if (!videoId.matches("[0-9]+")) {
             throw new IllegalStateException("Reels START did not return a numeric video_id");
         }
+        // Persist the Meta identity before any further external request.
+        // A worker crash after START must never erase the Reel identity.
+        db.update("""
+                INSERT INTO facebook_reel_publications
+                    (publishing_job_id, attempt_number, meta_video_id, phase, updated_at)
+                VALUES (?, ?, ?, 'START_ACCEPTED', NOW())
+                """, job.id(), job.attempt(), videoId);
         log.info("[FACEBOOK REELS] START accepted job={} videoId={}", job.id(), videoId);
         extendLease(job);
         requireApprovedForPublish(job);
@@ -1183,6 +1212,10 @@ public class FanpageQueueProcessor {
             throw new IllegalStateException("Reels upload failed HTTP " + uploaded.statusCode()
                     + " for video_id=" + videoId + "; reconcile before retrying");
         }
+        db.update("""
+                UPDATE facebook_reel_publications SET phase='UPLOAD_ACCEPTED', updated_at=NOW()
+                WHERE publishing_job_id=? AND attempt_number=? AND meta_video_id=?
+                """, job.id(), job.attempt(), videoId);
         log.info("[FACEBOOK REELS] upload accepted job={} videoId={}", job.id(), videoId);
         extendLease(job);
         requireApprovedForPublish(job);
@@ -1192,6 +1225,11 @@ public class FanpageQueueProcessor {
         if (finished.has("success") && !finished.path("success").asBoolean(false)) {
             throw new IllegalStateException("Reels FINISH returned success=false for video_id=" + videoId);
         }
+        db.update("""
+                UPDATE facebook_reel_publications
+                SET phase='FINISH_ACCEPTED', updated_at=NOW()
+                WHERE publishing_job_id=? AND attempt_number=? AND meta_video_id=?
+                """, job.id(), job.attempt(), videoId);
         return videoId;
     }
 

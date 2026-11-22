@@ -1,12 +1,13 @@
-
 package com.socialhub.media.controller;
 
 import com.socialhub.media.service.implement.CloudinaryStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.Map;
@@ -18,6 +19,9 @@ import java.util.UUID;
 @RequestMapping("/api/media-test")
 public class CloudinaryTestController {
 
+    private static final long MAX_IMAGE_SIZE = 10L * 1024 * 1024;
+    private static final long MAX_TEST_VIDEO_SIZE = 20L * 1024 * 1024;
+
     private final CloudinaryStorageService storage;
 
     @PostMapping(
@@ -28,44 +32,65 @@ public class CloudinaryTestController {
             @RequestPart("file") MultipartFile file
     ) throws IOException {
 
+        if (file.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "File cannot be empty"
+            );
+        }
+
+        String contentType = file.getContentType();
+
+        if (contentType == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Content type is required"
+            );
+        }
+
+        String publicId = UUID.randomUUID().toString();
+        String url;
+
+        if (contentType.startsWith("image/")) {
+
+            if (file.getSize() > MAX_IMAGE_SIZE) {
+                throw new ResponseStatusException(
+                        HttpStatus.PAYLOAD_TOO_LARGE,
+                        "Image exceeds 10 MB"
+                );
+            }
+
+            url = storage.uploadImage(
+                    file.getBytes(),
+                    publicId
+            );
+
+        } else if ("video/mp4".equalsIgnoreCase(contentType)) {
+
+            if (file.getSize() > MAX_TEST_VIDEO_SIZE) {
+                throw new ResponseStatusException(
+                        HttpStatus.PAYLOAD_TOO_LARGE,
+                        "Test video exceeds 20 MB"
+                );
+            }
+
+            url = storage.uploadVideo(
+                    file.getBytes(),
+                    publicId
+            );
+
+        } else {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Only images and MP4 videos are supported"
+            );
+        }
+
         log.info(
-                "[MEDIA TEST] Request received | filename={} | size={} | contentType={}",
-                file.getOriginalFilename(),
-                file.getSize(),
-                file.getContentType()
+                "[MEDIA TEST] Uploaded successfully | type={} | size={}",
+                contentType,
+                file.getSize()
         );
-
-        if (file.isEmpty()
-                || file.getContentType() == null
-                || !file.getContentType().startsWith("image/")) {
-
-            log.warn("[MEDIA TEST] Invalid image file");
-
-            throw new IllegalArgumentException(
-                    "Only image files are accepted"
-            );
-        }
-
-        if (file.getSize() > 10L * 1024 * 1024) {
-
-            log.warn(
-                    "[MEDIA TEST] File exceeds 10MB | size={}",
-                    file.getSize()
-            );
-
-            throw new IllegalArgumentException(
-                    "Image exceeds 10 MB"
-            );
-        }
-
-        log.info("[MEDIA TEST] Calling CloudinaryStorageService");
-
-        String url = storage.uploadImage(
-                file.getBytes(),
-                UUID.randomUUID().toString()
-        );
-
-        log.info("[MEDIA TEST] Upload completed successfully");
 
         return Map.of("publicUrl", url);
     }

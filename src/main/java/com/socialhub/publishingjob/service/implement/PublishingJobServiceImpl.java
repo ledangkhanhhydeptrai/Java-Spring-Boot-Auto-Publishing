@@ -410,6 +410,25 @@ public class PublishingJobServiceImpl implements PublishingJobService {
             );
         }
 
+        // Meta video/reel publishing is asynchronous. After any attempt,
+        // a "not published" observation is not proof the remote request
+        // will never complete. Do not re-send the same video job.
+        if ("FACEBOOK_PAGE".equals(account.getPlatform()) && currentAttempt > 0) {
+            Number videoMediaCount = (Number) entityManager.createNativeQuery("""
+                            SELECT COUNT(*) FROM post_media
+                            WHERE post_id = :postId
+                              AND media_type IN ('REEL', 'VIDEO')
+                            """)
+                    .setParameter("postId", post.getId())
+                    .getSingleResult();
+            if (videoMediaCount.longValue() > 0) {
+                throw new ApiException(
+                        HttpStatus.CONFLICT,
+                        "Facebook REEL/VIDEO retry is disabled after an attempt; reconcile Meta publication first"
+                );
+            }
+        }
+
         // Bulk publishing has a separate retry workflow.
         if ("FACEBOOK_PAGE".equals(account.getPlatform())) {
 

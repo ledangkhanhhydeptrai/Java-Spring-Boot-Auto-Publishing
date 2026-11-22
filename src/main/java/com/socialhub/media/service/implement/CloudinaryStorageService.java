@@ -84,4 +84,64 @@ public class CloudinaryStorageService {
             );
         }
     }
+
+    public String uploadVideo(
+            byte[] videoBytes,
+            String publicId
+    ) {
+
+        if (videoBytes == null || videoBytes.length == 0) {
+            throw new IllegalArgumentException(
+                    "Video cannot be empty"
+            );
+        }
+
+        try {
+            log.info(
+                    "[CLOUDINARY VIDEO] Starting upload | publicId={} | size={}",
+                    publicId,
+                    videoBytes.length
+            );
+
+            Map<?, ?> result = cloudinary.uploader().upload(
+                    videoBytes,
+                    ObjectUtils.asMap(
+                            "resource_type", "video",
+                            "folder", "socialhub/videos",
+                            "public_id", publicId,
+                            "overwrite", false,
+                            "unique_filename", false
+                    )
+            );
+
+            Object secureUrl = result.get("secure_url");
+
+            if (!(secureUrl instanceof String url)
+                    || url.isBlank()) {
+                throw new IllegalStateException(
+                        "Cloudinary video upload returned no secure_url"
+                );
+            }
+
+            log.info(
+                    "[CLOUDINARY VIDEO] Upload successful | publicId={}",
+                    publicId
+            );
+
+            return url;
+
+        } catch (IOException | RuntimeException e) {
+
+            log.error(
+                    "[CLOUDINARY VIDEO] Upload failed | publicId={}",
+                    publicId,
+                    e
+            );
+
+            throw new IllegalStateException(
+                    "Cloudinary video upload failed",
+                    e
+            );
+        }
+    }
 }
