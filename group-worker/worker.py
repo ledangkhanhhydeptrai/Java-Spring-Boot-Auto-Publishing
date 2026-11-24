@@ -245,7 +245,12 @@ def publish_one(page: Page, task: dict) -> None:
     if task_id != TASK_ID:
         raise RuntimeError("Claim returned a different task ID; review controller target filter")
     url = str(task.get("groupUrl", ""))
-    ensure_group_url(url)
+    try:
+        ensure_group_url(url)
+    except ValueError as exc:
+        # Claimed task must leave PROCESSING on a wrong-group configuration.
+        report(task_id, "NEEDS_REVIEW", f"Group URL validation: {exc}. No post attempted")
+        return
     content = str(task.get("content", "")).strip()
     if not content:
         report(task_id, "NEEDS_REVIEW", "Empty post content; publishing was not attempted")
@@ -294,7 +299,8 @@ def publish_one(page: Page, task: dict) -> None:
         report(task_id, "NEEDS_REVIEW", f"{state}: {str(exc)[:300]}. DO NOT AUTO-RETRY")
 
 
-def run_once() -> None:
+def run_once(watch: bool = False, poll_seconds: int = 30,
+             max_wait_minutes: int = 120) -> None:
     require_settings(for_publish=True)
     PROFILE.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p:
@@ -302,13 +308,23 @@ def run_once() -> None:
                                                        viewport={"width": 1300, "height": 900})
         page = context.pages[0] if context.pages else context.new_page()
         try:
-            # Validate logged-in group before claiming (otherwise task gets stuck PROCESSING).
+            # Check Facebook login / correct Group BEFORE claiming a task.
             prepare_browser(context, page)
-            task = claim()
-            if task is None:
-                print("No pending task matching GROUP_WORKER_TARGET_TASK_ID; nothing sent", flush=True)
-                return
-            publish_one(page, task)
+            deadline = time.monotonic() + max_wait_minutes * 60
+            while True:
+                task = claim()
+                if task is not None:
+                    # Exactly one claim, exactly one publish attempt, never an automatic retry.
+                    publish_one(page, task)
+                    return
+                if not watch:
+                    print("No READY and due task matching the exact ID; nothing sent", flush=True)
+                    return
+                if time.monotonic() >= deadline:
+                    print("Pilot watch expired without claiming a task; nothing sent", flush=True)
+                    return
+                print("Task not READY/due yet; waiting", poll_seconds, "seconds", flush=True)
+                time.sleep(poll_seconds)
         finally:
             context.close()
 
@@ -332,11 +348,17 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Controlled SocialHub Group AUTO one-task pilot")
     parser.add_argument("--prepare-profile", action="store_true",
                         help="Open browser for manual FB login; never claim any task")
+    parser.add_argument("--watch", action="store_true",
+                        help="Wait for the one exact READY task to become due; process at most once")
+    parser.add_argument("--poll-seconds", type=int, default=30)
+    parser.add_argument("--max-wait-minutes", type=int, default=120)
     args = parser.parse_args()
+    if args.poll_seconds < 10 or not 1 <= args.max_wait_minutes <= 1440:
+        parser.error("--poll-seconds must be >=10; --max-wait-minutes must be 1..1440")
     if args.prepare_profile:
         login_profile()
     else:
-        run_once()
+        run_once(args.watch, args.poll_seconds, args.max_wait_minutes)
 
 
 if __name__ == "__main__":

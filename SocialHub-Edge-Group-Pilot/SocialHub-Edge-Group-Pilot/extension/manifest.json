@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "SocialHub — Facebook Group One-Task Pilot",
+  "description": "Prepare and submit exactly one approved SocialHub group task in your existing Edge Facebook session. No session copying.",
+  "version": "0.1.0",
+  "permissions": ["storage", "activeTab", "tabs"],
+  "host_permissions": ["http://127.0.0.1:8765/*"],
+  "background": {"service_worker": "background.js"},
+  "action": {"default_popup": "popup.html", "default_title": "SocialHub Group Pilot"},
+  "content_scripts": [{
+    "matches": ["https://www.facebook.com/groups/*", "https://facebook.com/groups/*"],
+    "js": ["content.js"],
+    "run_at": "document_idle"
+  }]
+}

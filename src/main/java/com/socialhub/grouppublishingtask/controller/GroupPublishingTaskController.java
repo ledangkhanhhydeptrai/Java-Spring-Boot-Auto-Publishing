@@ -196,6 +196,14 @@ public class GroupPublishingTaskController {
                 );
             }
 
+            // Protect a task claimed by the browser worker from a competing manual action.
+            if ("PROCESSING".equals(t.getStatus())) {
+                throw new ApiException(HttpStatus.CONFLICT, "Task is being processed by Group Worker");
+            }
+            if ("READY".equals(newStatus) && !"PENDING".equals(t.getStatus())) {
+                throw new ApiException(HttpStatus.CONFLICT, "Only PENDING tasks can be approved for Group Worker");
+            }
+
             t.setStatus(newStatus);
 
             if ("PUBLISHED".equals(newStatus)) {
