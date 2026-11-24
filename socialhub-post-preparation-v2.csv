@@ -1,0 +1,6 @@
+﻿"Key","PostId","InitialStatus","FinalStatus","ApprovalStatus","Result","Error"
+"SH-T10-A01-P001","e279b5a3-33a5-4570-89b3-e25587292446","SCHEDULED","SCHEDULED","","SKIP_NON_DRAFT_OR_READY",""
+"SH-T10-A01-P002","458e26fd-9017-4f73-9c7e-ae3bbe776b94","DRAFT","READY","","FAILED","Approval response not APPROVED: "
+"SH-T10-A01-P003","63636713-b081-4690-919a-a5dcb5f810d2","DRAFT","READY","","FAILED","Approval response not APPROVED: "
+"SH-T10-A01-P004","0e5272c8-96cc-41e3-8372-f7a0ab962a1f","DRAFT","READY","","FAILED","Approval response not APPROVED: "
+"SH-T10-A01-P005","d802109d-b6d8-46f8-aee3-da02412c39f4","DRAFT","READY","","FAILED","Approval response not APPROVED: "

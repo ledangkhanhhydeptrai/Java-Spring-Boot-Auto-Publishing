@@ -5,3 +5,4 @@ target/
 group-worker/browser-profile/
 __pycache__/
 *.pyc
+static/

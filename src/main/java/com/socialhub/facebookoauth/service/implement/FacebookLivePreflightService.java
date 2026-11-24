@@ -145,7 +145,9 @@ public class FacebookLivePreflightService {
         }
 
         Verification permission = checkManagePosts(client, token, pageId);
-        Verification task = checkCreateContent(client, token, pageId);
+        Verification task = checkContentVerifiedAtOAuth(
+                connectionId, workspaceId, pageId
+        );
 
         // Only assert verified if BOTH distinct requirements were confirmed.
         if (permission.result() == Check.YES && task.result() == Check.YES) {
@@ -277,5 +279,50 @@ public class FacebookLivePreflightService {
                            String pageName, String reason) {
         return new Result(jobId, pageId == null ? "" : pageId, source,
                 readable, identified, pageName, "NOT_VERIFIED", "BLOCKED", reason);
+    }
+
+    private Verification checkContentVerifiedAtOAuth(
+            UUID connectionId,
+            UUID workspaceId,
+            String pageId
+    ) {
+        if (connectionId == null) {
+            return new Verification(
+                    Check.UNKNOWN, "No bound OAuth connection"
+            );
+        }
+
+        Boolean verified = db.queryForObject("""
+                        SELECT EXISTS (
+                            SELECT 1
+                            FROM facebook_page_connections c
+                            JOIN social_accounts a
+                                ON a.id = c.social_account_id
+                            WHERE c.id = ?
+                              AND a.workspace_id = ?
+                              AND a.external_account_id = ?
+                              AND a.platform = 'FACEBOOK_PAGE'
+                              AND a.status = 'CONNECTED'
+                              AND c.status = 'CONNECTED'
+                              AND c.last_connected_at >= NOW() - INTERVAL '24 hours'
+                              AND (
+                                  c.token_expires_at IS NULL
+                                  OR c.token_expires_at > NOW()
+                              )
+                        )
+                        """,
+                Boolean.class,
+                connectionId, workspaceId, pageId
+        );
+
+        return Boolean.TRUE.equals(verified)
+                ? new Verification(
+                Check.YES,
+                "CREATE_CONTENT checked during recent OAuth connection"
+        )
+                : new Verification(
+                Check.UNKNOWN,
+                "Recent OAuth CREATE_CONTENT proof unavailable"
+        );
     }
 }

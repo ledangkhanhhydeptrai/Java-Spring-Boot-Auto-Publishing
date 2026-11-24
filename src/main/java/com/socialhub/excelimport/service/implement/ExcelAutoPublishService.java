@@ -504,11 +504,13 @@ public class ExcelAutoPublishService {
                     || !Set.of("NOT_SUBMITTED", "PENDING_APPROVAL", "APPROVED").contains(approval)
                     || post.getStatus() == null
                     || !Set.of("DRAFT", "READY", "SCHEDULED").contains(post.getStatus())
-                    || ("THREADS".equals(platform) && post.getContent().length() > 500)
-                    || source.getSourcePublishDate() == null) {
+                    || ("THREADS".equals(platform) && post.getContent().length() > 500)) {
+                // A missing Excel source date is valid in explicit auto-plan/batch:
+                // the caller provides a new startDate/startTime for allocation.
+                // Do not weaken approval, content, status, or platform validation.
                 planned.put(source.getId(), new BatchPlanRow(source.getId(), source.getSourceRowNumber(),
                         post.getId(), "BLOCKED", null, false, false,
-                        "Missing date/content or ineligible Post/approval state"));
+                        "Missing content or ineligible Post/approval state"));
                 continue;
             }
             chosen.add(source);
@@ -516,6 +518,9 @@ public class ExcelAutoPublishService {
 
         // Protect original future dates before allocating any replacement slots.
         for (ExcelImportRow source : chosen) {
+            // Rows imported without "Ngay dang" have no original date to preserve.
+            // They receive a new slot in the allocation loop below.
+            if (source.getSourcePublishDate() == null) continue;
             ZonedDateTime original = ZonedDateTime.of(source.getSourcePublishDate(),
                     batch.getPublishTime(), ZONE);
             // Future original dates are never automatically rescheduled.
@@ -571,7 +576,9 @@ public class ExcelAutoPublishService {
                 planned.put(source.getId(), new BatchPlanRow(source.getId(), source.getSourceRowNumber(),
                         post.getId(), "RESCHEDULED", next,
                         isMediaReady(post), !"APPROVED".equals(post.getApprovalStatus()),
-                        "Old Excel date kept for audit; new date used for Job"));
+                        source.getSourcePublishDate() == null
+                                ? "No original Excel date; new batch date used for Job"
+                                : "Old Excel date kept for audit; new date used for Job"));
             }
         }
 
@@ -594,6 +601,8 @@ public class ExcelAutoPublishService {
     }
 
     private boolean isMediaReady(Post post) {
+        // No PostMedia records => text-only post; no upload is required.
+        // When media records exist, *all* of them must be supported and uploaded.
         return media.findByPostId(post.getId()).stream().allMatch(m ->
                 "IMAGE".equals(m.getMediaType())
                         && m.getPublicUrl() != null && !m.getPublicUrl().isBlank());
@@ -634,10 +643,9 @@ public class ExcelAutoPublishService {
                 && post.getContent().length() > 500) {
             throw new IllegalStateException("Threads content exceeds 500 characters");
         }
-        boolean ready = media.findByPostId(post.getId()).stream().allMatch(m ->
-                "IMAGE".equals(m.getMediaType())
-                        && m.getPublicUrl() != null && !m.getPublicUrl().isBlank());
-        if (!ready) {
+        // Keep the same rule as batch preview: text-only is allowed,
+        // but an attached image must have a valid public URL.
+        if (!isMediaReady(post)) {
             throw new IllegalStateException("Media not ready; check Google Drive/Cloudinary");
         }
     }
@@ -768,4 +776,3 @@ public class ExcelAutoPublishService {
         });
     }
 }
-

@@ -87,29 +87,7 @@ public class PublishingReviewServiceImpl implements PublishingReviewService {
                     "Job has no publishing attempt to review"
             );
         }
-// Prevent unsafe negative confirmation for asynchronous Meta videos.
-// A video/reel may already be published even if permalink is unavailable.
-        Boolean hasVideoMedia = jdbc.queryForObject("""
-                        SELECT EXISTS (
-                            SELECT 1
-                            FROM post_media pm
-                            WHERE pm.post_id = ?
-                              AND pm.media_type IN ('VIDEO', 'REEL')
-                        )
-                        """,
-                Boolean.class,
-                job.getPost().getId()
-        );
 
-        if (Boolean.TRUE.equals(hasVideoMedia)) {
-            throw new ApiException(
-                    HttpStatus.CONFLICT,
-                    "Cannot confirm VIDEO/REEL as NOT_PUBLISHED after "
-                            + "a publishing attempt. Meta may have accepted "
-                            + "the upload. Verify the Meta video status "
-                            + "before any retry. Automatic retry is blocked."
-            );
-        }
         if (reviews.findByPublishingJob_IdAndAttemptNumber(
                 jobId,
                 attemptNumber
@@ -224,6 +202,30 @@ public class PublishingReviewServiceImpl implements PublishingReviewService {
             throw new ApiException(
                     HttpStatus.CONFLICT,
                     "Job has no publishing attempt to review"
+            );
+        }
+
+        // Prevent unsafe negative confirmation for asynchronous Meta videos.
+        // A video/reel may already be published even if permalink is unavailable.
+        Boolean hasVideoMedia = jdbc.queryForObject("""
+                        SELECT EXISTS (
+                            SELECT 1
+                            FROM post_media pm
+                            WHERE pm.post_id = ?
+                              AND pm.media_type IN ('VIDEO', 'REEL')
+                        )
+                        """,
+                Boolean.class,
+                job.getPost().getId()
+        );
+
+        if (Boolean.TRUE.equals(hasVideoMedia)) {
+            throw new ApiException(
+                    HttpStatus.CONFLICT,
+                    "Cannot confirm VIDEO/REEL as NOT_PUBLISHED after "
+                            + "a publishing attempt. Meta may have accepted "
+                            + "the upload. Verify the Meta video status "
+                            + "before any retry. Automatic retry is blocked."
             );
         }
 

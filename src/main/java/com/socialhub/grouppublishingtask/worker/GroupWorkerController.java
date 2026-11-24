@@ -18,13 +18,18 @@ public class GroupWorkerController {
     @Value("${app.group-worker-token:}")
     private String workerToken;
 
+    // One exact task for the controlled Group AUTO pilot. Blank = no claims.
+    @Value("${GROUP_WORKER_TARGET_TASK_ID:}")
+    private String targetTaskId;
+
     private void check(String authorization) {
         if (workerToken.isBlank() || authorization == null || !MessageDigest.isEqual(
                 ("Bearer " + workerToken).getBytes(StandardCharsets.UTF_8), authorization.getBytes(StandardCharsets.UTF_8)))
             throw new org.springframework.web.server.ResponseStatusException(HttpStatus.UNAUTHORIZED);
     }
 
-    public record Task(UUID id, String groupUrl, String content) {
+    public record Task(UUID id, String groupUrl, String content,
+                       List<String> imageUrls, int unsupportedMediaCount) {
     }
 
     public record Result(String status, String publishedUrl, String note) {
@@ -33,23 +38,44 @@ public class GroupWorkerController {
     @PostMapping("/claim")
     public ResponseEntity<Task> claim(@RequestHeader(value = "Authorization", required = false) String authorization) {
         check(authorization);
+        UUID exactTask;
+        try {
+            exactTask = UUID.fromString(targetTaskId.trim());
+        } catch (Exception invalidOrBlank) {
+            // Never claim arbitrary PENDING tasks: require one exact task ID.
+            return ResponseEntity.noContent().build();
+        }
         var rows = db.query("""
                 WITH picked AS (
                   SELECT t.id FROM group_publishing_tasks t
                   JOIN posts p ON p.id=t.post_id
-                  WHERE t.status='PENDING' AND p.status IN ('READY','SCHEDULED')
-                    AND COALESCE(t.scheduled_at, t.created_at)<=now()
-                  ORDER BY COALESCE(t.scheduled_at,t.created_at)
+                  WHERE t.id=? AND t.status='PENDING'
+                    AND p.status IN ('READY','SCHEDULED')
+                    AND COALESCE(t.scheduled_at,t.created_at)<=now()
                   FOR UPDATE OF t SKIP LOCKED LIMIT 1
                 ) UPDATE group_publishing_tasks t SET status='PROCESSING'
                   FROM picked WHERE t.id=picked.id RETURNING t.id
-                """, (rs, n) -> rs.getObject(1, UUID.class));
+                """, (rs, n) -> rs.getObject(1, UUID.class), exactTask);
         if (rows.isEmpty()) return ResponseEntity.noContent().build();
+        UUID id = rows.getFirst();
+        List<String> images = db.query("""
+                SELECT COALESCE(NULLIF(TRIM(pm.public_url),''), NULLIF(TRIM(pm.source_url),''))
+                FROM post_media pm
+                JOIN group_publishing_tasks t ON t.post_id=pm.post_id
+                WHERE t.id=? AND pm.media_type='IMAGE'
+                ORDER BY pm.display_order, pm.created_at
+                """, (rs, n) -> rs.getString(1), id);
+        Integer unsupported = db.queryForObject("""
+                SELECT COUNT(*) FROM post_media pm
+                JOIN group_publishing_tasks t ON t.post_id=pm.post_id
+                WHERE t.id=? AND pm.media_type NOT IN ('IMAGE')
+                """, Integer.class, id);
         return ResponseEntity.ok(db.queryForObject("""
                 SELECT t.id,g.group_url,p.content FROM group_publishing_tasks t
                 JOIN facebook_groups g ON g.id=t.facebook_group_id
                 JOIN posts p ON p.id=t.post_id WHERE t.id=?
-                """, (rs, n) -> new Task(rs.getObject(1, UUID.class), rs.getString(2), rs.getString(3)), rows.getFirst()));
+                """, (rs, n) -> new Task(rs.getObject(1, UUID.class), rs.getString(2),
+                rs.getString(3), images, unsupported == null ? 0 : unsupported), id));
     }
 
     @PostMapping("/{id}/result")

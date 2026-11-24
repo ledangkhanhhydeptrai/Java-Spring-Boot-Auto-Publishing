@@ -1,0 +1,14 @@
+﻿{
+    "SH-EXCEL-MEDIA-T01-VIDEO-035":  {
+                                         "postId":  "132b322b-327a-4aa3-992c-bb0a726aa926",
+                                         "phase":  "JOB_SCHEDULED",
+                                         "jobId":  "b058a374-c92a-425f-a494-398337139463",
+                                         "mediaDone":  true
+                                     },
+    "SH-EXCEL-MEDIA-T01-REEL-068":  {
+                                        "postId":  "bc4b4bba-39c0-44f0-8a89-144ed72c9690",
+                                        "phase":  "JOB_SCHEDULED",
+                                        "jobId":  "db05249c-8493-48d0-a99f-339dca6931de",
+                                        "mediaDone":  true
+                                    }
+}
