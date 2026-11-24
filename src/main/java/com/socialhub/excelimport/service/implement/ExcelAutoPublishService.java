@@ -604,8 +604,11 @@ public class ExcelAutoPublishService {
         // No PostMedia records => text-only post; no upload is required.
         // When media records exist, *all* of them must be supported and uploaded.
         return media.findByPostId(post.getId()).stream().allMatch(m ->
-                "IMAGE".equals(m.getMediaType())
-                        && m.getPublicUrl() != null && !m.getPublicUrl().isBlank());
+                Set.of("IMAGE", "VIDEO", "REEL").contains(m.getMediaType())
+                        && m.getPublicUrl() != null
+                        && m.getPublicUrl().startsWith("https://res.cloudinary.com/")
+                        && (("IMAGE".equals(m.getMediaType()) && m.getPublicUrl().contains("/image/upload/"))
+                        || (!"IMAGE".equals(m.getMediaType()) && m.getPublicUrl().contains("/video/upload/"))));
     }
 
     private boolean isOccupied(Instant time, List<Instant> occupied, int gapMinutes) {

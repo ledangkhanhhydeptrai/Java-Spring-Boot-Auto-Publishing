@@ -183,6 +183,16 @@ public class ExcelImportMediaBatchService {
                             null, "SKIPPED", "Only IMAGE is supported"));
                     continue;
                 }
+                // Legacy Excel imports can mislabel VIDEO/REEL Cloudinary URLs as
+                // IMAGE. Never send those URLs to the Google Drive image downloader:
+                // keep the media unchanged and let the Threads preflight block it.
+                if (sourceUrl != null && sourceUrl.matches(
+                        "(?i)^https://res\\.cloudinary\\.com/[^/]+/video/upload/.*$")) {
+                    skipped++;
+                    results.add(new Item(postId, mediaId, sourceUrl,
+                            null, "SKIPPED", "Cloudinary video requires VIDEO/REEL pipeline"));
+                    continue;
+                }
 
                 try {
                     if (sourceUrl == null || sourceUrl.isBlank()) {

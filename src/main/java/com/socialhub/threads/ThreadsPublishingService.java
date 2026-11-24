@@ -38,6 +38,34 @@ import java.util.UUID;
 public class ThreadsPublishingService {
     private static final String GRAPH_BASE = "https://graph.threads.net/v1.0/";
 
+    // Meta can report FINISHED for a child before its carousel association is visible.
+    // Bounded delays only apply to the parent container; never retry threads_publish.
+    private static final long CAROUSEL_CHILD_SETTLE_MS = 3000L;
+    private static final int CAROUSEL_PARENT_MAX_ATTEMPTS = 3;
+
+    static final class ThreadsApiException extends IllegalStateException {
+        private final int httpStatus;
+        private final String code;
+        private final String subcode;
+
+        ThreadsApiException(String endpoint, int httpStatus, String code, String subcode) {
+            super("Threads API failed at " + endpoint + " with HTTP " + httpStatus
+                    + ", code=" + code + ", subcode=" + subcode);
+            this.httpStatus = httpStatus;
+            this.code = code;
+            this.subcode = subcode;
+        }
+    }
+
+    // Only retry a DEFINITE Meta 400 rejection while creating the carousel PARENT.
+    // Network errors, timeouts and publishing errors remain manual-review cases.
+    static boolean isCarouselChildPropagationError(Exception ex) {
+        return ex instanceof ThreadsApiException api
+                && api.httpStatus == 400
+                && "100".equals(api.code)
+                && "4279004".equals(api.subcode);
+    }
+
     private record Claim(UUID jobId, int attempt, UUID accountId, String text) {
     }
 
@@ -413,9 +441,34 @@ public class ThreadsPublishingService {
             awaitContainerReady(childId, token, jobId);
             children.add(childId);
         }
-        return requireContainerId(post(base + "/threads",
-                "media_type=CAROUSEL&children=" + enc(String.join(",", children))
-                        + "&text=" + enc(text), token, jobId, attempt));
+        // The last FINISHED response can precede availability of the child ID on
+        // Meta's carousel-parent endpoint. No public post is created here.
+        Thread.sleep(CAROUSEL_CHILD_SETTLE_MS);
+        String parentForm = "media_type=CAROUSEL&children=" + enc(String.join(",", children))
+                + "&text=" + enc(text);
+        for (int parentTry = 1; parentTry <= CAROUSEL_PARENT_MAX_ATTEMPTS; parentTry++) {
+            try {
+                log.info("[THREADS] Creating carousel parent | jobId={}, attempt={}/{}, children={}",
+                        jobId, parentTry, CAROUSEL_PARENT_MAX_ATTEMPTS, children.size());
+                return requireContainerId(post(base + "/threads", parentForm, token, jobId, attempt));
+            } catch (ThreadsApiException ex) {
+                if (!isCarouselChildPropagationError(ex) || parentTry == CAROUSEL_PARENT_MAX_ATTEMPTS) {
+                    throw ex;
+                }
+                long delayMs = 4000L * parentTry;
+                log.warn("[THREADS] Meta rejected carousel parent with 4279004; "
+                                + "will recheck child containers and retry parent only | jobId={}, "
+                                + "attempt={}/{}, delayMs={}",
+                        jobId, parentTry, CAROUSEL_PARENT_MAX_ATTEMPTS, delayMs);
+                Thread.sleep(delayMs);
+                // Never recreate children and NEVER call /threads_publish here.
+                // A failed readiness recheck aborts safely to manual review.
+                for (String childId : children) {
+                    awaitContainerReady(childId, token, jobId, 3);
+                }
+            }
+        }
+        throw new IllegalStateException("Carousel parent attempts exhausted");
     }
 
     private static String requireContainerId(JsonNode response) {
@@ -447,9 +500,7 @@ public class ThreadsPublishingService {
             }
             log.error("[THREADS] API failed. endpoint={}, status={}, code={}, subcode={}, type={}, message={}",
                     endpoint, response.statusCode(), errorCode, errorSubcode, errorType, errorMessage);
-            throw new IllegalStateException("Threads API failed at " + endpoint
-                    + " with HTTP " + response.statusCode()
-                    + ", code=" + errorCode + ", subcode=" + errorSubcode);
+            throw new ThreadsApiException(endpoint, response.statusCode(), errorCode, errorSubcode);
         }
         log.info("[THREADS] Request successful. endpoint={}, status={}", endpoint, response.statusCode());
         return json.readTree(response.body());
