@@ -78,6 +78,10 @@ public class ThreadsPublishingService {
     @Value("${app.threads.manual-publishing-enabled:false}")
     private boolean manualPublishingEnabled;
 
+    // Bounded read-only propagation guard for code=24/subcode=4279009.
+    @Value("${app.threads.publish-settle-ms:15000}")
+    private long publishSettleMs;
+
     @Value("${app.threads.token-key:}")
     private String tokenKey;
 
@@ -266,6 +270,9 @@ public class ThreadsPublishingService {
             boolean videoPost = getPostMedia(claim.jobId()).stream()
                     .anyMatch(m -> "VIDEO".equals(m.mediaType()));
             awaitContainerReady(creationId, token, claim.jobId(), videoPost ? 60 : 6);
+            // Parent FINISHED can precede visibility at Meta's publish endpoint.
+            // One publish attempt only: NEVER blindly retry /threads_publish.
+            settleContainerForPublish(creationId, token, claim.jobId());
             log.info("[THREADS] Publishing container | jobId={}, creationId={}", claim.jobId(), creationId);
             JsonNode published = post(base + "/threads_publish",
                     "creation_id=" + enc(creationId), token, claim.jobId(), claim.attempt());
@@ -539,6 +546,20 @@ public class ThreadsPublishingService {
 
     private static String enc(String s) {
         return URLEncoder.encode(s, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Meta may report container FINISHED before it becomes visible to /threads_publish.
+     * Delay then recheck via GET only. This does not publish or create new media.
+     */
+    private void settleContainerForPublish(String creationId, String token, UUID jobId) throws Exception {
+        long delayMs = Math.max(5000L, Math.min(publishSettleMs, 60000L));
+        log.info("[THREADS] Waiting for Meta propagation before publish | jobId={}, "
+                + "creationId={}, delayMs={}", jobId, creationId, delayMs);
+        Thread.sleep(delayMs);
+        awaitContainerReady(creationId, token, jobId, 3);
+        log.info("[THREADS] Propagation readiness rechecked | jobId={}, creationId={}",
+                jobId, creationId);
     }
 
     private void awaitContainerReady(String creationId, String token, UUID jobId) throws Exception {

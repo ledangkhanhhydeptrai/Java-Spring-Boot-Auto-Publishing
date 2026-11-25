@@ -1,9 +1,9 @@
-param(
+﻿param(
   [string]$Api = 'http://127.0.0.1:8081'
 )
 $ErrorActionPreference = 'Stop'
 $env:SOCIALHUB_API = $Api
-$env:GROUP_WORKER_TARGET_TASK_ID = '15e8de3f-cd4b-4ffb-96d0-ae5ec42a6c49'
+$env:GROUP_WORKER_TARGET_TASK_ID = '0c6ecb4c-ffe1-4f45-97d6-a5dfa9a1e73b'
 $env:GROUP_WORKER_EXPECTED_GROUP_ID = '1326570106277759'
 if (-not $env:GROUP_WORKER_TOKEN) {
   $s = Read-Host 'Enter the SAME GROUP_WORKER_TOKEN configured in IntelliJ Backend' -AsSecureString

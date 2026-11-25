@@ -2,6 +2,12 @@
 // Visible UI automation for ONE administrator-owned test group. No stealth,
 // CAPTCHA/2FA bypass, session export, background posting or blind retries.
 (() => {
+    // Prevent two copies of the content script from registering competing
+    // GROUP_FILL listeners in the same tab. Reload Facebook after updating.
+    const INSTALL_KEY = '__socialHubGroupPilotContentListener';
+    if (window[INSTALL_KEY]) return;
+    window[INSTALL_KEY] = true;
+
     let prepared = null;
     let inFlight = false;
     let filling = false; // Prevent overlapping Fill calls on the same tab.
@@ -80,55 +86,55 @@
     // rejected the request (scope=false, dialogs=2). Keep only the *innermost*
     // eligible panel; reject genuinely separate/ambiguous composers.
     function uniqueInnermost(nodes) {
-      const unique = [...new Set(nodes)];
-      const leaves = unique.filter(node => !unique.some(other =>
-        other !== node && node.contains(other)));
-      return leaves.length === 1 ? leaves[0] : null;
+        const unique = [...new Set(nodes)];
+        const leaves = unique.filter(node => !unique.some(other =>
+            other !== node && node.contains(other)));
+        return leaves.length === 1 ? leaves[0] : null;
     }
 
     function hasComposerPrompt(root) {
-      return Boolean(visibleWhere(root,
-        '[role="textbox"],[aria-placeholder],[data-placeholder],p,span,div', exactPrompt));
+        return Boolean(visibleWhere(root,
+            '[role="textbox"],[aria-placeholder],[data-placeholder],p,span,div', exactPrompt));
     }
 
     function isComposerPanel(el) {
-      return hasPostButton(el) &&
-        (containsComposerHeading(el) || hasComposerPrompt(el)) &&
-        (Boolean(findEditor(el)) || hasComposerPrompt(el));
+        return hasPostButton(el) &&
+            (containsComposerHeading(el) || hasComposerPrompt(el)) &&
+            (Boolean(findEditor(el)) || hasComposerPrompt(el));
     }
 
     function composerScope() {
-      const dialogs = all(document, '[role="dialog"],[aria-modal="true"]')
-        .filter(isVisible);
-      const eligible = dialogs.filter(isComposerPanel);
+        const dialogs = all(document, '[role="dialog"],[aria-modal="true"]')
+            .filter(isVisible);
+        const eligible = dialogs.filter(isComposerPanel);
 
-      // When the outer and inner modal are nested, prefer the innermost one
-      // that actually owns an editable field. This never chooses between
-      // two distinct modal windows.
-      const withEditor = eligible.filter(el => Boolean(findEditor(el)));
-      let chosen = uniqueInnermost(withEditor);
-      if (chosen) return chosen;
-      chosen = uniqueInnermost(eligible);
-      if (chosen) return chosen;
-      if (eligible.length > 1) return null;
+        // When the outer and inner modal are nested, prefer the innermost one
+        // that actually owns an editable field. This never chooses between
+        // two distinct modal windows.
+        const withEditor = eligible.filter(el => Boolean(findEditor(el)));
+        let chosen = uniqueInnermost(withEditor);
+        if (chosen) return chosen;
+        chosen = uniqueInnermost(eligible);
+        if (chosen) return chosen;
+        if (eligible.length > 1) return null;
 
-      // Some Facebook versions omit role="dialog". Walk from the exact
-      // composer heading / placeholder to a compact panel with the Post button.
-      const anchors = [
-        ...headingNodes(document),
-        ...all(document, 'span,div,p,[data-placeholder],[aria-placeholder]')
-          .filter(exactPrompt)
-      ];
-      const candidates = new Set();
-      for (const anchor of anchors) {
-        let parent = anchor.parentElement;
-        for (let depth = 0; parent && depth < 18; depth++, parent = parent.parentElement) {
-          if (!sensiblePanel(parent)) continue;
-          if (isComposerPanel(parent)) candidates.add(parent);
+        // Some Facebook versions omit role="dialog". Walk from the exact
+        // composer heading / placeholder to a compact panel with the Post button.
+        const anchors = [
+            ...headingNodes(document),
+            ...all(document, 'span,div,p,[data-placeholder],[aria-placeholder]')
+                .filter(exactPrompt)
+        ];
+        const candidates = new Set();
+        for (const anchor of anchors) {
+            let parent = anchor.parentElement;
+            for (let depth = 0; parent && depth < 18; depth++, parent = parent.parentElement) {
+                if (!sensiblePanel(parent)) continue;
+                if (isComposerPanel(parent)) candidates.add(parent);
+            }
         }
-      }
-      const withField = [...candidates].filter(el => Boolean(findEditor(el)));
-      return uniqueInnermost(withField.length ? withField : [...candidates]);
+        const withField = [...candidates].filter(el => Boolean(findEditor(el)));
+        return uniqueInnermost(withField.length ? withField : [...candidates]);
     }
 
 
@@ -215,60 +221,117 @@
         return waitForEditor();
     }
 
-    // One user-visible insert only. Chrome execCommand('insertText') dispatches
-    // its own input event. Sending another synthetic InputEvent can cause
-    // Facebook's controlled/Lexical editor to process the same text twice.
-    // Preserve exact whitespace except browser newline/NBSP normalization.
+    // COMPOSER-INSERT-v10: browser-originated typing via chrome.debugger.
+    // NEVER mutate Lexical DOM, execCommand, synthetic events or blind retry.
     const normalizeText = value => String(value ?? '')
         .replace(/\r\n?/g, '\n').replace(/\u00a0/g, ' ')
         .replace(/\u200b/g, '').trim();
 
-    function editorText(editor) {
-        if (!editor) return '';
-        return normalizeText(editor.tagName === 'TEXTAREA'
-            ? editor.value : (editor.innerText ?? editor.textContent ?? ''));
-    }
-
-    function exactEditorContent(editor, expected) {
-        const text = editorText(editor);
-        return text === normalizeText(expected);
-    }
-
-    async function setEditor(editor, content) {
-        const previous = editorText(editor);
-        const expected = normalizeText(content);
-        if (previous && previous !== expected) {
-            throw new Error('Ô soạn thảo đang có nội dung khác hoặc bị lặp. Đóng và bỏ bản nháp lỗi trước khi thử lại; KHÔNG đăng');
+    function paragraphText(paragraph) {
+        const parts = [];
+        function visit(node) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                parts.push(node.nodeValue || '');
+                return;
+            }
+            if (node.nodeType !== Node.ELEMENT_NODE ||
+                node.getAttribute('aria-hidden') === 'true' || node.hidden) return;
+            if (node.tagName === 'BR') { parts.push('\n'); return; }
+            for (const child of node.childNodes) visit(child);
         }
-        if (previous === expected) return;
-        editor.focus();
+        const hasContent = [...paragraph.childNodes].some(node =>
+            node.nodeType === Node.TEXT_NODE ? Boolean(node.nodeValue) :
+            node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BR');
+        if (!hasContent) return '';
+        for (const node of paragraph.childNodes) visit(node);
+        return parts.join('').replace(/\n$/, '');
+    }
+
+    function readEditor(editor) {
+        if (!editor) return {text: '', source: 'missing'};
+        if (editor.tagName === 'TEXTAREA') {
+            return {text: normalizeText(editor.value), source: 'textarea'};
+        }
+        const paragraphs = all(editor, 'p').filter(p => !p.parentElement?.closest('p'));
+        if (paragraphs.length) return {
+            text: normalizeText(paragraphs.map(paragraphText).join('\n')),
+            source: 'paragraphs'
+        };
+        return {text: normalizeText(editor.innerText || ''), source: 'innerText'};
+    }
+
+    const editorText = editor => readEditor(editor).text;
+    const exactEditorContent = (editor, expected) =>
+        Boolean(editor) && editorText(editor) === normalizeText(expected);
+
+    function mismatch(expected, editor, stage) {
+        const rendered = readEditor(editor);
+        const marker = expected.match(/\[SocialHub Group Pilot [a-f0-9]{8}\]$/)?.[0] || '';
+        const markerCount = marker ? rendered.text.split(marker).length - 1 : 0;
+        throw new Error('COMPOSER-INSERT-v10: Facebook hiển thị nội dung khác Task (' + stage + '). ' +
+            'expectedLength=' + normalizeText(expected).length +
+            ', visibleLength=' + rendered.text.length +
+            ', domBlocks=' + (editor?.querySelectorAll('p,div,li,blockquote').length || 0) +
+            ', brCount=' + (editor?.querySelectorAll('br').length || 0) +
+            ', source=' + rendered.source + ', markerCount=' + markerCount +
+            '. BỎ BẢN NHÁP; KHÔNG đăng');
+    }
+
+    async function checkRendered(expected, stage) {
+        for (const ms of [350, 750, 1100]) {
+            await delay(ms);
+            const {scope, editor} = editorForComposer();
+            if (!scope || !editor || !exactEditorContent(editor, expected))
+                mismatch(expected, editor, stage);
+        }
+    }
+
+    let typedOnceInTab = false;
+
+    function callTyping(request) {
+        return new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage({kind: 'GROUP_TYPE_TEXT', ...request}, response => {
+                if (chrome.runtime.lastError) return reject(Error(chrome.runtime.lastError.message));
+                if (!response?.ok) return reject(Error(response?.error || 'CDP typing unavailable'));
+                resolve(response.value);
+            });
+        });
+    }
+
+    async function setEditor(editor, content, task) {
+        const expected = normalizeText(content);
+        const previous = editorText(editor);
+        if (previous && previous !== expected)
+            throw Error('Facebook Composer đang có bản nháp khác; đóng và BỎ bản nháp; KHÔNG đăng');
+        if (previous === expected) {
+            await checkRendered(expected, 'existing draft');
+            return;
+        }
+        if (typedOnceInTab)
+            throw Error('Đã thử nhập một lần trong tab này. Đóng bản nháp, refresh Facebook; KHÔNG tự Retry');
+        const {scope, editor: current} = editorForComposer();
+        // The actual Facebook modal editor is in a dialog. No fallback to the
+        // public Group feed textbox or a comment editor.
+        if (!scope || !current || current !== editor ||
+            !current.closest('[role="dialog"],[aria-modal="true"]'))
+            throw Error('Không xác định duy nhất editor trong cửa sổ Tạo bài viết; KHÔNG nhập');
+        if (current.tagName !== 'DIV' || !current.isContentEditable)
+            throw Error('Editor không phải Facebook Lexical DIV; KHÔNG nhập');
+
+        current.focus();
         const selection = window.getSelection();
+        if (!selection) throw Error('Không có con trỏ soạn thảo; KHÔNG nhập');
         const range = document.createRange();
-        range.selectNodeContents(editor);
+        range.selectNodeContents(current);
+        range.collapse(true); // caret inside the empty editor, NOT a select-all mutation
         selection.removeAllRanges();
         selection.addRange(range);
-        if (!document.execCommand('insertText', false, content))
-            throw new Error('Facebook từ chối chèn nội dung vào ô soạn thảo');
-
-        // No manual dispatchEvent(InputEvent). Facebook might asynchronously
-        // re-render after input: check twice before enabling the next step.
-        await delay(350);
-        let current = editorForComposer();
-        if (!current.editor || !exactEditorContent(current.editor, content)) {
-            await delay(650); // one validation wait, NEVER insert again
-            current = editorForComposer();
-        } else {
-            await delay(500);
-            current = editorForComposer();
-        }
-        if (!current.editor || !exactEditorContent(current.editor, content)) {
-            const rendered = editorText(current.editor);
-            const marker = content.match(/\[SocialHub Group Pilot [a-f0-9]{8}\]$/)?.[0] || '';
-            const markerCount = marker ? rendered.split(marker).length - 1 : 0;
-            throw new Error('COMPOSER-INSERT-v5: Facebook hiển thị nội dung khác Task. ' +
-                'expectedLength=' + expected.length + ', visibleLength=' + rendered.length +
-                ', markerCount=' + markerCount + '. BỎ BẢN NHÁP; KHÔNG đăng');
-        }
+        if (!current.contains(selection.anchorNode))
+            throw Error('Con trỏ không nằm trong Facebook Composer; KHÔNG nhập');
+        typedOnceInTab = true; // no second attempt even if CDP fails halfway
+        await callTyping({groupId: task.groupId, taskId: task.id,
+            digest: task.digest, text: content});
+        await checkRendered(expected, 'browser-keyboard insertion');
     }
 
     function publishButton(scope) {
@@ -334,7 +397,7 @@
             assertGroup(groupId);
             const expected = content.trim() + '\n\n' + marker;
             const {editor} = await openComposer();
-            await setEditor(editor, expected);
+            await setEditor(editor, expected, {id, groupId, digest});
             prepared = {id, groupId, expected, digest, marker};
             return {message: 'Đã nạp và kiểm tra bản nháp. Hãy xem lại nội dung trước khi đăng'};
         } finally {

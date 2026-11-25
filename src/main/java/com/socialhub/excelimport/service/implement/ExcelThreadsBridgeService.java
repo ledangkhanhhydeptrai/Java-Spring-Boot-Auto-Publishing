@@ -33,20 +33,25 @@ public class ExcelThreadsBridgeService {
 
     public record Request(UUID threadsAccountId, LocalDate startDate, LocalTime startTime,
                           Integer intervalMinutes, Integer maxRows, Boolean dryRun,
-                          Boolean confirmLive, String previewToken, Integer fromRow, Integer toRow) { }
+                          Boolean confirmLive, String previewToken, Integer fromRow, Integer toRow) {
+    }
 
     public record PlannedRow(int sourceRowNumber, UUID postId, String action,
-                             OffsetDateTime scheduledAt, String note) { }
+                             OffsetDateTime scheduledAt, String note) {
+    }
 
     public record Result(UUID importId, UUID threadsAccountId, boolean dryRun,
                          String previewToken, int eligible, int created, int alreadyPlanned,
-                         int blocked, List<PlannedRow> rows, List<String> errors) { }
+                         int blocked, List<PlannedRow> rows, List<String> errors) {
+    }
 
     private record Source(int row, UUID postId, String content, String postStatus,
                           String approval, LocalDate originalDate, LocalTime publishTime,
-                          boolean jobExists, boolean mediaReady) { }
+                          boolean jobExists, boolean mediaReady) {
+    }
 
-    private record Snapshot(String token, List<PlannedRow> rows) { }
+    private record Snapshot(String token, List<PlannedRow> rows) {
+    }
 
     public Result plan(UUID workspaceId, UUID importId, Request req) {
         access.admin(workspaceId);
@@ -153,33 +158,43 @@ public class ExcelThreadsBridgeService {
 
     private Snapshot snapshot(UUID importId, Request req) {
         List<Source> sources = db.query("""
-                SELECT r.source_row_number, r.post_id, p.content, p.status AS post_status,
-                       p.approval_status, r.source_publish_date, e.publish_time,
-                       EXISTS(SELECT 1 FROM publishing_jobs j
-                           WHERE j.post_id=p.id AND j.social_account_id=?) AS has_job,
-                       NOT EXISTS(SELECT 1 FROM post_media m WHERE m.post_id=p.id
-                           AND (m.public_url IS NULL OR btrim(m.public_url)='' OR m.media_type<>'IMAGE')) AS media_ready
-                FROM excel_import_rows r
-                JOIN excel_imports e ON e.id=r.import_id
-                JOIN posts p ON p.id=r.post_id AND p.workspace_id=e.workspace_id
-                WHERE r.import_id=? AND r.post_id IS NOT NULL
-                  AND (r.processing_status IS NULL OR r.processing_status NOT LIKE 'SKIPPED_%')
-                  AND r.source_row_number BETWEEN ? AND ?
-                ORDER BY r.source_row_number
-                """, (rs, i) -> new Source(rs.getInt("source_row_number"),
-                rs.getObject("post_id", UUID.class), rs.getString("content"),
-                rs.getString("post_status"), rs.getString("approval_status"),
-                rs.getObject("source_publish_date", LocalDate.class),
-                rs.getObject("publish_time", LocalTime.class), rs.getBoolean("has_job"),
-                rs.getBoolean("media_ready")), req.threadsAccountId(), importId,
+                        SELECT r.source_row_number, r.post_id, p.content, p.status AS post_status,
+                               p.approval_status, r.source_publish_date, e.publish_time,
+                               EXISTS(SELECT 1 FROM publishing_jobs j
+                                   WHERE j.post_id=p.id AND j.social_account_id=?) AS has_job,
+                               -- Match the actual Threads publisher preflight:
+                               -- TEXT / up to 20 IMAGE / one VIDEO; no mixed VIDEO + IMAGE.
+                               NOT EXISTS(SELECT 1 FROM post_media m WHERE m.post_id=p.id
+                                   AND (m.public_url IS NULL OR btrim(m.public_url)=''
+                                        OR m.media_type NOT IN ('IMAGE','VIDEO')
+                                        OR (m.media_type='IMAGE' AND m.public_url NOT ILIKE 'https://res.cloudinary.com/%/image/upload/%')
+                                        OR (m.media_type='VIDEO' AND m.public_url NOT ILIKE 'https://res.cloudinary.com/%/video/upload/%')))
+                               AND (SELECT COUNT(*) FROM post_media m WHERE m.post_id=p.id) <= 20
+                               AND (NOT EXISTS(SELECT 1 FROM post_media m WHERE m.post_id=p.id
+                                               AND m.media_type='VIDEO')
+                                    OR (SELECT COUNT(*) FROM post_media m WHERE m.post_id=p.id) = 1)
+                               AS media_ready
+                        FROM excel_import_rows r
+                        JOIN excel_imports e ON e.id=r.import_id
+                        JOIN posts p ON p.id=r.post_id AND p.workspace_id=e.workspace_id
+                        WHERE r.import_id=? AND r.post_id IS NOT NULL
+                          AND (r.processing_status IS NULL OR r.processing_status NOT LIKE 'SKIPPED_%')
+                          AND r.source_row_number BETWEEN ? AND ?
+                        ORDER BY r.source_row_number
+                        """, (rs, i) -> new Source(rs.getInt("source_row_number"),
+                        rs.getObject("post_id", UUID.class), rs.getString("content"),
+                        rs.getString("post_status"), rs.getString("approval_status"),
+                        rs.getObject("source_publish_date", LocalDate.class),
+                        rs.getObject("publish_time", LocalTime.class), rs.getBoolean("has_job"),
+                        rs.getBoolean("media_ready")), req.threadsAccountId(), importId,
                 req.fromRow() == null ? 2 : req.fromRow(),
                 req.toRow() == null ? 10001 : req.toRow());
 
         List<Instant> occupied = db.query("""
-                SELECT scheduled_at FROM publishing_jobs
-                WHERE social_account_id=? AND status IN ('PENDING','PROCESSING','RETRY')
-                  AND scheduled_at IS NOT NULL
-                """, (rs, i) -> rs.getObject(1, OffsetDateTime.class).toInstant(),
+                        SELECT scheduled_at FROM publishing_jobs
+                        WHERE social_account_id=? AND status IN ('PENDING','PROCESSING','RETRY')
+                          AND scheduled_at IS NOT NULL
+                        """, (rs, i) -> rs.getObject(1, OffsetDateTime.class).toInstant(),
                 req.threadsAccountId());
 
         int selected = 0;
@@ -264,5 +279,6 @@ public class ExcelThreadsBridgeService {
         }
     }
 
-    private static final class AlreadyExists extends RuntimeException { }
+    private static final class AlreadyExists extends RuntimeException {
+    }
 }

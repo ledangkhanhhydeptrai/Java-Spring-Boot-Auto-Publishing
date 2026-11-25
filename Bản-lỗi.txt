@@ -1,0 +1,4 @@
+Nếu có bản lỗi thì nhập xác minh như vầy:
+Đã đối chiếu nội dung và media trên Threads @ledangkhanhhy. Không tìm thấy bài tương ứng với Job dd35ba5c sau lần đăng lúc 13:51 ngày 25/11/2026. Publishing Attempt #1 có trạng thái UNKNOWN, chưa có permalink.
+note:
+Xác nhận chưa tìm thấy bài đăng sau khi kiểm tra Threads. Cần xử lý khôi phục Job có kiểm soát; không tự động Retry khi chưa bảo đảm tránh đăng trùng.

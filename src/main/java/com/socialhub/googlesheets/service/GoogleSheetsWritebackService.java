@@ -271,113 +271,344 @@ public class GoogleSheetsWritebackService {
                 importId, c.workspaceId(), c.id(), fromRow, toRow);
     }
 
-    private synchronized Report execute(Connection c, UUID importId, int fromRow, int toRow,
-                                        int limit, String platform, boolean dryRun) {
+
+    private synchronized Report execute(
+            Connection c,
+            UUID importId,
+            int fromRow,
+            int toRow,
+            int limit,
+            String platform,
+            boolean dryRun
+    ) {
         var rows = new ArrayList<Item>();
         var errors = new ArrayList<String>();
-        int written = 0, unchanged = 0, conflicts = 0;
+
+        int written = 0;
+        int unchanged = 0;
+        int conflicts = 0;
+
         String token = null;
-        if (!dryRun) token = oauthToken();
-        boolean doFb = "FACEBOOK_PAGE".equals(platform) || "ALL".equals(platform);
-        boolean doThreads = "THREADS".equals(platform) || "ALL".equals(platform);
+
+        if (!dryRun) {
+            token = oauthToken();
+        }
+
+        boolean doFb = "FACEBOOK_PAGE".equals(platform)
+                || "ALL".equals(platform);
+
+        boolean doThreads = "THREADS".equals(platform)
+                || "ALL".equals(platform);
+
         for (Candidate item : candidates(c, importId, fromRow, toRow)) {
-            if (rows.size() + conflicts >= limit) break;
+
+            if (rows.size() + conflicts >= limit) {
+                break;
+            }
+
             boolean fbPublished = item.facebookId() != null;
-            // Only a real published permalink from a PUBLISHED Threads Job proves delivery.
-            boolean threadsPublished = looksLikeThreadsLink(item.threadsPublishedUrl());
-            if (!(doFb && fbPublished) && !(doThreads && threadsPublished)) continue;
+
+            boolean threadsPublished =
+                    looksLikeThreadsLink(item.threadsPublishedUrl());
+
+            if (!(doFb && fbPublished)
+                    && !(doThreads && threadsPublished)) {
+                continue;
+            }
+
             String fbUrl = facebookUrl(item.facebookId());
-            String threadsUrl = threadsPublished ? item.threadsPublishedUrl() : null;
-            // Only report or update a row when evidence for the requested platform exists.
+
+            String threadsUrl = threadsPublished
+                    ? item.threadsPublishedUrl()
+                    : null;
+
             try {
-                String scopedToken = token == null ? oauthToken() : token;
-                List<String> existing = readCells(c, item.row(), scopedToken);
+                String scopedToken = token == null
+                        ? oauthToken()
+                        : token;
+
+                List<String> existing =
+                        readCells(c, item.row(), scopedToken);
+
+                // Verify source content before any write.
                 if (!cell(existing, 1).equals(item.content())) {
                     conflicts++;
-                    errors.add("row " + item.row() + ": Google Sheets content differs from matching Post");
+
+                    errors.add(
+                            "row " + item.row()
+                                    + ": Google Sheets content differs from matching Post"
+                    );
+
                     continue;
                 }
+
                 String currentF = cell(existing, 5);
                 String currentG = cell(existing, 6);
-                String currentH = cell(existing, 7), currentI = cell(existing, 8);
+                String currentH = cell(existing, 7);
+                String currentI = cell(existing, 8);
 
-                // Prefer the Facebook publication date if both platforms have a
-                // published Job; otherwise Threads-only imports can update F too.
-                // Only overdue/rescheduled original dates qualify. Future dates stay.
+                // =========================================
+                // COLUMN F: ACTUAL PUBLISH DATE
+                // =========================================
+
                 String newF = currentF;
-                boolean dateEligible = (doFb && fbUrl != null)
-                        || (doThreads && threadsPublished && !fbPublished);
-                if (dateEligible && item.originalDate() != null
-                        && item.scheduledAt() != null && item.publishedAt() != null) {
-                    LocalDate scheduledDay = item.scheduledAt()
-                            .atZoneSameInstant(VIETNAM_ZONE).toLocalDate();
-                    LocalDate actualDay = item.publishedAt()
-                            .atZoneSameInstant(VIETNAM_ZONE).toLocalDate();
-                    if (item.originalDate().isBefore(scheduledDay)
-                            && !item.originalDate().equals(actualDay)) {
-                        LocalDate sheetDay = parseSheetDate(currentF);
-                        if (sheetDay == null || (!sheetDay.equals(item.originalDate())
+
+                boolean dateEligible =
+                        (doFb && fbUrl != null)
+                                || (doThreads
+                                && threadsPublished
+                                && !fbPublished);
+
+                // SH26 may not persist source_publish_date.
+                // Fall back to the original date shown in Sheet F.
+                LocalDate originalDay =
+                        item.originalDate() != null
+                                ? item.originalDate()
+                                : parseSheetDate(currentF);
+
+                if (dateEligible
+                        && originalDay != null
+                        && item.scheduledAt() != null
+                        && item.publishedAt() != null) {
+
+                    LocalDate scheduledDay =
+                            item.scheduledAt()
+                                    .atZoneSameInstant(VIETNAM_ZONE)
+                                    .toLocalDate();
+
+                    LocalDate actualDay =
+                            item.publishedAt()
+                                    .atZoneSameInstant(VIETNAM_ZONE)
+                                    .toLocalDate();
+
+                    // Only update an overdue/rescheduled date.
+                    if (originalDay.isBefore(scheduledDay)
+                            && !originalDay.equals(actualDay)) {
+
+                        LocalDate sheetDay =
+                                parseSheetDate(currentF);
+
+                        // Protect unexpected Sheet modifications.
+                        if (sheetDay == null
+                                || (!sheetDay.equals(originalDay)
                                 && !sheetDay.equals(actualDay))) {
+
                             conflicts++;
-                            errors.add("row " + item.row()
-                                    + ": column F differs from original/rescheduled date; manual review");
+
+                            errors.add(
+                                    "row " + item.row()
+                                            + ": column F differs from original/rescheduled date; manual review"
+                            );
+
                             continue;
                         }
+
                         newF = SHEET_DATE.format(actualDay);
                     }
                 }
-                if (doFb && fbUrl != null && !currentI.isBlank() && !currentI.equals(fbUrl)) {
+
+                // =========================================
+                // COLUMN I: FACEBOOK URL
+                // =========================================
+
+                if (doFb
+                        && fbUrl != null
+                        && !currentI.isBlank()
+                        && !currentI.equals(fbUrl)) {
+
                     conflicts++;
-                    errors.add("row " + item.row() + ": existing Facebook URL differs; manual review");
+
+                    errors.add(
+                            "row " + item.row()
+                                    + ": existing Facebook URL differs; manual review"
+                    );
+
                     continue;
                 }
-                if (doThreads && threadsUrl != null && !currentH.isBlank() && !currentH.equals(threadsUrl)) {
+
+                // =========================================
+                // COLUMN H: THREADS URL
+                // =========================================
+
+                if (doThreads
+                        && threadsUrl != null
+                        && !currentH.isBlank()
+                        && !currentH.equals(threadsUrl)) {
+
                     conflicts++;
-                    errors.add("row " + item.row() + ": existing Threads URL differs; manual review");
+
+                    errors.add(
+                            "row " + item.row()
+                                    + ": existing Threads URL differs; manual review"
+                    );
+
                     continue;
                 }
-                String newH = doThreads && currentH.isBlank() && threadsUrl != null ? threadsUrl : currentH;
-                String newI = doFb && fbUrl != null ? fbUrl : currentI;
-                // G is shared: published means at least one platform has evidence.
-                // Never reset G back to unpublished when the other platform is missing.
-                boolean hasFacebookEvidence = (doFb && fbPublished && fbUrl != null)
-                        || looksLikeFacebookLink(newI);
-                boolean hasThreadsEvidence = looksLikeThreadsLink(newH);
-                String newG = (hasFacebookEvidence || hasThreadsEvidence) ? "Đã đăng" : currentG;
-                String note = "Single status G (any platform); Threads H; Facebook I";
-                if (!newF.equals(currentF)) note += "; overdue date F -> " + newF;
-                if (doFb && fbPublished && fbUrl == null)
-                    note += "; Facebook external ID cannot form a verified URL; no Facebook status write";
-                if (doThreads && threadsPublished && threadsUrl == null)
-                    note += "; Threads ID has no verified permalink; H preserved";
-                rows.add(new Item(item.row(), fbPublished, threadsPublished, newI, newH, note));
-                boolean changed = !newF.equals(currentF) || !newG.equals(currentG)
-                        || !newH.equals(currentH) || !newI.equals(currentI);
+
+                String newH =
+                        doThreads
+                                && currentH.isBlank()
+                                && threadsUrl != null
+                                ? threadsUrl
+                                : currentH;
+
+                String newI =
+                        doFb && fbUrl != null
+                                ? fbUrl
+                                : currentI;
+
+                // =========================================
+                // COLUMN G: COMMON PUBLISHED STATUS
+                // =========================================
+
+                boolean hasFacebookEvidence =
+                        (doFb && fbPublished && fbUrl != null)
+                                || looksLikeFacebookLink(newI);
+
+                boolean hasThreadsEvidence =
+                        looksLikeThreadsLink(newH);
+
+                String newG =
+                        (hasFacebookEvidence || hasThreadsEvidence)
+                                ? "Đã đăng"
+                                : currentG;
+
+                String note =
+                        "Single status G (any platform); Threads H; Facebook I";
+
+                if (!newF.equals(currentF)) {
+                    note += "; overdue date F -> " + newF;
+                }
+
+                if (doFb && fbPublished && fbUrl == null) {
+                    note +=
+                            "; Facebook external ID cannot form a verified URL; no Facebook status write";
+                }
+
+                if (doThreads
+                        && threadsPublished
+                        && threadsUrl == null) {
+                    note +=
+                            "; Threads ID has no verified permalink; H preserved";
+                }
+
+                rows.add(
+                        new Item(
+                                item.row(),
+                                fbPublished,
+                                threadsPublished,
+                                newI,
+                                newH,
+                                note
+                        )
+                );
+
+                boolean changed =
+                        !newF.equals(currentF)
+                                || !newG.equals(currentG)
+                                || !newH.equals(currentH)
+                                || !newI.equals(currentI);
+
+                // =========================================
+                // NO CHANGE
+                // =========================================
+
                 if (!changed) {
                     unchanged++;
+
                     if (!dryRun) {
-                        if (doFb && fbUrl != null) audit(c, item.row(), "FACEBOOK_PAGE", item.facebookId(), fbUrl);
-                        if (doThreads && threadsPublished)
-                            audit(c, item.row(), "THREADS", item.threadsId(), threadsUrl);
+                        if (doFb && fbUrl != null) {
+                            audit(
+                                    c,
+                                    item.row(),
+                                    "FACEBOOK_PAGE",
+                                    item.facebookId(),
+                                    fbUrl
+                            );
+                        }
+
+                        if (doThreads && threadsPublished) {
+                            audit(
+                                    c,
+                                    item.row(),
+                                    "THREADS",
+                                    item.threadsId(),
+                                    threadsUrl
+                            );
+                        }
                     }
+
                     continue;
                 }
-                if (dryRun) continue;
-                // Do not create/validate the Facebook I header for Threads-only writes.
-                if (doFb && fbUrl != null) validateHeaders(c, scopedToken);
-                writeCells(c, item.row(), existing, newF, newG, newH, newI, scopedToken);
+
+                // Preview never writes to Sheets.
+                if (dryRun) {
+                    continue;
+                }
+
+                // =========================================
+                // GOOGLE SHEETS WRITEBACK
+                // =========================================
+
+                if (doFb && fbUrl != null) {
+                    validateHeaders(c, scopedToken);
+                }
+
+                writeCells(
+                        c,
+                        item.row(),
+                        existing,
+                        newF,
+                        newG,
+                        newH,
+                        newI,
+                        scopedToken
+                );
+
                 written++;
-                if (doFb && fbUrl != null) audit(c, item.row(), "FACEBOOK_PAGE", item.facebookId(), fbUrl);
-                if (doThreads && threadsPublished)
-                    audit(c, item.row(), "THREADS", item.threadsId(), threadsUrl);
+
+                if (doFb && fbUrl != null) {
+                    audit(
+                            c,
+                            item.row(),
+                            "FACEBOOK_PAGE",
+                            item.facebookId(),
+                            fbUrl
+                    );
+                }
+
+                if (doThreads && threadsPublished) {
+                    audit(
+                            c,
+                            item.row(),
+                            "THREADS",
+                            item.threadsId(),
+                            threadsUrl
+                    );
+                }
+
             } catch (Exception e) {
                 conflicts++;
-                errors.add("row " + item.row() + ": " + shortMessage(e));
+
+                errors.add(
+                        "row " + item.row()
+                                + ": " + shortMessage(e)
+                );
             }
         }
-        return new Report(c.id(), dryRun, rows.size(), written, unchanged, conflicts,
-                List.copyOf(rows), List.copyOf(errors));
+
+        return new Report(
+                c.id(),
+                dryRun,
+                rows.size(),
+                written,
+                unchanged,
+                conflicts,
+                List.copyOf(rows),
+                List.copyOf(errors)
+        );
     }
+
 
     private void audit(Connection c, int row, String platform, String externalId, String url) {
         db.update("""
@@ -426,18 +657,31 @@ public class GoogleSheetsWritebackService {
         sendUpdates(c, updates, token);
     }
 
+
     private static LocalDate parseSheetDate(String raw) {
-        if (raw == null || raw.isBlank()) return null;
-        try {
-            return LocalDate.parse(raw.trim(), SHEET_DATE);
-        } catch (DateTimeParseException ignored) {
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+
+        String value = raw.trim();
+
+        List<DateTimeFormatter> formats = List.of(
+                DateTimeFormatter.ofPattern("dd/MM/uuuu"),
+                DateTimeFormatter.ofPattern("dd/MM/uuuu H:mm"),
+                DateTimeFormatter.ISO_LOCAL_DATE
+        );
+
+        for (DateTimeFormatter format : formats) {
             try {
-                return LocalDate.parse(raw.trim(), DateTimeFormatter.ISO_LOCAL_DATE);
-            } catch (DateTimeParseException ignoredIso) {
-                return null; // never overwrite an unrecognized date
+                return format.parse(value, LocalDate::from);
+            } catch (DateTimeParseException ignored) {
+                // Try the next date format.
             }
         }
+
+        return null;
     }
+
 
     private Map<String, Object> valueRange(Connection c, String range, String text) {
         return Map.of("range", tab(c) + range, "majorDimension", "ROWS", "values", List.of(List.of(text)));

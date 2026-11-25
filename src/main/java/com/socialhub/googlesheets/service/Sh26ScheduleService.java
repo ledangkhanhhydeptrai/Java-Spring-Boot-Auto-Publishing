@@ -189,25 +189,45 @@ public class Sh26ScheduleService {
                             + earliestNonOverlappingDate(workspaceId));
     }
 
+
     private LocalDate earliestNonOverlappingDate(UUID workspaceId) {
-        List<Sh26BulkDto.Imported> existing = drafts.existingImports(workspaceId);
-        LocalDate result = LocalDate.now(ZoneId.of("Asia/Ho_Chi_Minh")).plusDays(1);
+        ZoneId zone = ZoneId.of("Asia/Ho_Chi_Minh");
+
+        // Cho phép lên lịch hôm nay nếu không có Jobs xung đột.
+        LocalDate result = LocalDate.now(zone);
+
+        List<Sh26BulkDto.Imported> existing =
+                drafts.existingImports(workspaceId);
+
         for (Sh26BulkDto.Imported entry : existing) {
             Instant last = db.queryForObject("""
-                    SELECT MAX(j.scheduled_at) FROM publishing_jobs j
-                    WHERE j.social_account_id=? AND j.status IN ('PENDING','PROCESSING','RETRY')
-                      AND j.scheduled_at IS NOT NULL
-                    """, (rs, idx) -> {
-                java.sql.Timestamp stamp = rs.getTimestamp(1);
-                return stamp == null ? null : stamp.toInstant();
-            }, entry.socialAccountId());
+                            SELECT MAX(j.scheduled_at)
+                            FROM publishing_jobs j
+                            WHERE j.social_account_id = ?
+                              AND j.status IN ('PENDING', 'PROCESSING', 'RETRY')
+                              AND j.scheduled_at IS NOT NULL
+                            """,
+                    (rs, idx) -> {
+                        java.sql.Timestamp stamp = rs.getTimestamp(1);
+                        return stamp == null ? null : stamp.toInstant();
+                    },
+                    entry.socialAccountId()
+            );
+
             if (last != null) {
-                LocalDate next = last.atZone(ZoneId.of("Asia/Ho_Chi_Minh")).toLocalDate().plusDays(1);
-                if (next.isAfter(result)) result = next;
+                LocalDate next = last.atZone(zone)
+                        .toLocalDate()
+                        .plusDays(1);
+
+                if (next.isAfter(result)) {
+                    result = next;
+                }
             }
         }
+
         return result;
     }
+
 
     private List<Sh26BulkDto.Imported> exactImports(UUID workspaceId) {
         List<Sh26BulkDto.Imported> found = drafts.existingImports(workspaceId);
