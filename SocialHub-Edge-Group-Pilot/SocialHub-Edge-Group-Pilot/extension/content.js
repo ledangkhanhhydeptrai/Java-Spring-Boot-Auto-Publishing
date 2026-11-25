@@ -11,6 +11,7 @@
     let prepared = null;
     let inFlight = false;
     let filling = false; // Prevent overlapping Fill calls on the same tab.
+    let mediaAttempted = false; // Never upload files twice to one draft.
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
     const taskRegex = /^[a-f0-9-]{36}$/;
     const isVisible = el => Boolean(el && el.getClientRects().length && getComputedStyle(el).visibility !== 'hidden');
@@ -229,6 +230,7 @@
 
     function paragraphText(paragraph) {
         const parts = [];
+
         function visit(node) {
             if (node.nodeType === Node.TEXT_NODE) {
                 parts.push(node.nodeValue || '');
@@ -236,12 +238,16 @@
             }
             if (node.nodeType !== Node.ELEMENT_NODE ||
                 node.getAttribute('aria-hidden') === 'true' || node.hidden) return;
-            if (node.tagName === 'BR') { parts.push('\n'); return; }
+            if (node.tagName === 'BR') {
+                parts.push('\n');
+                return;
+            }
             for (const child of node.childNodes) visit(child);
         }
+
         const hasContent = [...paragraph.childNodes].some(node =>
             node.nodeType === Node.TEXT_NODE ? Boolean(node.nodeValue) :
-            node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BR');
+                node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BR');
         if (!hasContent) return '';
         for (const node of paragraph.childNodes) visit(node);
         return parts.join('').replace(/\n$/, '');
@@ -329,9 +335,186 @@
         if (!current.contains(selection.anchorNode))
             throw Error('Con trỏ không nằm trong Facebook Composer; KHÔNG nhập');
         typedOnceInTab = true; // no second attempt even if CDP fails halfway
-        await callTyping({groupId: task.groupId, taskId: task.id,
-            digest: task.digest, text: content});
+        await callTyping({
+            groupId: task.groupId, taskId: task.id,
+            digest: task.digest, text: content
+        });
         await checkRendered(expected, 'browser-keyboard insertion');
+    }
+
+    // IMAGE-PILOT-v11: explicit file chooser selection with browser CDP.
+    // No DOM replacement of Lexical, no fake file input events, no automatic retries.
+    const imageControl = /(?:Ảnh\s*\/?\s*video|Thêm ảnh|Photo\s*\/?\s*video|Add photo|Add photos)/i;
+
+    function fileInputs() {
+        return all(document, 'input[type="file"]').filter(el => el.isConnected && !el.disabled);
+    }
+
+    function imageAccepts(input) {
+        const accept = (input.getAttribute('accept') || '').toLowerCase();
+        return !accept || /image|\.jpe?g|\.png|\.webp/.test(accept);
+    }
+
+    async function findImageInput(scope, expectedCount) {
+        const initial = fileInputs();
+        let eligible = initial.filter(input => imageAccepts(input) &&
+            (expectedCount === 1 || input.multiple) && scope.contains(input));
+        if (eligible.length === 1) return eligible[0];
+        if (eligible.length > 1) throw new Error('Có nhiều ô tải ảnh trong Composer; KHÔNG chọn bừa');
+
+        // Some Facebook revisions create the hidden input on an accessible
+        // Photo/video button click. Require an unambiguous, visible button.
+        const controls = all(scope, 'button,[role="button"]').filter(el => isVisible(el) &&
+            imageControl.test([el.getAttribute('aria-label'), el.getAttribute('title'), txt(el)]
+                .filter(Boolean).join(' ')));
+        if (controls.length !== 1)
+            throw new Error('Không xác định duy nhất nút Ảnh/video trong Composer. ' +
+                'Nếu không có, mở nút Ảnh/video trên Facebook rồi kiểm tra lại, KHÔNG đăng');
+        controls[0].click();
+        await delay(800);
+        const after = fileInputs().filter(input => imageAccepts(input) &&
+            (expectedCount === 1 || input.multiple));
+        eligible = after.filter(input => scope.contains(input) || !initial.includes(input));
+        if (eligible.length !== 1)
+            throw new Error('Không tìm được một input ảnh duy nhất sau khi mở Ảnh/video; KHÔNG đăng');
+        return eligible[0];
+    }
+
+    function videoAccepts(input) {
+        const accept = (input.getAttribute('accept') || '').toLowerCase();
+        return !accept || /video|\.mp4/.test(accept);
+    }
+
+    async function findVideoInput(scope) {
+        const before = fileInputs();
+        let matching = before.filter(input => scope.contains(input) && videoAccepts(input));
+        if (matching.length === 1) return matching[0];
+        if (matching.length > 1) throw Error('Nhiều ô chọn video trong Composer; KHÔNG chọn bừa');
+        const controls = all(scope, 'button,[role="button"]').filter(el => isVisible(el) &&
+            imageControl.test([el.getAttribute('aria-label'), el.getAttribute('title'), txt(el)]
+                .filter(Boolean).join(' ')));
+        if (controls.length !== 1)
+            throw Error('Không thấy một nút Ảnh/video duy nhất; mở thủ công đúng Composer rồi kiểm tra lại');
+        controls[0].click();
+        await delay(800);
+        matching = fileInputs().filter(input => videoAccepts(input) &&
+            (scope.contains(input) || !before.includes(input)));
+        if (matching.length !== 1)
+            throw Error('Không xác định được một input VIDEO MP4 sau khi mở Ảnh/video');
+        return matching[0];
+    }
+
+    function callVideoAttach(request) {
+        return new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage({kind: 'GROUP_ATTACH_VIDEO', ...request}, response => {
+                if (chrome.runtime.lastError) return reject(Error(chrome.runtime.lastError.message));
+                if (!response?.ok) return reject(Error(response?.error || 'Edge không chọn được video'));
+                resolve(response.value);
+            });
+        });
+    }
+
+    async function attachVideo(request) {
+        if (filling || inFlight || !prepared) throw Error('Chưa có bản nháp hợp lệ');
+        const current = prepared;
+        if (!request.preview || request.preview.id !== current.id ||
+            request.preview.digest !== current.digest || current.mediaKind !== 'VIDEO' ||
+            current.mediaCount !== 1)
+            throw Error('Không phải một Task VIDEO hợp lệ');
+        if (mediaAttempted) throw Error('Đã thử chọn media trong tab này; không Retry');
+        assertGroup(current.groupId);
+        const {scope, editor} = editorForComposer();
+        if (!scope || !editor || !exactEditorContent(editor, current.expected))
+            throw Error('Nội dung bản nháp thay đổi; không chọn video');
+        const input = await findVideoInput(scope);
+        const marker = crypto.randomUUID();
+        input.setAttribute('data-socialhub-video-target', marker);
+        mediaAttempted = true;
+        const result = await callVideoAttach({
+            taskId: current.id, groupId: current.groupId,
+            digest: current.digest, inputMarker: marker, count: 1
+        });
+        // FB may clear its file input after accepting the upload. Require
+        // explicit operator check of the completed video/player before LIVE.
+        if (result.commandAccepted !== true || result.expectedCount !== 1)
+            throw Error('CDP chưa xác nhận lệnh chọn MP4; KHÔNG đăng');
+        await delay(900);
+        const check = editorForComposer();
+        if (!check.editor || !exactEditorContent(check.editor, current.expected))
+            throw Error('Facebook thay đổi nội dung sau khi chọn video; KHÔNG đăng');
+        current.mediaAttached = true;
+        return {message: 'Đã chọn MP4 vào Composer. Đợi Facebook xử lý XONG và kiểm tra video/thumbnail bằng mắt trước LIVE.'};
+    }
+
+    async function acknowledgeVideo(request) {
+        if (!prepared || prepared.mediaKind !== 'VIDEO' || !prepared.mediaAttached ||
+            request.preview?.id !== prepared.id || request.preview?.digest !== prepared.digest)
+            throw Error('Task/video không khớp hoặc chưa đính kèm');
+        prepared.mediaReviewed = true; // Operator confirmation, NOT automatic upload proof.
+        return {message: 'Đã xác nhận video được Facebook hiển thị và xử lý xong (thủ công)'};
+    }
+
+    function callImageAttach(request) {
+        return new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage({kind: 'GROUP_ATTACH_IMAGES', ...request}, response => {
+                if (chrome.runtime.lastError) return reject(Error(chrome.runtime.lastError.message));
+                if (!response?.ok) return reject(Error(response?.error || 'Không thể chọn ảnh qua Edge CDP'));
+                resolve(response.value);
+            });
+        });
+    }
+
+    async function attachImages(request) {
+        if (filling || inFlight || !prepared) throw Error('Chưa có bản nháp hợp lệ hoặc đang xử lý');
+        const current = prepared;
+        const {preview} = request;
+        if (!preview || preview.id !== current.id || preview.digest !== current.digest ||
+            preview.groupId !== current.groupId || current.mediaKind !== 'IMAGE' ||
+            preview.imageCount !== current.imageCount ||
+            !Number.isInteger(current.imageCount) || current.imageCount < 1 || current.imageCount > 10)
+            throw Error('Preview/ảnh/Task không khớp; KHÔNG đính kèm');
+        if (mediaAttempted) throw Error('Đã thử chọn ảnh trong tab này; KHÔNG tự Retry');
+        assertGroup(current.groupId);
+        const {scope, editor} = editorForComposer();
+        if (!scope || !editor || !exactEditorContent(editor, current.expected))
+            throw Error('Nội dung Composer thay đổi; KHÔNG tải ảnh');
+        const input = await findImageInput(scope, current.imageCount);
+        const inputMarker = crypto.randomUUID();
+        input.setAttribute('data-socialhub-media-target', inputMarker);
+        mediaAttempted = true; // one attempt per draft even after an unknown CDP failure
+        const result = await callImageAttach({
+            taskId: current.id, groupId: current.groupId,
+            digest: current.digest, inputMarker, count: current.imageCount
+        });
+        // Facebook may unmount/reset its <input type="file"> once upload starts.
+        // Successful CDP selection is necessary but NOT proof of completed upload.
+        // Manual verification in GROUP_ACK_IMAGES remains mandatory before LIVE.
+        if (result.commandAccepted !== true || result.expectedCount !== current.imageCount)
+            throw Error('CDP không xác nhận đã chuyển đủ ảnh vào Composer; KHÔNG đăng');
+        await delay(1300);
+        const recheck = editorForComposer();
+        if (!recheck.editor || !exactEditorContent(recheck.editor, current.expected))
+            throw Error('Nội dung thay đổi sau khi chọn ảnh; KHÔNG đăng');
+        current.imageAttached = true;
+        current.mediaAttached = true;
+        return {
+            message: 'Đã chọn ' + current.imageCount + ' ảnh qua Edge. ' +
+                'Đợi Facebook tải xong; phải NHÌN THẤY đủ ' + current.imageCount +
+                ' thumbnail trước khi xác nhận thủ công. Chưa đăng.'
+        };
+    }
+
+    async function acknowledgeImages(request) {
+        if (!prepared || !prepared.imageAttached || !request.preview ||
+            request.preview.id !== prepared.id ||
+            request.preview.digest !== prepared.digest ||
+            request.preview.imageCount !== prepared.imageCount)
+            throw Error('Không đủ bằng chứng đã đính kèm ảnh; KHÔNG đăng');
+        // Operator has visually confirmed all thumbnails. This is NOT an
+        // automated proof of successful Facebook upload.
+        prepared.imagesReviewed = true;
+        prepared.mediaReviewed = true;
+        return {message: 'Đã ghi nhận kiểm tra thủ công số ảnh'};
     }
 
     function publishButton(scope) {
@@ -389,16 +572,33 @@
         filling = true;
         prepared = null; // No publish if any subsequent validation fails.
         try {
-            const {id, groupId, content, marker, digest} = request.preview || {};
+            const {id, groupId, content, marker, digest, imageCount, mediaKind, mediaCount} = request.preview || {};
             if (!taskRegex.test(id || '') || !/^\d+$/.test(groupId || '') || !digest ||
-                typeof content !== 'string' ||
+                typeof content !== 'string' || !Number.isInteger(imageCount) || imageCount < 0 || imageCount > 10 ||
+                !['TEXT', 'IMAGE', 'VIDEO'].includes(mediaKind) || !Number.isInteger(mediaCount) || mediaCount < 0 || mediaCount > 10 ||
+                (mediaKind === 'IMAGE' && (mediaCount !== imageCount || imageCount < 1)) ||
+                (mediaKind === 'VIDEO' && (imageCount !== 0 || mediaCount !== 1)) ||
+                (mediaKind === 'TEXT' && mediaCount !== 0) ||
                 marker !== '[SocialHub Group Pilot ' + id.slice(0, 8) + ']')
                 throw new Error('Preview không hợp lệ');
             assertGroup(groupId);
             const expected = content.trim() + '\n\n' + marker;
             const {editor} = await openComposer();
             await setEditor(editor, expected, {id, groupId, digest});
-            prepared = {id, groupId, expected, digest, marker};
+            prepared = {
+                id,
+                groupId,
+                expected,
+                digest,
+                marker,
+                imageCount,
+                imageAttached: false,
+                imagesReviewed: false,
+                mediaKind,
+                mediaCount,
+                mediaAttached: false,
+                mediaReviewed: false
+            };
             return {message: 'Đã nạp và kiểm tra bản nháp. Hãy xem lại nội dung trước khi đăng'};
         } finally {
             filling = false;
@@ -410,6 +610,8 @@
         if (!prepared) throw new Error('Chưa nạp bài trong tab này');
         const current = prepared;
         assertGroup(current.groupId);
+        if (current.mediaCount > 0 && (!current.mediaAttached || !current.mediaReviewed))
+            throw new Error('Media chưa được đính kèm và kiểm tra; KHÔNG đăng');
         const {scope, editor} = editorForComposer();
         if (!editor || !exactEditorContent(editor, current.expected))
             throw new Error('Nội dung đã thay đổi. Không đăng để tránh nhầm bài');
@@ -428,7 +630,9 @@
             const task = await callBridge('/claim', {digest: current.digest});
             claimed = true;
             if (task.id !== current.id || task.groupId !== current.groupId ||
-                (task.content.trim() + '\n\n' + task.marker) !== current.expected)
+                (task.content.trim() + '\n\n' + task.marker) !== current.expected ||
+                task.imageCount !== current.imageCount ||
+                task.mediaKind !== current.mediaKind || task.mediaCount !== current.mediaCount)
                 throw new Error('Claim payload differs from preview; DO NOT publish');
             // One click only, no catch-based retry even on timeout or UI change.
             clicked = true;
@@ -469,8 +673,12 @@
     }
 
     chrome.runtime.onMessage.addListener((msg, sender, respond) => {
-        if (msg?.kind !== 'GROUP_FILL' && msg?.kind !== 'GROUP_PUBLISH') return;
-        const op = msg.kind === 'GROUP_FILL' ? fill(msg) : publish();
+        if (!['GROUP_FILL', 'GROUP_ATTACH_MEDIA', 'GROUP_ACK_IMAGES', 'GROUP_ATTACH_VIDEO', 'GROUP_ACK_VIDEO', 'GROUP_PUBLISH'].includes(msg?.kind)) return;
+        const op = msg.kind === 'GROUP_FILL' ? fill(msg) :
+            msg.kind === 'GROUP_ATTACH_MEDIA' ? attachImages(msg) :
+                msg.kind === 'GROUP_ACK_IMAGES' ? acknowledgeImages(msg) :
+                    msg.kind === 'GROUP_ATTACH_VIDEO' ? attachVideo(msg) :
+                        msg.kind === 'GROUP_ACK_VIDEO' ? acknowledgeVideo(msg) : publish();
         op.then(result => respond({ok: true, ...result}))
             .catch(error => respond({ok: false, error: String(error.message || error)}));
         return true;

@@ -1,21 +1,135 @@
 <!doctype html>
-<html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SocialHub Group Pilot</title>
-<style>
-:root {color-scheme:dark} body{margin:0;min-width:350px;max-width:410px;background:#0c1328;color:#eff6ff;font:13px/1.5 system-ui;padding:17px;box-sizing:border-box} h1{font-size:18px;margin:0 0 5px} p{color:#b7c5df;margin:0 0 12px} label{display:block;font-weight:600;margin:10px 0 5px} input{box-sizing:border-box;width:100%;border:1px solid #40516f;border-radius:8px;padding:10px;background:#121e35;color:white} button{width:100%;margin-top:9px;padding:11px 12px;cursor:pointer;border:1px solid #43628f;border-radius:8px;background:#172743;color:white;font-weight:700} button.primary{background:#2e75fc;border-color:#2e75fc} button:disabled{opacity:.4;cursor:not-allowed} .preview{border:1px solid #334767;border-radius:10px;padding:11px;margin:12px 0;display:none;white-space:pre-wrap;max-height:230px;overflow:auto;overflow-wrap:anywhere} .hint{font-size:11px;color:#9db1d1;margin:8px 0} #message{white-space:pre-wrap;overflow-wrap:anywhere;background:#1c2840;border-radius:8px;padding:9px;display:none;margin-top:12px} .danger{color:#ffc4bc}
-</style></head><body>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>SocialHub Group Pilot</title>
+    <style>
+        :root {
+            color-scheme: dark
+        }
+
+        body {
+            margin: 0;
+            min-width: 350px;
+            max-width: 410px;
+            background: #0c1328;
+            color: #eff6ff;
+            font: 13px/1.5 system-ui;
+            padding: 17px;
+            box-sizing: border-box
+        }
+
+        h1 {
+            font-size: 18px;
+            margin: 0 0 5px
+        }
+
+        p {
+            color: #b7c5df;
+            margin: 0 0 12px
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin: 10px 0 5px
+        }
+
+        input {
+            box-sizing: border-box;
+            width: 100%;
+            border: 1px solid #40516f;
+            border-radius: 8px;
+            padding: 10px;
+            background: #121e35;
+            color: white
+        }
+
+        button {
+            width: 100%;
+            margin-top: 9px;
+            padding: 11px 12px;
+            cursor: pointer;
+            border: 1px solid #43628f;
+            border-radius: 8px;
+            background: #172743;
+            color: white;
+            font-weight: 700
+        }
+
+        button.primary {
+            background: #2e75fc;
+            border-color: #2e75fc
+        }
+
+        button:disabled {
+            opacity: .4;
+            cursor: not-allowed
+        }
+
+        .preview {
+            border: 1px solid #334767;
+            border-radius: 10px;
+            padding: 11px;
+            margin: 12px 0;
+            display: none;
+            white-space: pre-wrap;
+            max-height: 230px;
+            overflow: auto;
+            overflow-wrap: anywhere
+        }
+
+        .hint {
+            font-size: 11px;
+            color: #9db1d1;
+            margin: 8px 0
+        }
+
+        #message {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            background: #1c2840;
+            border-radius: 8px;
+            padding: 9px;
+            display: none;
+            margin-top: 12px
+        }
+
+        .danger {
+            color: #ffc4bc
+        }
+    </style>
+</head>
+<body>
 <h1>SocialHub • Group Pilot</h1>
 <p>Chỉ 1 Task đã duyệt • Facebook đang đăng nhập trên Edge • Không tự đăng khi khởi chạy.</p>
 <label for="pair">Mã ghép nối từ PowerShell</label>
 <input type="password" id="pair" placeholder="Dán mã từ bridge.py" autocomplete="off">
 <button id="connect">Kết nối Bridge</button>
-<button id="preview">1. Xem trước Task (không đổi trạng thái)</button>
+<button id="inspectImages">0. Kiểm tra ảnh/video/lịch PENDING (chỉ đọc)</button>
+<button id="preview">1. Xem trước Task READY (không đổi trạng thái)</button>
 <div class="preview" id="task"></div>
 <button id="grantKeyboard">Cho phép nhập bằng bàn phím Edge (CDP)</button>
-<div class="hint">Quyền debugger rất mạnh: Edge có thể hiện cảnh báo gỡ lỗi. Chỉ cấp trên máy và Group thử nghiệm của bạn. Đóng DevTools của tab Facebook trước khi nạp.</div>
+<div class="hint">Quyền debugger rất mạnh: Edge có thể hiện cảnh báo gỡ lỗi. Chỉ cấp trên máy và Group thử nghiệm của
+    bạn. Đóng DevTools của tab Facebook trước khi nạp.
+</div>
 <button id="fill" disabled>2. Nạp bản nháp vào Facebook Group</button>
-<button class="primary" id="publish" disabled>3. Đăng đúng 1 bài (LIVE)</button>
-<div class="hint">Trước khi đăng: mở đúng Group trong Edge, đóng bản nháp “Hello” nếu còn; kiểm tra nội dung hiển thị. Không tự Retry nếu không chắc chắn kết quả.</div>
+<button id="attachImages" disabled>3A. Đính kèm ảnh (1–10 ảnh)</button>
+<button id="ackImages" disabled>4A. Đã kiểm tra đủ ảnh trên Facebook</button>
+<div class="hint">Xác minh thủ công sau khi nhìn thấy đầy đủ thumbnail; video cần xử lý xong trước khi tiếp tục. Không
+    bấm nếu đang tải hoặc thiếu ảnh. Không tự động đăng.
+</div>
+<button id="attachVideo" disabled>3B. Đính kèm video MP4 (1 file)</button>
+<button id="ackVideo" disabled>4B. Tôi đã xem video xử lý xong trên Facebook</button>
+<div class="hint">Video Group có thể được Facebook hiển thị dạng Reel; Pilot KHÔNG tự chọn trang tạo Reel riêng, không
+    đảm bảo video đăng thành Reel. Nếu không thấy đúng preview: KHÔNG ĐĂNG.
+</div>
+<button class="primary" id="publish" disabled>5. Đăng đúng 1 bài (LIVE)</button>
+<div class="hint">Trước khi đăng: mở đúng Group trong Edge, đóng bản nháp “Hello” nếu còn; kiểm tra nội dung hiển thị.
+    Không tự Retry nếu không chắc chắn kết quả.
+</div>
 <div id="message" role="status"></div>
 <script src="popup.js"></script>
-</body></html>
+</body>
+</html>

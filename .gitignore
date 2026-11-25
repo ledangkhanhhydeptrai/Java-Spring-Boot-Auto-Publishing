@@ -6,3 +6,4 @@ group-worker/browser-profile/
 __pycache__/
 *.pyc
 static/
+/SocialHub-Group-Media-v13.2-NoJavaOverwrite/
