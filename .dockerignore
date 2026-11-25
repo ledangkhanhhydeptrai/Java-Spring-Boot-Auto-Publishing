@@ -1,0 +1,21 @@
+if (!(Test-Path ".\.dockerignore")) {
+@'
+.git
+.idea
+target
+**/target
+*.iml
+*.rar
+*.zip
+*.dump
+.env
+.env.*
+node_modules
+SocialHub-Group-Media-v13.2-NoJavaOverwrite/
+SocialHub-Edge-Group-Pilot/
+'@ | Set-Content -LiteralPath ".\.dockerignore" -Encoding ascii
+}
+
+Test-Path ".\Dockerfile"
+Test-Path ".\.dockerignore"
+Test-Path ".\pom.xml"
