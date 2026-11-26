@@ -26,6 +26,14 @@ public class GoogleSheetsWritebackController {
         return service.preview(workspaceId, connectionId, importId, fromRow, toRow, limit, platform);
     }
 
+    @GetMapping("/preview-all")
+    public GoogleSheetsWritebackService.Report previewAll(
+            @PathVariable UUID workspaceId, @PathVariable UUID connectionId,
+            @RequestParam(defaultValue = "FACEBOOK_PAGE") String platform) {
+        access.admin(workspaceId);
+        return service.previewAll(workspaceId, connectionId, platform);
+    }
+
     @PostMapping("/sync")
     public GoogleSheetsWritebackService.Report sync(
             @PathVariable UUID workspaceId, @PathVariable UUID connectionId,

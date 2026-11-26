@@ -40,6 +40,9 @@ import java.util.*;
 public class GoogleSheetsWritebackService {
     private static final String SHEETS_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
     private static final int BATCH_LIMIT = 50;
+    private static final int PREVIEW_LIMIT = 10_000;
+    private static final int READ_SPAN = 200;
+    private static final int RANGES_PER_REQUEST = 20;
     private static final ZoneId VIETNAM_ZONE = ZoneId.of("Asia/Ho_Chi_Minh");
     private static final DateTimeFormatter SHEET_DATE = DateTimeFormatter.ofPattern("dd/MM/uuuu");
     private final JdbcTemplate db;
@@ -48,6 +51,18 @@ public class GoogleSheetsWritebackService {
 
     @Value("${app.google-sheets.writeback-worker-enabled:false}")
     private boolean workerEnabled;
+
+    // Per-poll budget, not a limit on the total number of source rows.
+    @Value("${app.google-sheets.writeback-max-rows-per-poll:10}")
+    private int maxRowsPerPoll;
+    private int nextLinkIndex;
+    private final Map<EnabledLink, Integer> lastAttemptedRows = new HashMap<>();
+
+    private record AuditKey(int row, String platform) {
+    }
+
+    private record AuditValue(String externalId, String url) {
+    }
 
     public record SwitchStatus(UUID connectionId, boolean writebackEnabled) {
     }
@@ -64,7 +79,8 @@ public class GoogleSheetsWritebackService {
     }
 
     private record Candidate(int row, String content,
-                             String facebookId, String threadsId, String threadsPublishedUrl,
+                             String facebookId, String facebookPublishedUrl, String threadsId,
+                             String threadsPublishedUrl,
                              LocalDate originalDate, OffsetDateTime scheduledAt,
                              OffsetDateTime publishedAt) {
     }
@@ -88,6 +104,16 @@ public class GoogleSheetsWritebackService {
         return execute(connection(workspace, id), importId, fromRow, toRow, limit, platform, false);
     }
 
+    public Report previewAll(UUID workspace, UUID id, String platform) {
+        if (platform == null || !Set.of("FACEBOOK_PAGE", "THREADS", "ALL").contains(platform))
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Invalid platform");
+        Connection c = connection(workspace, id);
+        Boolean linked = db.queryForObject("SELECT EXISTS(SELECT 1 FROM google_sheet_import_links WHERE connection_id=? AND workspace_id=? AND enabled=TRUE)", Boolean.class, c.id(), c.workspaceId());
+        if (!Boolean.TRUE.equals(linked))
+            throw new ApiException(HttpStatus.CONFLICT, "No enabled imports linked to this Sheet");
+        return executeCandidates(c, candidates(c, null, 2, 10001), PREVIEW_LIMIT, platform, true);
+    }
+
     private void validateRequest(UUID workspace, UUID importId, int fromRow, int toRow,
                                  int limit, String platform) {
         if (importId == null || fromRow < 2 || toRow < fromRow || toRow > 10001
@@ -107,7 +133,7 @@ public class GoogleSheetsWritebackService {
 
     // The worker uses the DB-backed V30 link table; no globally hardcoded Import ID.
     // Keep the same permission-scoped Preview/Sync endpoints for manual verification.
-    private record EnabledLink(UUID connectionId, UUID workspaceId, UUID importId) {
+    private record EnabledLink(UUID connectionId, UUID workspaceId) {
     }
 
     @Scheduled(fixedDelayString = "${app.google-sheets.writeback-delay-ms:300000}",
@@ -118,7 +144,7 @@ public class GoogleSheetsWritebackService {
         // BOTH the link and its connection must be opted in. Composite FKs from V30
         // guarantee that connection and import are in the same workspace.
         List<EnabledLink> links = db.query("""
-                SELECT l.connection_id, l.workspace_id, l.import_id
+                SELECT DISTINCT l.connection_id, l.workspace_id
                 FROM google_sheet_import_links l
                 JOIN google_sheet_connections c
                   ON c.id = l.connection_id AND c.workspace_id = l.workspace_id
@@ -128,76 +154,71 @@ public class GoogleSheetsWritebackService {
                   AND c.writeback_enabled = TRUE
                   AND c.sync_status = 'SYNCED'
                   AND e.social_account_id IS NOT NULL
-                ORDER BY l.created_at, l.id
+                ORDER BY l.connection_id, l.workspace_id
                 """, (rs, n) -> new EnabledLink(
                 rs.getObject("connection_id", UUID.class),
-                rs.getObject("workspace_id", UUID.class),
-                rs.getObject("import_id", UUID.class)));
+                rs.getObject("workspace_id", UUID.class)));
 
-        for (EnabledLink link : links) {
+        lastAttemptedRows.keySet().retainAll(links);
+        if (links.isEmpty()) return;
+        int budget = Math.max(1, Math.min(BATCH_LIMIT, maxRowsPerPoll));
+        int start = Math.floorMod(nextLinkIndex, links.size());
+        nextLinkIndex = (start + 1) % links.size();
+
+        for (int n = 0; n < links.size() && budget > 0; n++) {
+            EnabledLink link = links.get((start + n) % links.size());
             try {
                 Connection c = connection(link.workspaceId(), link.connectionId());
-                // Discover BOTH platforms for an imported Post. A Facebook-linked import
-                // can also have a published Threads job on the SAME Post and workspace.
-                // A published Threads job needs a real permalink, not merely a numeric ID.
-                List<Integer> publishedRows = db.query("""
-                                SELECT DISTINCT s.source_row_number
-                                FROM google_sheet_staged_rows s
-                                JOIN excel_import_rows r
-                                  ON r.source_row_number = s.source_row_number
-                                JOIN excel_imports e
-                                  ON e.id = r.import_id
-                                JOIN posts p
-                                  ON p.id = r.post_id
-                                 AND p.workspace_id = e.workspace_id
-                                 AND p.content = s.content
-                                JOIN publishing_jobs j
-                                  ON j.post_id = p.id
-                                JOIN social_accounts a
-                                  ON a.id = j.social_account_id
-                                 AND a.workspace_id = e.workspace_id
-                                WHERE s.connection_id = ?
-                                  AND s.present_in_sheet = TRUE
-                                  AND s.source_row_number BETWEEN 2 AND 10001
-                                  AND e.id = ? AND e.workspace_id = ?
-                                  AND j.status = 'PUBLISHED'
-                                  AND (
-                                       (a.platform = 'FACEBOOK_PAGE'
-                                        AND j.social_account_id = e.social_account_id
-                                        AND j.external_post_id IS NOT NULL)
-                                    OR (a.platform = 'THREADS'
-                                        AND j.external_post_id IS NOT NULL
-                                        AND (j.published_url LIKE 'https://www.threads.com/%'
-                                          OR j.published_url LIKE 'https://www.threads.net/%'))
-                                  )
-                                ORDER BY s.source_row_number
-                                """, (rs, n) -> rs.getInt(1),
-                        link.connectionId(), link.importId(), link.workspaceId());
-
-                int written = 0, unchanged = 0, conflicts = 0;
-                for (int offset = 0; offset < publishedRows.size(); offset += BATCH_LIMIT) {
-                    List<Integer> batch = publishedRows.subList(
-                            offset, Math.min(offset + BATCH_LIMIT, publishedRows.size()));
-                    // Process at most 50 published source rows per batch.
-                    Report report = execute(c, link.importId(),
-                            batch.getFirst(), batch.getLast(), BATCH_LIMIT,
-                            "ALL", false);
-                    written += report.written();
-                    unchanged += report.unchanged();
-                    conflicts += report.conflicts();
-                    if (!report.errors().isEmpty()) {
-                        log.warn("[SHEETS WRITEBACK] connection={} import={} errors={}",
-                                link.connectionId(), link.importId(), report.errors());
-                    }
+                // Same verified mapping for scheduled and manual writeback.
+                List<Candidate> pending = pendingCandidates(c);
+                if (pending.isEmpty()) continue;
+                // Rotate even when a row conflicts, so later rows are not starved.
+                int lastRow = lastAttemptedRows.getOrDefault(link, 1);
+                int offset = 0;
+                while (offset < pending.size() && pending.get(offset).row() <= lastRow) offset++;
+                int count = Math.min(budget, pending.size());
+                List<Candidate> batch = new ArrayList<>(count);
+                for (int i = 0; i < count; i++) {
+                    batch.add(pending.get((offset + i) % pending.size()));
                 }
-                log.info("[SHEETS WRITEBACK] connection={} import={} publishedRows={} written={} unchanged={} conflicts={}",
-                        link.connectionId(), link.importId(), publishedRows.size(), written, unchanged, conflicts);
+                lastAttemptedRows.put(link, batch.getLast().row());
+                budget -= count;
+                Report report = executeCandidates(c, batch, count, "ALL", false);
+                log.info("[SHEETS WRITEBACK] connection={} pendingRows={} attempted={} written={} unchanged={} conflicts={}",
+                        link.connectionId(), pending.size(), count,
+                        report.written(), report.unchanged(), report.conflicts());
+                if (!report.errors().isEmpty()) {
+                    log.warn("[SHEETS WRITEBACK] connection={} errors={}",
+                            link.connectionId(), report.errors());
+                }
             } catch (Exception ex) {
-                // Do not touch publishing jobs; the next scheduled poll will retry Sheet sync.
-                log.warn("[SHEETS WRITEBACK] connection={} import={} error={}",
-                        link.connectionId(), link.importId(), ex.getMessage(), ex);
+                log.warn("[SHEETS WRITEBACK] connection={} error={}",
+                        link.connectionId(), ex.getMessage(), ex);
             }
         }
+    }
+
+    private List<Candidate> pendingCandidates(Connection c) {
+        Map<AuditKey, AuditValue> completed = new HashMap<>();
+        db.query("""
+                SELECT source_row_number, platform, external_post_id, published_url
+                FROM google_sheet_writeback_audit WHERE connection_id = ?
+                """, (org.springframework.jdbc.core.RowCallbackHandler) rs -> {
+            completed.put(new AuditKey(rs.getInt(1), rs.getString(2)),
+                    new AuditValue(rs.getString(3), rs.getString(4)));
+        }, c.id());
+
+        return candidates(c, null, 2, 10001).stream().filter(item -> {
+            String fbUrl = facebookUrl(item);
+            String thUrl = item.threadsPublishedUrl();
+            boolean fbPending = fbUrl != null && !Objects.equals(
+                    completed.get(new AuditKey(item.row(), "FACEBOOK_PAGE")),
+                    new AuditValue(item.facebookId(), fbUrl));
+            boolean thPending = looksLikeThreadsLink(thUrl) && !Objects.equals(
+                    completed.get(new AuditKey(item.row(), "THREADS")),
+                    new AuditValue(item.threadsId(), thUrl));
+            return fbPending || thPending;
+        }).toList();
     }
 
     private Connection connection(UUID workspace, UUID id) {
@@ -212,35 +233,46 @@ public class GoogleSheetsWritebackService {
     }
 
     private List<Candidate> candidates(Connection c, UUID importId, int fromRow, int toRow) {
-        // Both platforms must belong to the SAME imported Post and workspace.
-        // Do not cross-match only on text: different Posts may legitimately have
-        // identical content, and Threads permalinks must not be assigned to those.
-        // The original (immutable) Excel date is read from excel_import_rows.
+        // Resolve the sheet row separately from the local Excel row. Exact content
+        // must be unique in this sheet and unambiguous within the import and other
+        // enabled imports on this connection. Never infer an offset from file names.
+        // Both platforms must still belong to the SAME imported Post/workspace.
+        // The original Excel source row and original date are never modified.
         return db.query("""
+                        WITH linked_rows AS (
+                            SELECT e.id AS import_id, e.workspace_id, e.social_account_id,
+                                   r.post_id, r.source_publish_date, r.processing_status, p.content,
+                                   COUNT(*) OVER (PARTITION BY p.content) AS matches
+                            FROM google_sheet_import_links l
+                            JOIN excel_imports e ON e.id = l.import_id AND e.workspace_id = l.workspace_id
+                            JOIN excel_import_rows r ON r.import_id = e.id
+                            JOIN posts p ON p.id = r.post_id AND p.workspace_id = e.workspace_id
+                            WHERE l.connection_id = ? AND l.workspace_id = ? AND l.enabled = TRUE
+                        ), sheet_rows AS (
+                            SELECT s.source_row_number, s.content,
+                                   COUNT(*) OVER (PARTITION BY s.content) AS matches
+                            FROM google_sheet_staged_rows s
+                            WHERE s.connection_id = ? AND s.present_in_sheet = TRUE
+                        )
                         SELECT s.source_row_number, s.content,
                                fb.external_post_id AS facebook_id,
+                               fb.published_url AS facebook_published_url,
                                th.external_post_id AS threads_id,
                                th.published_url AS threads_published_url,
                                r.source_publish_date,
                                COALESCE(fb.scheduled_at, th.scheduled_at) AS scheduled_at,
                                COALESCE(fb.published_at, th.published_at) AS published_at
-                        FROM google_sheet_staged_rows s
-                        JOIN excel_import_rows r
-                          ON r.source_row_number = s.source_row_number
-                         AND r.import_id = ?
-                        JOIN excel_imports e
-                          ON e.id = r.import_id AND e.workspace_id = ?
-                        JOIN posts p
-                          ON p.id = r.post_id AND p.workspace_id = e.workspace_id
-                         AND p.content = s.content
+                        FROM sheet_rows s
+                        JOIN linked_rows r ON r.content = s.content
+                          AND r.matches = 1 AND s.matches = 1
                         LEFT JOIN LATERAL (
-                            SELECT j.external_post_id, j.scheduled_at, j.published_at
+                            SELECT j.external_post_id, j.published_url, j.scheduled_at, j.published_at
                             FROM publishing_jobs j
                             JOIN social_accounts a ON a.id = j.social_account_id
-                            WHERE j.post_id = p.id AND j.status = 'PUBLISHED'
+                            WHERE j.post_id = r.post_id AND j.status = 'PUBLISHED'
                               AND a.platform = 'FACEBOOK_PAGE'
-                              AND a.workspace_id = e.workspace_id
-                              AND j.social_account_id = e.social_account_id
+                              AND a.workspace_id = r.workspace_id
+                              AND j.social_account_id = r.social_account_id
                               AND j.external_post_id IS NOT NULL
                             ORDER BY j.published_at DESC NULLS LAST, j.id DESC LIMIT 1
                         ) fb ON TRUE
@@ -249,38 +281,54 @@ public class GoogleSheetsWritebackService {
                                    j.scheduled_at, j.published_at
                             FROM publishing_jobs j
                             JOIN social_accounts a ON a.id = j.social_account_id
-                            WHERE j.post_id = p.id AND j.status = 'PUBLISHED'
+                            WHERE j.post_id = r.post_id AND j.status = 'PUBLISHED'
                               AND a.platform = 'THREADS'
-                              AND a.workspace_id = e.workspace_id
+                              AND a.workspace_id = r.workspace_id
                               AND j.external_post_id IS NOT NULL
                               AND (j.published_url LIKE 'https://www.threads.com/%'
                                 OR j.published_url LIKE 'https://www.threads.net/%')
                             ORDER BY j.published_at DESC NULLS LAST, j.id DESC LIMIT 1
                         ) th ON TRUE
-                        WHERE s.connection_id = ? AND s.present_in_sheet = TRUE
+                        WHERE (CAST(? AS uuid) IS NULL OR r.import_id = CAST(? AS uuid))
+                          AND r.social_account_id IS NOT NULL
+                          AND (r.processing_status IS NULL OR r.processing_status NOT LIKE 'SKIPPED_%')
                           AND s.source_row_number BETWEEN ? AND ?
                           AND (fb.external_post_id IS NOT NULL OR th.published_url IS NOT NULL)
                         ORDER BY s.source_row_number LIMIT 10000
                         """, (rs, n) -> new Candidate(
                         rs.getInt("source_row_number"), rs.getString("content"),
-                        rs.getString("facebook_id"), rs.getString("threads_id"),
+                        rs.getString("facebook_id"), rs.getString("facebook_published_url"), rs.getString("threads_id"),
                         rs.getString("threads_published_url"),
                         rs.getObject("source_publish_date", LocalDate.class),
                         rs.getObject("scheduled_at", OffsetDateTime.class),
                         rs.getObject("published_at", OffsetDateTime.class)),
-                importId, c.workspaceId(), c.id(), fromRow, toRow);
+                c.id(), c.workspaceId(), c.id(), importId, importId, fromRow, toRow);
     }
 
 
-    private synchronized Report execute(
-            Connection c,
-            UUID importId,
-            int fromRow,
-            int toRow,
-            int limit,
-            String platform,
-            boolean dryRun
+    private Report execute(
+            Connection c, UUID importId, int fromRow, int toRow,
+            int limit, String platform, boolean dryRun
     ) {
+        Boolean linked = db.queryForObject("SELECT EXISTS(SELECT 1 FROM google_sheet_import_links WHERE connection_id=? AND workspace_id=? AND import_id=? AND enabled=TRUE)", Boolean.class, c.id(), c.workspaceId(), importId);
+        if (!Boolean.TRUE.equals(linked))
+            throw new ApiException(HttpStatus.CONFLICT, "Import not linked to this Sheet");
+        return executeCandidates(c, candidates(c, importId, fromRow, toRow),
+                limit, platform, dryRun);
+    }
+
+    private final Object writeLock = new Object();
+
+    private Report executeCandidates(Connection c, List<Candidate> candidates, int limit,
+                                     String platform, boolean dryRun) {
+        if (dryRun) return executeBatch(c, candidates, limit, platform, true);
+        synchronized (writeLock) {
+            return executeBatch(c, candidates, limit, platform, false);
+        }
+    }
+
+    private Report executeBatch(Connection c, List<Candidate> candidates, int limit,
+                                String platform, boolean dryRun) {
         var rows = new ArrayList<Item>();
         var errors = new ArrayList<String>();
 
@@ -288,23 +336,26 @@ public class GoogleSheetsWritebackService {
         int unchanged = 0;
         int conflicts = 0;
 
-        String token = null;
-
-        if (!dryRun) {
-            token = oauthToken();
+        boolean doFb = "FACEBOOK_PAGE".equals(platform) || "ALL".equals(platform);
+        boolean doThreads = "THREADS".equals(platform) || "ALL".equals(platform);
+        List<Candidate> selected = candidates.stream().filter(item ->
+                        (doFb && item.facebookId() != null) ||
+                                (doThreads && looksLikeThreadsLink(item.threadsPublishedUrl())))
+                .limit(limit).toList();
+        final String token = oauthToken();
+        final Map<Integer, List<String>> live;
+        try {
+            live = readBatch(c, selected, token);
+            validateHeaders(live.getOrDefault(1, List.of()));
+        } catch (Exception e) {
+            throw new ApiException(HttpStatus.CONFLICT, "Writeback read/header validation failed: " + shortMessage(e));
         }
+        if (selected.isEmpty()) return new Report(c.id(), dryRun, 0, 0, 0, 0, List.of(), List.of());
+        List<Map<String, Object>> updates = new ArrayList<>();
+        List<Candidate> accepted = new ArrayList<>();
+        int changes = 0;
+        for (Candidate item : selected) {
 
-        boolean doFb = "FACEBOOK_PAGE".equals(platform)
-                || "ALL".equals(platform);
-
-        boolean doThreads = "THREADS".equals(platform)
-                || "ALL".equals(platform);
-
-        for (Candidate item : candidates(c, importId, fromRow, toRow)) {
-
-            if (rows.size() + conflicts >= limit) {
-                break;
-            }
 
             boolean fbPublished = item.facebookId() != null;
 
@@ -316,19 +367,19 @@ public class GoogleSheetsWritebackService {
                 continue;
             }
 
-            String fbUrl = facebookUrl(item.facebookId());
+            String fbUrl = facebookUrl(item);
 
             String threadsUrl = threadsPublished
                     ? item.threadsPublishedUrl()
                     : null;
 
             try {
-                String scopedToken = token == null
-                        ? oauthToken()
-                        : token;
-
-                List<String> existing =
-                        readCells(c, item.row(), scopedToken);
+                List<String> existing = live.getOrDefault(item.row(), List.of());
+                if (doFb && fbPublished && fbUrl == null && !(doThreads && threadsPublished)) {
+                    conflicts++;
+                    errors.add("row " + item.row() + ": published Facebook job has no verified permalink");
+                    continue;
+                }
 
                 // Verify source content before any write.
                 if (!cell(existing, 1).equals(item.content())) {
@@ -509,84 +560,19 @@ public class GoogleSheetsWritebackService {
                                 || !newH.equals(currentH)
                                 || !newI.equals(currentI);
 
-                // =========================================
-                // NO CHANGE
-                // =========================================
-
                 if (!changed) {
                     unchanged++;
-
+                } else {
+                    changes++;
                     if (!dryRun) {
-                        if (doFb && fbUrl != null) {
-                            audit(
-                                    c,
-                                    item.row(),
-                                    "FACEBOOK_PAGE",
-                                    item.facebookId(),
-                                    fbUrl
-                            );
-                        }
-
-                        if (doThreads && threadsPublished) {
-                            audit(
-                                    c,
-                                    item.row(),
-                                    "THREADS",
-                                    item.threadsId(),
-                                    threadsUrl
-                            );
+                        String[] values = {newF, newG, newH, newI};
+                        for (int n = 0; n < values.length; n++) {
+                            if (!values[n].equals(cell(existing, 5 + n)))
+                                updates.add(valueRange(c, "" + (char) ('F' + n) + item.row(), values[n]));
                         }
                     }
-
-                    continue;
                 }
-
-                // Preview never writes to Sheets.
-                if (dryRun) {
-                    continue;
-                }
-
-                // =========================================
-                // GOOGLE SHEETS WRITEBACK
-                // =========================================
-
-                if (doFb && fbUrl != null) {
-                    validateHeaders(c, scopedToken);
-                }
-
-                writeCells(
-                        c,
-                        item.row(),
-                        existing,
-                        newF,
-                        newG,
-                        newH,
-                        newI,
-                        scopedToken
-                );
-
-                written++;
-
-                if (doFb && fbUrl != null) {
-                    audit(
-                            c,
-                            item.row(),
-                            "FACEBOOK_PAGE",
-                            item.facebookId(),
-                            fbUrl
-                    );
-                }
-
-                if (doThreads && threadsPublished) {
-                    audit(
-                            c,
-                            item.row(),
-                            "THREADS",
-                            item.threadsId(),
-                            threadsUrl
-                    );
-                }
-
+                accepted.add(item);
             } catch (Exception e) {
                 conflicts++;
 
@@ -597,6 +583,29 @@ public class GoogleSheetsWritebackService {
             }
         }
 
+        if (!dryRun) {
+            try {
+                // Recheck permission before sending changes. This is not a cross-system transaction.
+                Boolean enabled = db.queryForObject("SELECT writeback_enabled FROM google_sheet_connections WHERE id=? AND workspace_id=? AND sync_status='SYNCED'", Boolean.class, c.id(), c.workspaceId());
+                if (!Boolean.TRUE.equals(enabled)) throw new IllegalStateException("Writeback disabled");
+                if (doFb && accepted.stream().anyMatch(item -> facebookUrl(item) != null)
+                        && cell(live.getOrDefault(1, List.of()), 8).isBlank())
+                    updates.add(valueRange(c, "I1", "Link Facebook"));
+                sendUpdates(c, updates, token);
+                written = changes;
+            } catch (Exception e) {
+                // No audit on failed/unknown Google response; a future poll reads live cells again.
+                throw new ApiException(HttpStatus.SERVICE_UNAVAILABLE, "Writeback batch not confirmed: " + shortMessage(e));
+            }
+            for (Candidate item : accepted) {
+                String fbUrl = facebookUrl(item);
+                if (doFb && fbUrl != null) audit(c, item.row(), "FACEBOOK_PAGE", item.facebookId(), fbUrl);
+                if (doThreads && looksLikeThreadsLink(item.threadsPublishedUrl()))
+                    audit(c, item.row(), "THREADS", item.threadsId(), item.threadsPublishedUrl());
+            }
+        }
+        log.info("[SHEETS WRITEBACK BATCH] connection={} preview={} selected={} written={} unchanged={} conflicts={}",
+                c.id(), dryRun, selected.size(), written, unchanged, conflicts);
         return new Report(
                 c.id(),
                 dryRun,
@@ -618,45 +627,72 @@ public class GoogleSheetsWritebackService {
                 """, c.id(), row, platform, externalId, url);
     }
 
-    private void validateHeaders(Connection c, String token) throws Exception {
-        var header = readCells(c, 1, token);
-        // Never overwrite an unrelated I-column header. J/K are left untouched.
-        String existing = cell(header, 8);
-        if (!existing.isBlank() && !"Link Facebook".equals(existing))
-            throw new IllegalStateException("Column I has user header/data; refuse overwrite");
-        if (existing.isBlank()) {
-            sendUpdates(c, List.of(valueRange(c, "I1", "Link Facebook")), token);
+    private static String normalizedHeader(String value) {
+        return java.text.Normalizer.normalize(value.trim(), java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "").toLowerCase(Locale.ROOT).replace('đ', 'd').replaceAll("\\s+", " ");
+    }
+
+    private void validateHeaders(List<String> header) {
+        String[] required = {"noi dung", "topic", "anh 1", "anh 2", "ngay dang", "trang thai", "link bai da dang"};
+        for (int i = 0; i < required.length; i++) {
+            if (!required[i].equals(normalizedHeader(cell(header, i + 1))))
+                throw new IllegalStateException("Unexpected column " + (char) ('B' + i) + "; no write");
         }
+        String facebook = normalizedHeader(cell(header, 8));
+        if (!facebook.isBlank() && !"link facebook".equals(facebook))
+            throw new IllegalStateException("Unexpected column I; no write");
     }
 
-    private List<String> readCells(Connection c, int row, String token) throws Exception {
-        String a1 = tab(c) + "A" + row + ":K" + row;
-        String path = base(c) + "/values/" + encode(a1) + "?valueRenderOption=FORMATTED_VALUE";
-        HttpRequest req = HttpRequest.newBuilder(URI.create(path)).timeout(Duration.ofSeconds(30))
-                .header("Authorization", "Bearer " + token).GET().build();
-        var res = http.send(req, HttpResponse.BodyHandlers.ofString());
-        if (res.statusCode() != 200) throw new IllegalStateException("Google Sheets read HTTP " + res.statusCode());
-        JsonNode values = mapper.readTree(res.body()).path("values");
-        List<String> cells = new ArrayList<>();
-        if (values.isArray() && !values.isEmpty() && values.get(0).isArray())
-            values.get(0).forEach(v -> cells.add(v.asText("")));
-        return cells;
+    private record Span(int first, int last) {
     }
 
-    private void writeCells(Connection c, int row, List<String> previous,
-                            String f, String g, String h, String i, String token) throws Exception {
-        List<Map<String, Object>> updates = new ArrayList<>();
-        String[] values = {f, g, h, i};
-        for (int n = 0; n < values.length; n++) {
-            if (!values[n].equals(cell(previous, 5 + n))) {
-                updates.add(valueRange(c, "" + (char) ('F' + n) + row, values[n]));
+    private static List<Span> planSpans(List<Integer> rowNumbers) {
+        List<Span> spans = new ArrayList<>();
+        spans.add(new Span(1, 1));
+        List<Integer> numbers = rowNumbers.stream().distinct().sorted().toList();
+        for (int pos = 0; pos < numbers.size(); ) {
+            int first = numbers.get(pos++), last = first;
+            while (pos < numbers.size() && numbers.get(pos) - first < READ_SPAN) last = numbers.get(pos++);
+            spans.add(new Span(first, last));
+        }
+        return spans;
+    }
+
+    private Map<Integer, List<String>> readBatch(Connection c, List<Candidate> selected, String token) throws Exception {
+        if (c.tabName() == null || c.tabName().isBlank())
+            throw new IllegalStateException("Explicit Sheet tab required");
+        List<Span> spans = planSpans(selected.stream().map(Candidate::row).toList());
+        Map<Integer, List<String>> result = new HashMap<>();
+        for (int offset = 0; offset < spans.size(); offset += RANGES_PER_REQUEST) {
+            List<Span> batch = spans.subList(offset, Math.min(offset + RANGES_PER_REQUEST, spans.size()));
+            StringBuilder path = new StringBuilder(base(c) + "/values:batchGet?valueRenderOption=FORMATTED_VALUE&majorDimension=ROWS");
+            for (Span span : batch)
+                path.append("&ranges=").append(encode(tab(c) + "A" + span.first() + ":I" + span.last()));
+            HttpRequest request = HttpRequest.newBuilder(URI.create(path.toString())).timeout(Duration.ofSeconds(30))
+                    .header("Authorization", "Bearer " + token).GET().build();
+            var response = http.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200)
+                throw new IllegalStateException("Google Sheets batch read HTTP " + response.statusCode());
+            JsonNode ranges = mapper.readTree(response.body()).path("valueRanges");
+            if (!ranges.isArray() || ranges.size() != batch.size())
+                throw new IllegalStateException("Invalid batch read response");
+            for (int i = 0; i < batch.size(); i++) {
+                Span span = batch.get(i);
+                JsonNode values = ranges.get(i).path("values");
+                if (values.isMissingNode()) continue;
+                if (!values.isArray() || values.size() > span.last() - span.first() + 1)
+                    throw new IllegalStateException("Invalid row count in batch response");
+                for (int j = 0; j < values.size(); j++) {
+                    JsonNode row = values.get(j);
+                    if (!row.isArray()) throw new IllegalStateException("Invalid row in batch response");
+                    List<String> cells = new ArrayList<>();
+                    row.forEach(value -> cells.add(value.asText("")));
+                    result.put(span.first() + j, cells);
+                }
             }
         }
-        // RAW keeps dd/MM/yyyy as a date-only display string and does not
-        // re-interpret Facebook URLs or other cell text.
-        sendUpdates(c, updates, token);
+        return result;
     }
-
 
     private static LocalDate parseSheetDate(String raw) {
         if (raw == null || raw.isBlank()) {
@@ -699,10 +735,13 @@ public class GoogleSheetsWritebackService {
             throw new IllegalStateException("Google Sheets write HTTP " + response.statusCode());
     }
 
-    private String oauthToken() {
+    private GoogleCredentials cachedCredentials;
+
+    private synchronized String oauthToken() {
         try {
-            GoogleCredentials credentials = GoogleCredentials.getApplicationDefault()
+            if (cachedCredentials == null) cachedCredentials = GoogleCredentials.getApplicationDefault()
                     .createScoped(List.of(SHEETS_SCOPE));
+            GoogleCredentials credentials = cachedCredentials;
             credentials.refreshIfExpired();
             if (credentials.getAccessToken() == null) credentials.refresh();
             return credentials.getAccessToken().getTokenValue();
@@ -738,6 +777,12 @@ public class GoogleSheetsWritebackService {
                 || text.startsWith("https://www.threads.net/"));
     }
 
+    private static String facebookUrl(Candidate item) {
+        String saved = item.facebookPublishedUrl();
+        if (looksLikeFacebookLink(saved)) return saved;
+        return facebookUrl(item.facebookId());
+    }
+
     private static String facebookUrl(String id) {
         if (id == null || id.isBlank()) return null;
         if (id.matches("[0-9]+_[0-9]+")) return "https://www.facebook.com/" + id;
@@ -751,4 +796,3 @@ public class GoogleSheetsWritebackService {
         return message.length() > 200 ? message.substring(0, 200) : message;
     }
 }
-

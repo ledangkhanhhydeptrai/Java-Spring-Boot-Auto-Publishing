@@ -175,6 +175,13 @@ public class ExcelImportController {
         return threadsBridgeService.plan(workspaceId, importId, request);
     }
 
+    @PostMapping("/threads-plan/all")
+    public ExcelThreadsBridgeService.MultiResult threadsPlanAll(
+            @PathVariable UUID workspaceId,
+            @RequestBody ExcelThreadsBridgeService.MultiRequest request) {
+        return threadsBridgeService.planAll(workspaceId, request);
+    }
+
     @GetMapping("/{importId}/publish-progress")
     public java.util.Map<String, Integer> publishProgress(
             @PathVariable UUID workspaceId,

@@ -7,6 +7,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
+import java.net.URI;
+import java.util.regex.Pattern;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import java.security.MessageDigest;
 import java.util.*;
 
@@ -27,7 +32,7 @@ public class GroupWorkerController {
     private String expectedGroupId;
 
     private void check(String authorization) {
-        if (workerToken.isBlank() || authorization == null || !MessageDigest.isEqual(
+        if (workerToken == null || workerToken.isBlank() || authorization == null || !MessageDigest.isEqual(
                 ("Bearer " + workerToken).getBytes(StandardCharsets.UTF_8), authorization.getBytes(StandardCharsets.UTF_8)))
             throw new org.springframework.web.server.ResponseStatusException(HttpStatus.UNAUTHORIZED);
     }
@@ -65,11 +70,11 @@ public class GroupWorkerController {
                        (SELECT count(*) FROM post_media pm WHERE pm.post_id=t.post_id
                          AND pm.media_type='IMAGE') AS image_count,
                        (SELECT count(*) FROM post_media pm WHERE pm.post_id=t.post_id
-                         AND pm.media_type NOT IN ('IMAGE')) AS unsupported_media_count
+                         AND pm.media_type IS DISTINCT FROM 'IMAGE') AS unsupported_media_count
                 FROM group_publishing_tasks t
                 JOIN posts p ON p.id=t.post_id
                 JOIN facebook_groups g ON g.id=t.facebook_group_id
-                WHERE t.id=? AND g.external_group_id=?
+                WHERE t.id=? AND g.external_group_id=? AND p.workspace_id=g.workspace_id
                 """, (rs, row) -> new Preview(
                 rs.getObject("id", UUID.class), rs.getString("group_url"),
                 rs.getString("content"), rs.getString("task_status"),
@@ -79,6 +84,7 @@ public class GroupWorkerController {
         return rows.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(rows.getFirst());
     }
 
+    @Transactional
     @PostMapping("/claim")
     public ResponseEntity<Task> claim(@RequestHeader(value = "Authorization", required = false) String authorization) {
         check(authorization);
@@ -98,9 +104,12 @@ public class GroupWorkerController {
                   JOIN posts p ON p.id=t.post_id
                   JOIN facebook_groups g ON g.id=t.facebook_group_id
                   WHERE t.id=? AND g.external_group_id=? AND t.status='READY'
-                    AND p.status IN ('READY','SCHEDULED')
+                    AND p.workspace_id=g.workspace_id
+                    AND p.status IN ('READY','SCHEDULED','PUBLISHED')
                     AND p.approval_status='APPROVED'
                     AND COALESCE(t.scheduled_at,t.created_at)<=now()
+                    AND NULLIF(BTRIM(p.content),'') IS NOT NULL
+                    AND NOT EXISTS (SELECT 1 FROM post_media pm WHERE pm.post_id=t.post_id)
                   FOR UPDATE OF t SKIP LOCKED LIMIT 1
                 ) UPDATE group_publishing_tasks t SET status='PROCESSING'
                   FROM picked WHERE t.id=picked.id RETURNING t.id
@@ -117,7 +126,7 @@ public class GroupWorkerController {
         Integer unsupported = db.queryForObject("""
                 SELECT COUNT(*) FROM post_media pm
                 JOIN group_publishing_tasks t ON t.post_id=pm.post_id
-                WHERE t.id=? AND pm.media_type NOT IN ('IMAGE')
+                WHERE t.id=? AND pm.media_type IS DISTINCT FROM 'IMAGE'
                 """, Integer.class, id);
         return ResponseEntity.ok(db.queryForObject("""
                 SELECT t.id,g.group_url,p.content FROM group_publishing_tasks t
@@ -131,11 +140,42 @@ public class GroupWorkerController {
     public void result(@RequestHeader(value = "Authorization", required = false) String authorization,
                        @PathVariable UUID id, @RequestBody Result r) {
         check(authorization);
-        if (!List.of("NEEDS_REVIEW", "FAILED", "PUBLISHED").contains(r.status()))
+        if (r == null || r.status() == null || !List.of("NEEDS_REVIEW", "FAILED", "PUBLISHED").contains(r.status()))
             throw new org.springframework.web.server.ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid status");
-        if ("PUBLISHED".equals(r.status()) && (r.publishedUrl() == null || !r.publishedUrl().startsWith("https://www.facebook.com/")))
-            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.BAD_REQUEST, "Verified Facebook post URL required");
-        int count = db.update("UPDATE group_publishing_tasks SET status=?,published_url=?,published_at=CASE WHEN ?='PUBLISHED' THEN now() ELSE NULL END WHERE id=? AND status='PROCESSING'", r.status(), r.publishedUrl(), r.status(), id);
+        UUID configured;
+        try {
+            configured = UUID.fromString(targetTaskId.trim());
+        } catch (RuntimeException invalid) {
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "Exact task not configured");
+        }
+        if (!configured.equals(id) || expectedGroupId == null || !expectedGroupId.matches("[0-9]+"))
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.FORBIDDEN, "Task outside configured pilot");
+        boolean published = "PUBLISHED".equals(r.status());
+        if (published && !validPermalink(r.publishedUrl(), expectedGroupId))
+            throw new org.springframework.web.server.ResponseStatusException(HttpStatus.BAD_REQUEST, "Verified exact Group permalink required");
+        String url = published ? r.publishedUrl() : null;
+        int count = db.update("""
+                UPDATE group_publishing_tasks t
+                SET status=?, published_url=?, published_at=CASE WHEN ?='PUBLISHED' THEN now() ELSE NULL END
+                FROM facebook_groups g, posts p
+                WHERE t.id=? AND t.status='PROCESSING' AND t.facebook_group_id=g.id
+                  AND t.post_id=p.id AND p.workspace_id=g.workspace_id AND g.external_group_id=?
+                """, r.status(), url, r.status(), id, expectedGroupId);
         if (count != 1) throw new org.springframework.web.server.ResponseStatusException(HttpStatus.CONFLICT);
+    }
+
+    public static boolean validPermalink(String value, String groupId) {
+        if (value == null || groupId == null || !groupId.matches("[0-9]+")) return false;
+        try {
+            URI uri = URI.create(value);
+            return "https".equalsIgnoreCase(uri.getScheme())
+                    && "www.facebook.com".equalsIgnoreCase(uri.getHost())
+                    && uri.getPort() == -1 && uri.getUserInfo() == null && uri.getFragment() == null
+                    && uri.getRawPath() != null
+                    && Pattern.compile("^/groups/" + Pattern.quote(groupId)
+                    + "/(?:posts|permalink)/(?:[0-9]+|pfbid[A-Za-z0-9]+)/?$").matcher(uri.getRawPath()).matches();
+        } catch (IllegalArgumentException invalid) {
+            return false;
+        }
     }
 }

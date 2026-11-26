@@ -26,14 +26,15 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * Quick UI: exactly two inputs (Sheet URL + start time). Joins current staged
+ * Quick UI: Sheet URL + start time, with optional explicit connection/group and schedule settings. Joins current staged
  * Sheet rows to ALL enabled linked Excel imports by exact, unique Post.content.
  * Never guesses by import order or reuses Excel-local row numbers as Sheet rows.
- * Scheduling only creates PENDING Group Tasks. IMAGE-only posts may be
+ * Scheduling only creates PENDING Group Tasks. Supported image/video/reel posts may be
  * scheduled but are NOT approved or automatically published by this Controller.
  * This controller NEVER approves, claims, publishes or retries anything.
  * <p>
@@ -47,6 +48,8 @@ public class GroupSheetQuickPlanController {
     private static final Pattern ID = Pattern.compile("[A-Za-z0-9_-]{20,200}");
     private static final int MAX_ROWS = 1200;
     private static final int GAP_MINUTES = 10;
+    private static final int DEFAULT_DAILY_LIMIT = 10;
+    private static final ZoneId GROUP_ZONE = ZoneId.of("Asia/Ho_Chi_Minh");
     private static final int MAX_GROUP_IMAGES_PER_POST = 10; // scheduling only; never auto-publish
     private static final int SHEETS_WRITE_BATCH = 40;
     private static final String SCOPE = "https://www.googleapis.com/auth/spreadsheets";
@@ -60,10 +63,17 @@ public class GroupSheetQuickPlanController {
     private final ObjectMapper mapper;
     private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
 
-    public record Request(String sheetUrl, OffsetDateTime startAt, String previewToken, Boolean confirmSchedule) {
+    public record Request(String sheetUrl, OffsetDateTime startAt, String previewToken, Boolean confirmSchedule,
+                          UUID connectionId, UUID facebookGroupId, Integer intervalMinutes, Integer maxTasksPerDay) {
+        public Request(String sheetUrl, OffsetDateTime startAt, String previewToken, Boolean confirmSchedule) {
+            this(sheetUrl, startAt, previewToken, confirmSchedule, null, null, null, null);
+        }
     }
 
-    public record LinkRequest(String sheetUrl, Boolean confirmWrite) {
+    public record LinkRequest(String sheetUrl, Boolean confirmWrite, UUID connectionId, UUID facebookGroupId) {
+        public LinkRequest(String sheetUrl, Boolean confirmWrite) {
+            this(sheetUrl, confirmWrite, null, null);
+        }
     }
 
     public record Row(int sourceRowNumber, UUID postId, String action, String reason, OffsetDateTime scheduledAt) {
@@ -127,7 +137,7 @@ public class GroupSheetQuickPlanController {
     public Result preview(@PathVariable UUID workspaceId, @RequestBody Request request) {
         access.admin(workspaceId);
         requireStart(request);
-        return snapshot(workspaceId, source(workspaceId, request.sheetUrl()), request.startAt()).result();
+        return snapshot(workspaceId, source(workspaceId, request.sheetUrl(), request.connectionId(), request.facebookGroupId()), request).result();
     }
 
     @PostMapping("/confirm")
@@ -139,14 +149,13 @@ public class GroupSheetQuickPlanController {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Preview token and confirmSchedule=true required");
 
         return transactions.execute(transaction -> {
-            Source src = source(workspaceId, request.sheetUrl());
-            // A recent SYNCED cache is not proof that the live Sheet is unchanged.
-            // Before any DB write, compare the actual Google Sheet column B.
-            verifyLiveSheetContent(src);
-            // Ensure two concurrent Quick plans for this group cannot both create tasks.
+            Source initial = source(workspaceId, request.sheetUrl(), request.connectionId(), request.facebookGroupId());
+            // Serialize Quick plans for the same workspace/group before reloading the snapshot.
             db.queryForObject("SELECT pg_advisory_xact_lock(hashtext(?),hashtext(?))",
-                    (rs, n) -> rs.getObject(1), workspaceId.toString(), src.group().id().toString());
-            Snapshot checked = snapshot(workspaceId, src, request.startAt());
+                    (rs, n) -> rs.getObject(1), workspaceId.toString(), initial.group().id().toString());
+            Source src = source(workspaceId, request.sheetUrl(), initial.connection().id(), initial.group().id());
+            verifyLiveSheetContent(src);
+            Snapshot checked = snapshot(workspaceId, src, request);
             if (!sameHash(checked.result().previewToken(), request.previewToken()))
                 throw new ApiException(HttpStatus.CONFLICT,
                         "Sheet/Post/Task state changed since preview. Preview again; no tasks created");
@@ -162,6 +171,8 @@ public class GroupSheetQuickPlanController {
             if (!Boolean.TRUE.equals(groupInWorkspace))
                 throw new ApiException(HttpStatus.CONFLICT,
                         "Facebook Group no longer belongs to this Workspace; no tasks created");
+            var group = groups.findById(src.group().id()).orElseThrow(() ->
+                    new ApiException(HttpStatus.CONFLICT, "Group disappeared. Preview again"));
             int created = 0;
             for (int i = 0; i < checked.mapped().size(); i++) {
                 Row row = checked.result().rows().get(i);
@@ -190,8 +201,6 @@ public class GroupSheetQuickPlanController {
                     throw new ApiException(HttpStatus.CONFLICT,
                             "Post is not in the selected Workspace (postId=" + postId +
                                     "); no tasks created");
-                var group = groups.findById(src.group().id()).orElseThrow(() ->
-                        new ApiException(HttpStatus.CONFLICT, "Group disappeared. Preview again"));
                 GroupPublishingTask task = new GroupPublishingTask();
                 task.post = post;
                 task.facebookGroup = group;
@@ -222,14 +231,16 @@ public class GroupSheetQuickPlanController {
     @PostMapping("/links/preview")
     public WritebackResult linksPreview(@PathVariable UUID workspaceId, @RequestBody LinkRequest request) {
         access.admin(workspaceId);
-        Source src = source(workspaceId, request == null ? null : request.sheetUrl());
+        Source src = source(workspaceId, request == null ? null : request.sheetUrl(),
+                request == null ? null : request.connectionId(), request == null ? null : request.facebookGroupId());
         return writeback(workspaceId, src, true);
     }
 
     @PostMapping("/links/write")
     public WritebackResult linksWrite(@PathVariable UUID workspaceId, @RequestBody LinkRequest request) {
         access.admin(workspaceId);
-        Source src = source(workspaceId, request == null ? null : request.sheetUrl());
+        Source src = source(workspaceId, request == null ? null : request.sheetUrl(),
+                request == null ? null : request.connectionId(), request == null ? null : request.facebookGroupId());
         if (request == null || !Boolean.TRUE.equals(request.confirmWrite()))
             throw new ApiException(HttpStatus.BAD_REQUEST, "confirmWrite=true required");
         if (!src.connection().writebackEnabled())
@@ -237,17 +248,75 @@ public class GroupSheetQuickPlanController {
         return writeback(workspaceId, src, false);
     }
 
-    private Snapshot snapshot(UUID workspaceId, Source src, OffsetDateTime startAt) {
+    /** Internal-only opt-in worker entry. No HTTP mapping or user-session bypass. */
+    WritebackResult runConfiguredWriteback(UUID connectionId, UUID groupId) {
+        var configs = db.query("""
+                SELECT c.workspace_id, c.spreadsheet_id
+                  FROM google_sheet_connections c
+                  JOIN facebook_groups g ON g.workspace_id=c.workspace_id AND g.id=?
+                 WHERE c.id=? AND c.sync_status='SYNCED' AND c.writeback_enabled=TRUE
+                   AND EXISTS (
+                       SELECT 1 FROM group_publishing_tasks t
+                       JOIN posts p ON p.id=t.post_id AND p.workspace_id=c.workspace_id
+                       JOIN excel_import_rows r ON r.post_id=p.id
+                       JOIN google_sheet_import_links l ON l.import_id=r.import_id
+                         AND l.connection_id=c.id AND l.workspace_id=c.workspace_id AND l.enabled=TRUE
+                       WHERE t.facebook_group_id=g.id AND t.status='PUBLISHED'
+                         AND NULLIF(BTRIM(t.published_url),'') IS NOT NULL
+                   )
+                """, (rs,n) -> new AutoTarget(rs.getObject(1, UUID.class), rs.getString(2)), groupId, connectionId);
+        if (configs.size() != 1) return null;
+        AutoTarget target = configs.getFirst();
+        Source src = source(target.workspaceId(), "https://docs.google.com/spreadsheets/d/"
+                + target.spreadsheetId() + "/edit", connectionId, groupId);
+        if (!src.connection().writebackEnabled()) return null;
+        return writeback(target.workspaceId(), src, false);
+    }
+
+    private record AutoTarget(UUID workspaceId, String spreadsheetId) { }
+
+    public record TaskSummary(String status, long total) { }
+
+    @GetMapping("/tasks/summary")
+    public List<TaskSummary> taskSummary(@PathVariable UUID workspaceId, @RequestParam UUID facebookGroupId) {
+        access.workspace(workspaceId);
+        Boolean valid = db.queryForObject("""
+                SELECT EXISTS(SELECT 1 FROM facebook_groups WHERE id=? AND workspace_id=?)
+                """, Boolean.class, facebookGroupId, workspaceId);
+        if (!Boolean.TRUE.equals(valid)) throw new ApiException(HttpStatus.NOT_FOUND, "Group not found");
+        return db.query("""
+                SELECT t.status, COUNT(*) FROM group_publishing_tasks t
+                JOIN facebook_groups g ON g.id=t.facebook_group_id
+                JOIN posts p ON p.id=t.post_id AND p.workspace_id=g.workspace_id
+                WHERE g.id=? AND g.workspace_id=? GROUP BY t.status ORDER BY t.status
+                """, (rs,n) -> new TaskSummary(rs.getString(1), rs.getLong(2)), facebookGroupId, workspaceId);
+    }
+
+    private Snapshot snapshot(UUID workspaceId, Source src, Request request) {
+        OffsetDateTime startAt = request.startAt();
+        int gap = request.intervalMinutes() == null ? GAP_MINUTES : request.intervalMinutes();
+        int dailyLimit = request.maxTasksPerDay() == null ? DEFAULT_DAILY_LIMIT : request.maxTasksPerDay();
         Map<UUID, Boolean> already = existingTasks(src.group().id());
+        List<OffsetDateTime> occupied = db.query("""
+                SELECT COALESCE(t.scheduled_at,t.created_at)
+                  FROM group_publishing_tasks t
+                  JOIN facebook_groups g ON g.id=t.facebook_group_id
+                  JOIN posts p ON p.id=t.post_id AND p.workspace_id=g.workspace_id
+                 WHERE g.id=? AND g.workspace_id=? AND t.status IS DISTINCT FROM 'CANCELLED'
+                   AND COALESCE(t.scheduled_at,t.created_at)>=?
+                """, (rs, n) -> rs.getObject(1, OffsetDateTime.class),
+                src.group().id(), workspaceId, startAt.minusDays(2));
+        GroupPlanSlots slots = new GroupPlanSlots(startAt, GROUP_ZONE, gap, dailyLimit, occupied);
         List<Row> rows = new ArrayList<>();
         StringBuilder fingerprint = new StringBuilder(src.connection().id().toString())
-                .append('|').append(src.group().id()).append('|').append(startAt.toInstant());
+                .append('|').append(src.group().id()).append('|').append(src.group().externalId())
+                .append('|').append(startAt.toInstant()).append('|').append(gap).append('|').append(dailyLimit);
         int ready = 0, existing = 0, blocked = 0;
         // Sheet row index (not imported file row index) controls ordering and schedule.
         for (int i = 0; i < src.mapped().size(); i++) {
             Mapped m = src.mapped().get(i);
             PostCandidate p = m.match();
-            OffsetDateTime at = startAt.plusMinutes((long) i * GAP_MINUTES);
+            OffsetDateTime at = null;
             String action, reason;
             if (m.ambiguous()) {
                 action = "BLOCKED";
@@ -301,7 +370,14 @@ public class GroupSheetQuickPlanController {
                         " image(s), PENDING schedule ONLY; requires one-task Edge media verification";
             }
             switch (action) {
-                case "READY_TO_CREATE" -> ready++;
+                case "READY_TO_CREATE" -> {
+                    try {
+                        at = slots.next();
+                    } catch (IllegalStateException ex) {
+                        throw new ApiException(HttpStatus.CONFLICT, ex.getMessage());
+                    }
+                    ready++;
+                }
                 case "ALREADY_EXISTS" -> existing++;
                 default -> blocked++;
             }
@@ -327,7 +403,7 @@ public class GroupSheetQuickPlanController {
         Result result = new Result(src.connection().id(), null, src.group().id(),
                 src.connection().spreadsheetId(), src.connection().tabName(), src.group().name(),
                 true, src.mapped().size(), ready, existing, blocked, 0,
-                GAP_MINUTES, sha256(fingerprint.toString()), List.copyOf(rows));
+                gap, sha256(fingerprint.toString()), List.copyOf(rows));
         return new Snapshot(result, src.mapped());
     }
 
@@ -340,14 +416,18 @@ public class GroupSheetQuickPlanController {
         return result;
     }
 
-    private Source source(UUID workspaceId, String sheetUrl) {
+    private Source source(UUID workspaceId, String sheetUrl, UUID connectionId, UUID groupId) {
         String sheetId = parseSheetId(sheetUrl);
+        String gid = parseSheetGid(sheetUrl);
         List<Connection> connections = db.query("""
                 SELECT id, spreadsheet_id, tab_name, writeback_enabled
                   FROM google_sheet_connections
                  WHERE workspace_id=? AND spreadsheet_id=? AND sync_status='SYNCED'
+                   AND (CAST(? AS uuid) IS NULL OR id=?)
+                   AND (CAST(? AS text) IS NULL OR tab_gid=?)
                 """, (rs, n) -> new Connection(rs.getObject(1, UUID.class),
-                rs.getString(2), rs.getString(3), rs.getBoolean(4)), workspaceId, sheetId);
+                        rs.getString(2), rs.getString(3), rs.getBoolean(4)), workspaceId, sheetId,
+                connectionId, connectionId, gid, gid);
         if (connections.size() != 1)
             throw new ApiException(HttpStatus.CONFLICT,
                     "Expected exactly one SYNCED Google Sheets connection for this link (found " +
@@ -355,14 +435,17 @@ public class GroupSheetQuickPlanController {
         Connection conn = connections.getFirst();
         List<Group> targets = db.query("""
                 SELECT id, name, external_group_id FROM facebook_groups
-                 WHERE workspace_id=? AND group_url LIKE 'https://%facebook.com/groups/%'
+                 WHERE workspace_id=? AND (CAST(? AS uuid) IS NULL OR id=?)
+                   AND (group_url LIKE 'https://www.facebook.com/groups/%'
+                        OR group_url LIKE 'https://facebook.com/groups/%')
+                   AND external_group_id ~ '^[0-9]+$'
                  ORDER BY id
                 """, (rs, n) -> new Group(rs.getObject(1, UUID.class),
-                rs.getString(2), rs.getString(3)), workspaceId);
+                rs.getString(2), rs.getString(3)), workspaceId, groupId, groupId);
         if (targets.size() != 1)
             throw new ApiException(HttpStatus.CONFLICT,
-                    "Need exactly one configured Facebook Group (found " + targets.size() +
-                            "); cannot auto-select the target");
+                    "Select exactly one valid Facebook Group in this Workspace (found " + targets.size() +
+                            "); supply facebookGroupId if multiple groups exist");
         List<SheetRow> sheetRows = db.query("""
                 SELECT source_row_number, content FROM google_sheet_staged_rows
                  WHERE connection_id=? AND present_in_sheet=TRUE
@@ -457,7 +540,7 @@ public class GroupSheetQuickPlanController {
         }
     }
 
-    private WritebackResult writeback(UUID workspaceId, Source source, boolean preview) {
+    private synchronized WritebackResult writeback(UUID workspaceId, Source source, boolean preview) {
         Connection c = source.connection();
         Group target = source.group();
         String token = oauthToken();
@@ -472,14 +555,15 @@ public class GroupSheetQuickPlanController {
 
         Map<UUID, Published> published = new HashMap<>();
         db.query("""
-                SELECT post_id, COUNT(DISTINCT published_url) url_count, MIN(published_url) published_url
-                  FROM group_publishing_tasks
-                 WHERE facebook_group_id=? AND status='PUBLISHED' AND published_url IS NOT NULL
-                 GROUP BY post_id
+                SELECT t.post_id, COUNT(DISTINCT t.published_url) url_count, MIN(t.published_url) published_url
+                  FROM group_publishing_tasks t
+                  JOIN posts p ON p.id=t.post_id AND p.workspace_id=?
+                 WHERE t.facebook_group_id=? AND t.status='PUBLISHED' AND t.published_url IS NOT NULL
+                 GROUP BY t.post_id
                 """, (java.sql.ResultSet rs) -> {
             published.put(rs.getObject("post_id", UUID.class),
                     new Published(rs.getInt("url_count"), rs.getString("published_url")));
-        }, target.id());
+        }, workspaceId, target.id());
 
         List<GroupSheetWritebackController.Row> resultRows = new ArrayList<>();
         List<Map<String, Object>> updates = new ArrayList<>();
@@ -622,11 +706,32 @@ public class GroupSheetQuickPlanController {
         }
     }
 
+    private static String parseSheetGid(String link) {
+        URI uri = URI.create(link.trim()); // parseSheetId already checked scheme/host/path
+        Pattern pattern = Pattern.compile("(?:^|&)gid=([0-9]+)(?:&|$)");
+        String found = null;
+        for (String part : new String[]{uri.getRawQuery(), uri.getRawFragment()}) {
+            if (part == null) continue;
+            var matcher = pattern.matcher(part);
+            if (!matcher.find()) continue;
+            String gid = matcher.group(1);
+            if (found != null && !found.equals(gid))
+                throw new ApiException(HttpStatus.BAD_REQUEST, "Conflicting Sheet gid in link");
+            found = gid;
+        }
+        return found;
+    }
+
     private static void requireStart(Request request) {
         if (request == null || request.startAt() == null ||
                 !request.startAt().toInstant().isAfter(Instant.now().plusSeconds(300)))
             throw new ApiException(HttpStatus.BAD_REQUEST,
                     "Start time must be at least five minutes in the future");
+        int gap = request.intervalMinutes() == null ? GAP_MINUTES : request.intervalMinutes();
+        int limit = request.maxTasksPerDay() == null ? DEFAULT_DAILY_LIMIT : request.maxTasksPerDay();
+        if (gap < 10 || gap > 1440 || limit < 1 || limit > 20)
+            throw new ApiException(HttpStatus.BAD_REQUEST,
+                    "intervalMinutes=10..1440, maxTasksPerDay=1..20 (internal planning limit)");
     }
 
     private static String sha256(String raw) {

@@ -49,8 +49,7 @@ public class ThreadsPublishingService {
         private final String subcode;
 
         ThreadsApiException(String endpoint, int httpStatus, String code, String subcode) {
-            super("Threads API failed at " + endpoint + " with HTTP " + httpStatus
-                    + ", code=" + code + ", subcode=" + subcode);
+            super("Threads API failed at " + endpoint + " with HTTP " + httpStatus + ", code=" + code + ", subcode=" + subcode);
             this.httpStatus = httpStatus;
             this.code = code;
             this.subcode = subcode;
@@ -60,10 +59,7 @@ public class ThreadsPublishingService {
     // Only retry a DEFINITE Meta 400 rejection while creating the carousel PARENT.
     // Network errors, timeouts and publishing errors remain manual-review cases.
     static boolean isCarouselChildPropagationError(Exception ex) {
-        return ex instanceof ThreadsApiException api
-                && api.httpStatus == 400
-                && "100".equals(api.code)
-                && "4279004".equals(api.subcode);
+        return ex instanceof ThreadsApiException api && api.httpStatus == 400 && "100".equals(api.code) && "4279004".equals(api.subcode);
     }
 
     private record Claim(UUID jobId, int attempt, UUID accountId, String text) {
@@ -91,8 +87,7 @@ public class ThreadsPublishingService {
     private final SocialAccountRepository accounts;
     private final ObjectMapper json;
 
-    private final HttpClient http = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(10)).build();
+    private final HttpClient http = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
 
     /**
      * Scheduler and manual endpoints share the same atomic claim and publish path.
@@ -131,10 +126,13 @@ public class ThreadsPublishingService {
                       )
                       AND COALESCE(j.scheduled_at,j.created_at)<=NOW()
                       AND NOT EXISTS (SELECT 1 FROM post_media m WHERE m.post_id=p.id
-                          AND (m.public_url IS NULL OR BTRIM(m.public_url) = '' OR m.media_type NOT IN ('IMAGE','VIDEO')))
+                          AND (m.public_url IS NULL OR btrim(m.public_url)=''
+                               OR m.media_type IS NULL OR m.media_type NOT IN ('IMAGE','VIDEO','REEL')
+                               OR (m.media_type='IMAGE' AND m.public_url !~* '^https://res[.]cloudinary[.]com/[^/?#]+/image/upload/[^?#]+([?][^#]*)?$')
+                               OR (m.media_type IN ('VIDEO','REEL') AND m.public_url !~* '^https://res[.]cloudinary[.]com/[^/?#]+/video/upload/[^?#]+([?][^#]*)?$')))
                       AND (SELECT COUNT(*) FROM post_media m WHERE m.post_id=p.id) <= 20
                       AND (
-                          NOT EXISTS (SELECT 1 FROM post_media vm WHERE vm.post_id=p.id AND vm.media_type='VIDEO')
+                          NOT EXISTS (SELECT 1 FROM post_media vm WHERE vm.post_id=p.id AND vm.media_type IN ('VIDEO','REEL'))
                           OR (SELECT COUNT(*) FROM post_media vm WHERE vm.post_id=p.id) = 1
                       )
                       AND (NOT EXISTS (SELECT 1 FROM campaign_jobs cj WHERE cj.publishing_job_id=j.id)
@@ -180,10 +178,7 @@ public class ThreadsPublishingService {
                 JOIN posts p ON p.id = j.post_id
                 JOIN social_accounts a ON a.id = j.social_account_id
                 WHERE j.id = ?
-                """, (rs, i) -> Map.of(
-                "workspaceId", rs.getObject("workspace_id", UUID.class),
-                "platform", rs.getString("platform"),
-                "accountStatus", rs.getString("account_status")), jobId);
+                """, (rs, i) -> Map.of("workspaceId", rs.getObject("workspace_id", UUID.class), "platform", rs.getString("platform"), "accountStatus", rs.getString("account_status")), jobId);
         if (info.isEmpty()) throw new ApiException(HttpStatus.NOT_FOUND, "Publishing job not found");
         if (requireAdmin) access.admin((UUID) info.getFirst().get("workspaceId"));
         if (!"THREADS".equals(info.getFirst().get("platform")))
@@ -226,32 +221,31 @@ public class ThreadsPublishingService {
                       AND j.status='PENDING'
                       AND COALESCE(j.scheduled_at,j.created_at)<=NOW()
                       AND NOT EXISTS (SELECT 1 FROM post_media m WHERE m.post_id=p.id
-                          AND (m.public_url IS NULL OR BTRIM(m.public_url) = '' OR m.media_type NOT IN ('IMAGE','VIDEO')))
+                          AND (m.public_url IS NULL OR btrim(m.public_url)=''
+                               OR m.media_type IS NULL OR m.media_type NOT IN ('IMAGE','VIDEO','REEL')
+                               OR (m.media_type='IMAGE' AND m.public_url !~* '^https://res[.]cloudinary[.]com/[^/?#]+/image/upload/[^?#]+([?][^#]*)?$')
+                               OR (m.media_type IN ('VIDEO','REEL') AND m.public_url !~* '^https://res[.]cloudinary[.]com/[^/?#]+/video/upload/[^?#]+([?][^#]*)?$')))
                       AND (SELECT COUNT(*) FROM post_media m WHERE m.post_id=p.id) <= 20
                       AND (
-                          NOT EXISTS (SELECT 1 FROM post_media vm WHERE vm.post_id=p.id AND vm.media_type='VIDEO')
+                          NOT EXISTS (SELECT 1 FROM post_media vm WHERE vm.post_id=p.id AND vm.media_type IN ('VIDEO','REEL'))
                           OR (SELECT COUNT(*) FROM post_media vm WHERE vm.post_id=p.id) = 1
                       )
                       AND (NOT EXISTS (SELECT 1 FROM campaign_jobs cj WHERE cj.publishing_job_id=j.id)
                            OR EXISTS (SELECT 1 FROM campaign_jobs cj JOIN campaigns c ON c.id=cj.campaign_id
                                       WHERE cj.publishing_job_id=j.id AND c.status='RUNNING'))
                     RETURNING j.id, j.attempt_count, j.social_account_id, p.content
-                    """, (rs, i) -> new Claim(
-                    rs.getObject(1, UUID.class), rs.getInt(2),
-                    rs.getObject(3, UUID.class), rs.getString(4)), jobId);
+                    """, (rs, i) -> new Claim(rs.getObject(1, UUID.class), rs.getInt(2), rs.getObject(3, UUID.class), rs.getString(4)), jobId);
             if (rows.isEmpty()) return null;
             Claim c = rows.getFirst();
-            db.update("INSERT INTO publishing_attempts (publishing_job_id,attempt_number,status) VALUES (?,?,'PROCESSING')",
-                    c.jobId(), c.attempt());
+            db.update("INSERT INTO publishing_attempts (publishing_job_id,attempt_number,status) VALUES (?,?,'PROCESSING')", c.jobId(), c.attempt());
             return c;
         });
-        if (claim == null) throw new ApiException(HttpStatus.CONFLICT,
-                "Job must be PENDING, eligible, due now, approved, and contain images or one video");
+        if (claim == null)
+            throw new ApiException(HttpStatus.CONFLICT, "Job must be PENDING, eligible, due now, approved, and contain images or one video");
 
         boolean requestStarted = false;
         try {
-            if (claim.text() == null || claim.text().isBlank()
-                    || claim.text().codePointCount(0, claim.text().length()) > 500)
+            if (claim.text() == null || claim.text().isBlank() || claim.text().codePointCount(0, claim.text().length()) > 500)
                 throw new IllegalArgumentException("Threads text must contain 1-500 characters");
             SocialAccount account = accounts.findById(claim.accountId()).orElseThrow();
             if (account.tokenExpiresAt == null || !account.tokenExpiresAt.isAfter(OffsetDateTime.now()))
@@ -267,15 +261,13 @@ public class ThreadsPublishingService {
             String creationId = createThreadsContainer(base, token, claim.text(), claim.jobId(), claim.attempt());
             log.info("[THREADS] Container created | jobId={}, creationId={}", claim.jobId(), creationId);
             // Video encoding can take longer than image processing.
-            boolean videoPost = getPostMedia(claim.jobId()).stream()
-                    .anyMatch(m -> "VIDEO".equals(m.mediaType()));
+            boolean videoPost = getPostMedia(claim.jobId()).stream().anyMatch(m -> "VIDEO".equals(m.mediaType()));
             awaitContainerReady(creationId, token, claim.jobId(), videoPost ? 60 : 6);
             // Parent FINISHED can precede visibility at Meta's publish endpoint.
             // One publish attempt only: NEVER blindly retry /threads_publish.
             settleContainerForPublish(creationId, token, claim.jobId());
             log.info("[THREADS] Publishing container | jobId={}, creationId={}", claim.jobId(), creationId);
-            JsonNode published = post(base + "/threads_publish",
-                    "creation_id=" + enc(creationId), token, claim.jobId(), claim.attempt());
+            JsonNode published = post(base + "/threads_publish", "creation_id=" + enc(creationId), token, claim.jobId(), claim.attempt());
             String postId = published.path("id").asText("");
             if (!postId.matches("[0-9]+")) throw new IllegalStateException("Threads published post ID missing");
 
@@ -323,19 +315,12 @@ public class ThreadsPublishingService {
                 });
                 log.info("[THREADS] Permalink saved | jobId={}, postId={}, url={}", claim.jobId(), postId, finalUrl);
             } catch (Exception linkEx) {
-                log.warn("[THREADS] Published but permalink could not be saved. "
-                        + "Do NOT republish; recover with GET /v1.0/{}?fields=id,permalink. "
-                        + "jobId={}, reason={}", postId, claim.jobId(), linkEx.toString());
+                log.warn("[THREADS] Published but permalink could not be saved. " + "Do NOT republish; recover with GET /v1.0/{}?fields=id,permalink. " + "jobId={}, reason={}", postId, claim.jobId(), linkEx.toString());
             }
-            return new ThreadsPublishingController.Result(jobId, "PUBLISHED", postId, finalUrl,
-                    finalUrl == null ? "Published to Threads; permalink pending reconciliation"
-                            : "Published to Threads");
+            return new ThreadsPublishingController.Result(jobId, "PUBLISHED", postId, finalUrl, finalUrl == null ? "Published to Threads; permalink pending reconciliation" : "Published to Threads");
         } catch (Exception ex) {
-            log.error("[THREADS] Publishing failed. jobId={}, attempt={}, requestStarted={}",
-                    claim.jobId(), claim.attempt(), requestStarted, ex);
-            String message = requestStarted
-                    ? "Threads result uncertain. Review Backend logs and Threads before any retry."
-                    : "Threads validation failed before sending request";
+            log.error("[THREADS] Publishing failed. jobId={}, attempt={}, requestStarted={}", claim.jobId(), claim.attempt(), requestStarted, ex);
+            String message = requestStarted ? "Threads result uncertain. Review Backend logs and Threads before any retry." : "Threads validation failed before sending request";
             String jobStatus = requestStarted ? "NEEDS_REVIEW" : "FAILED";
             String attemptStatus = requestStarted ? "UNKNOWN" : "FAILED";
             tx.executeWithoutResult(s -> {
@@ -359,11 +344,7 @@ public class ThreadsPublishingService {
         Exception last = null;
         for (int check = 1; check <= 3; check++) {
             try {
-                HttpRequest request = HttpRequest.newBuilder(
-                                URI.create(GRAPH_BASE + postId + "?fields=id,permalink"))
-                        .timeout(Duration.ofSeconds(20))
-                        .header("Authorization", "Bearer " + token)
-                        .GET().build();
+                HttpRequest request = HttpRequest.newBuilder(URI.create(GRAPH_BASE + postId + "?fields=id,permalink")).timeout(Duration.ofSeconds(20)).header("Authorization", "Bearer " + token).GET().build();
                 HttpResponse<String> response = http.send(request, HttpResponse.BodyHandlers.ofString());
                 if (response.statusCode() / 100 != 2) {
                     throw new IllegalStateException("Threads permalink GET returned HTTP " + response.statusCode());
@@ -375,23 +356,34 @@ public class ThreadsPublishingService {
                 String permalink = body.path("permalink").asText("").strip();
                 URI uri = URI.create(permalink);
                 String host = uri.getHost();
-                if (!"https".equalsIgnoreCase(uri.getScheme()) || host == null
-                        || !("threads.net".equalsIgnoreCase(host)
-                        || "www.threads.net".equalsIgnoreCase(host)
-                        || "threads.com".equalsIgnoreCase(host)
-                        || "www.threads.com".equalsIgnoreCase(host))
-                        || uri.getUserInfo() != null || uri.getPort() != -1) {
+                if (!"https".equalsIgnoreCase(uri.getScheme()) || host == null || !("threads.net".equalsIgnoreCase(host) || "www.threads.net".equalsIgnoreCase(host) || "threads.com".equalsIgnoreCase(host) || "www.threads.com".equalsIgnoreCase(host)) || uri.getUserInfo() != null || uri.getPort() != -1) {
                     throw new IllegalStateException("Meta returned an invalid Threads permalink");
                 }
                 return permalink;
             } catch (Exception e) {
                 last = e;
-                log.warn("[THREADS] Permalink not available yet | jobId={}, check={}/3, reason={}",
-                        jobId, check, e.toString());
+                log.warn("[THREADS] Permalink not available yet | jobId={}, check={}/3, reason={}", jobId, check, e.toString());
                 if (check < 3) Thread.sleep(1500L);
             }
         }
         throw new IllegalStateException("Could not fetch Threads permalink after publication", last);
+    }
+
+    // REEL is a Facebook source classification. Threads publishes the same asset as VIDEO.
+    // Normalize only the local DTO; never UPDATE post_media or mutate the shared Post.
+    static String normalizeMediaType(String sourceType) {
+        return "REEL".equals(sourceType) ? "VIDEO" : sourceType;
+    }
+
+    static boolean validThreadsMediaUrl(String normalizedType, String publicUrl) {
+        String resource = "IMAGE".equals(normalizedType) ? "image" : "VIDEO".equals(normalizedType) ? "video" : null;
+        if (resource == null || publicUrl == null || publicUrl.isBlank()) return false;
+        try {
+            URI uri = URI.create(publicUrl);
+            return "https".equalsIgnoreCase(uri.getScheme()) && "res.cloudinary.com".equalsIgnoreCase(uri.getHost()) && uri.getUserInfo() == null && uri.getPort() == -1 && uri.getFragment() == null && uri.getRawPath() != null && uri.getRawPath().matches("(?i)/[^/]+/" + resource + "/upload/.+");
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
     }
 
     private List<MediaItem> getPostMedia(UUID jobId) {
@@ -401,13 +393,10 @@ public class ThreadsPublishingService {
                 JOIN publishing_jobs j ON j.post_id = m.post_id
                 WHERE j.id = ?
                 ORDER BY m.display_order ASC, m.id ASC
-                """, (rs, i) -> new MediaItem(
-                rs.getObject("id", UUID.class), rs.getString("public_url"),
-                rs.getString("media_type")), jobId);
+                """, (rs, i) -> new MediaItem(rs.getObject("id", UUID.class), rs.getString("public_url"), normalizeMediaType(rs.getString("media_type"))), jobId);
     }
 
-    private String createThreadsContainer(String base, String token, String text, UUID jobId, int attempt)
-            throws Exception {
+    private String createThreadsContainer(String base, String token, String text, UUID jobId, int attempt) throws Exception {
         List<MediaItem> media = getPostMedia(jobId);
         if (media.size() > 20) throw new IllegalArgumentException("Threads carousel supports at most 20 images");
         long videoCount = media.stream().filter(m -> "VIDEO".equals(m.mediaType())).count();
@@ -417,56 +406,38 @@ public class ThreadsPublishingService {
         for (MediaItem item : media) {
             if (!"IMAGE".equals(item.mediaType()) && !"VIDEO".equals(item.mediaType()))
                 throw new IllegalArgumentException("Unsupported Threads media type");
-            if (item.publicUrl() == null || item.publicUrl().isBlank())
-                throw new IllegalArgumentException("Threads media publicUrl is missing");
-            URI uri = URI.create(item.publicUrl());
-            if (!"https".equalsIgnoreCase(uri.getScheme())
-                    || uri.getHost() == null
-                    || !"res.cloudinary.com".equalsIgnoreCase(uri.getHost())
-                    || uri.getUserInfo() != null || uri.getPort() != -1 || uri.getFragment() != null)
-                throw new IllegalArgumentException("Use a public Cloudinary HTTPS media URL");
+            if (!validThreadsMediaUrl(item.mediaType(), item.publicUrl()))
+                throw new IllegalArgumentException("Use a public Cloudinary HTTPS upload URL matching IMAGE or VIDEO");
         }
         if (media.isEmpty()) {
-            return requireContainerId(post(base + "/threads",
-                    "media_type=TEXT&text=" + enc(text), token, jobId, attempt));
+            return requireContainerId(post(base + "/threads", "media_type=TEXT&text=" + enc(text), token, jobId, attempt));
         }
         if (media.size() == 1) {
             MediaItem item = media.getFirst();
-            String body = "VIDEO".equals(item.mediaType())
-                    ? "media_type=VIDEO&video_url=" + enc(item.publicUrl())
-                    : "media_type=IMAGE&image_url=" + enc(item.publicUrl());
-            return requireContainerId(post(base + "/threads",
-                    body + "&text=" + enc(text), token, jobId, attempt));
+            String body = "VIDEO".equals(item.mediaType()) ? "media_type=VIDEO&video_url=" + enc(item.publicUrl()) : "media_type=IMAGE&image_url=" + enc(item.publicUrl());
+            return requireContainerId(post(base + "/threads", body + "&text=" + enc(text), token, jobId, attempt));
         }
         List<String> children = new ArrayList<>();
         for (MediaItem item : media) {
-            String childId = requireContainerId(post(base + "/threads",
-                    "media_type=IMAGE&image_url=" + enc(item.publicUrl())
-                            + "&is_carousel_item=true", token, jobId, attempt));
-            log.info("[THREADS] Carousel child created | jobId={}, mediaId={}, childId={}",
-                    jobId, item.id(), childId);
+            String childId = requireContainerId(post(base + "/threads", "media_type=IMAGE&image_url=" + enc(item.publicUrl()) + "&is_carousel_item=true", token, jobId, attempt));
+            log.info("[THREADS] Carousel child created | jobId={}, mediaId={}, childId={}", jobId, item.id(), childId);
             awaitContainerReady(childId, token, jobId);
             children.add(childId);
         }
         // The last FINISHED response can precede availability of the child ID on
         // Meta's carousel-parent endpoint. No public post is created here.
         Thread.sleep(CAROUSEL_CHILD_SETTLE_MS);
-        String parentForm = "media_type=CAROUSEL&children=" + enc(String.join(",", children))
-                + "&text=" + enc(text);
+        String parentForm = "media_type=CAROUSEL&children=" + enc(String.join(",", children)) + "&text=" + enc(text);
         for (int parentTry = 1; parentTry <= CAROUSEL_PARENT_MAX_ATTEMPTS; parentTry++) {
             try {
-                log.info("[THREADS] Creating carousel parent | jobId={}, attempt={}/{}, children={}",
-                        jobId, parentTry, CAROUSEL_PARENT_MAX_ATTEMPTS, children.size());
+                log.info("[THREADS] Creating carousel parent | jobId={}, attempt={}/{}, children={}", jobId, parentTry, CAROUSEL_PARENT_MAX_ATTEMPTS, children.size());
                 return requireContainerId(post(base + "/threads", parentForm, token, jobId, attempt));
             } catch (ThreadsApiException ex) {
                 if (!isCarouselChildPropagationError(ex) || parentTry == CAROUSEL_PARENT_MAX_ATTEMPTS) {
                     throw ex;
                 }
                 long delayMs = 4000L * parentTry;
-                log.warn("[THREADS] Meta rejected carousel parent with 4279004; "
-                                + "will recheck child containers and retry parent only | jobId={}, "
-                                + "attempt={}/{}, delayMs={}",
-                        jobId, parentTry, CAROUSEL_PARENT_MAX_ATTEMPTS, delayMs);
+                log.warn("[THREADS] Meta rejected carousel parent with 4279004; " + "will recheck child containers and retry parent only | jobId={}, " + "attempt={}/{}, delayMs={}", jobId, parentTry, CAROUSEL_PARENT_MAX_ATTEMPTS, delayMs);
                 Thread.sleep(delayMs);
                 // Never recreate children and NEVER call /threads_publish here.
                 // A failed readiness recheck aborts safely to manual review.
@@ -487,11 +458,7 @@ public class ThreadsPublishingService {
     private JsonNode post(String url, String form, String token, UUID jobId, int attempt) throws Exception {
         String endpoint = URI.create(url).getPath();
         log.info("[THREADS] Sending request to {}", endpoint);
-        HttpRequest request = HttpRequest.newBuilder(URI.create(url))
-                .timeout(Duration.ofSeconds(60))
-                .header("Authorization", "Bearer " + token)
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .POST(HttpRequest.BodyPublishers.ofString(form)).build();
+        HttpRequest request = HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofSeconds(60)).header("Authorization", "Bearer " + token).header("Content-Type", "application/x-www-form-urlencoded").POST(HttpRequest.BodyPublishers.ofString(form)).build();
         requireApprovedForPublish(jobId, attempt);
         HttpResponse<String> response = http.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() / 100 != 2) {
@@ -505,8 +472,7 @@ public class ThreadsPublishingService {
             } catch (Exception parseError) {
                 log.warn("[THREADS] Unable to parse API error response");
             }
-            log.error("[THREADS] API failed. endpoint={}, status={}, code={}, subcode={}, type={}, message={}",
-                    endpoint, response.statusCode(), errorCode, errorSubcode, errorType, errorMessage);
+            log.error("[THREADS] API failed. endpoint={}, status={}, code={}, subcode={}, type={}, message={}", endpoint, response.statusCode(), errorCode, errorSubcode, errorType, errorMessage);
             throw new ThreadsApiException(endpoint, response.statusCode(), errorCode, errorSubcode);
         }
         log.info("[THREADS] Request successful. endpoint={}, status={}", endpoint, response.statusCode());
@@ -554,12 +520,10 @@ public class ThreadsPublishingService {
      */
     private void settleContainerForPublish(String creationId, String token, UUID jobId) throws Exception {
         long delayMs = Math.max(5000L, Math.min(publishSettleMs, 60000L));
-        log.info("[THREADS] Waiting for Meta propagation before publish | jobId={}, "
-                + "creationId={}, delayMs={}", jobId, creationId, delayMs);
+        log.info("[THREADS] Waiting for Meta propagation before publish | jobId={}, " + "creationId={}, delayMs={}", jobId, creationId, delayMs);
         Thread.sleep(delayMs);
         awaitContainerReady(creationId, token, jobId, 3);
-        log.info("[THREADS] Propagation readiness rechecked | jobId={}, creationId={}",
-                jobId, creationId);
+        log.info("[THREADS] Propagation readiness rechecked | jobId={}, creationId={}", jobId, creationId);
     }
 
     private void awaitContainerReady(String creationId, String token, UUID jobId) throws Exception {
@@ -571,8 +535,7 @@ public class ThreadsPublishingService {
         for (int check = 1; check <= maxChecks; check++) {
             JsonNode response = getContainerStatus(creationId, token);
             String state = response.path("status").asText("UNKNOWN");
-            log.info("[THREADS] Container readiness | jobId={}, check={}/{}, state={}",
-                    jobId, check, maxChecks, state);
+            log.info("[THREADS] Container readiness | jobId={}, check={}/{}, state={}", jobId, check, maxChecks, state);
             switch (state) {
                 case "FINISHED":
                     return;
@@ -581,34 +544,25 @@ public class ThreadsPublishingService {
                         Thread.sleep(intervalMillis);
                         continue;
                     }
-                    throw new IllegalStateException(
-                            "Threads container still IN_PROGRESS after " + maxChecks + " checks; no publish attempted");
+                    throw new IllegalStateException("Threads container still IN_PROGRESS after " + maxChecks + " checks; no publish attempted");
                 case "PUBLISHED":
-                    throw new IllegalStateException(
-                            "Threads container already PUBLISHED; do not publish again; verify externally");
+                    throw new IllegalStateException("Threads container already PUBLISHED; do not publish again; verify externally");
                 case "ERROR", "EXPIRED":
-                    throw new IllegalStateException("Threads container status=" + state
-                            + "; no publish attempted; details="
-                            + response.path("error_message").asText("not supplied"));
+                    throw new IllegalStateException("Threads container status=" + state + "; no publish attempted; details=" + response.path("error_message").asText("not supplied"));
                 default:
-                    throw new IllegalStateException(
-                            "Unexpected Threads container status=" + state + "; no publish attempted");
+                    throw new IllegalStateException("Unexpected Threads container status=" + state + "; no publish attempted");
             }
         }
     }
 
     private JsonNode getContainerStatus(String creationId, String token) throws Exception {
         String url = GRAPH_BASE + enc(creationId) + "?fields=id,status,error_message";
-        HttpRequest request = HttpRequest.newBuilder(URI.create(url))
-                .timeout(Duration.ofSeconds(30))
-                .header("Authorization", "Bearer " + token).GET().build();
+        HttpRequest request = HttpRequest.newBuilder(URI.create(url)).timeout(Duration.ofSeconds(30)).header("Authorization", "Bearer " + token).GET().build();
         HttpResponse<String> response = http.send(request, HttpResponse.BodyHandlers.ofString());
         if (response.statusCode() / 100 != 2)
             throw new IllegalStateException("Threads container status check failed: HTTP " + response.statusCode());
         JsonNode result = json.readTree(response.body());
-        log.info("[THREADS] Container status | creationId={}, status={}, error={}",
-                creationId, result.path("status").asText("UNKNOWN"),
-                result.path("error_message").asText(""));
+        log.info("[THREADS] Container status | creationId={}, status={}, error={}", creationId, result.path("status").asText("UNKNOWN"), result.path("error_message").asText(""));
         return result;
     }
 }
