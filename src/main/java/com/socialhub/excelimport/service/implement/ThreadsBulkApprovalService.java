@@ -1,5 +1,7 @@
 package com.socialhub.excelimport.service.implement;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.socialhub.common.ApiException;
 import com.socialhub.post.entity.Post;
 import com.socialhub.postapproval.service.interfaces.PostApprovalService;
@@ -38,21 +40,28 @@ public class ThreadsBulkApprovalService {
 
     public record Request(UUID threadsAccountId, Integer maxPosts, Integer fromRow,
                           Integer toRow, Boolean dryRun, Boolean confirmApproval,
-                          String previewToken) { }
+                          String previewToken) {
+    }
 
-    public record Row(int sourceRowNumber, UUID postId, String action, String reason,
-                      String contentPreview) { }
+    public record Row(int sourceRowNumber, UUID postId, String action,
+                      @JsonSerialize(using = ViDisplayTextSerializer.class) String reason,
+                      String contentPreview) {
+    }
 
     public record Result(UUID importId, UUID threadsAccountId, boolean dryRun,
                          String previewToken, int eligible, int alreadyApproved,
-                         int blocked, int approved, List<Row> rows, List<String> errors) { }
+                         int blocked, int approved, List<Row> rows,
+                         @JsonSerialize(contentUsing = ViDisplayTextSerializer.class) List<String> errors) {
+    }
 
     private record Source(int row, UUID postId, String content, String topic, String status,
                           String approval, boolean hasJob, boolean mediaReady,
-                          boolean hasSourceDate, boolean hasPublishTime) { }
+                          boolean hasSourceDate, boolean hasPublishTime) {
+    }
 
     private record Snapshot(String token, int eligible, int alreadyApproved,
-                            int blocked, List<Row> rows) { }
+                            int blocked, List<Row> rows) {
+    }
 
     public Result run(UUID workspaceId, UUID importId, Request request) {
         access.admin(workspaceId);
@@ -113,7 +122,7 @@ public class ThreadsBulkApprovalService {
                 || (request.fromRow() != null && request.fromRow() < 2)
                 || (request.toRow() != null && request.toRow() > 10001)
                 || (request.fromRow() != null && request.toRow() != null
-                    && request.toRow() < request.fromRow())) {
+                && request.toRow() < request.fromRow())) {
             throw new ApiException(HttpStatus.BAD_REQUEST,
                     "threadsAccountId, maxPosts(1..1000), valid fromRow/toRow required");
         }
@@ -137,24 +146,24 @@ public class ThreadsBulkApprovalService {
 
     private List<Source> readSource(UUID importId, Request request) {
         return db.query("""
-                SELECT r.source_row_number, r.post_id, p.content, p.topic, p.status,
-                       p.approval_status,
-                       EXISTS(SELECT 1 FROM publishing_jobs j WHERE j.post_id=p.id) AS has_job,
-                       NOT EXISTS(SELECT 1 FROM post_media m WHERE m.post_id=p.id
-                           AND (m.public_url IS NULL OR btrim(m.public_url)=''
-                                OR m.media_type<>'IMAGE'
-                                OR m.public_url ILIKE '%/video/upload/%'
-                                OR m.source_url ILIKE '%/video/upload/%')) AS media_ready,
-                       r.source_publish_date IS NOT NULL AS has_source_date,
-                       e.publish_time IS NOT NULL AS has_publish_time
-                FROM excel_import_rows r
-                JOIN excel_imports e ON e.id=r.import_id
-                JOIN posts p ON p.id=r.post_id AND p.workspace_id=e.workspace_id
-                WHERE r.import_id=? AND r.post_id IS NOT NULL
-                  AND (r.processing_status IS NULL OR r.processing_status NOT LIKE 'SKIPPED_%')
-                  AND r.source_row_number BETWEEN ? AND ?
-                ORDER BY r.source_row_number
-                """, (rs, i) -> new Source(
+                        SELECT r.source_row_number, r.post_id, p.content, p.topic, p.status,
+                               p.approval_status,
+                               EXISTS(SELECT 1 FROM publishing_jobs j WHERE j.post_id=p.id) AS has_job,
+                               NOT EXISTS(SELECT 1 FROM post_media m WHERE m.post_id=p.id
+                                   AND (m.public_url IS NULL OR btrim(m.public_url)=''
+                                        OR m.media_type<>'IMAGE'
+                                        OR m.public_url ILIKE '%/video/upload/%'
+                                        OR m.source_url ILIKE '%/video/upload/%')) AS media_ready,
+                               r.source_publish_date IS NOT NULL AS has_source_date,
+                               e.publish_time IS NOT NULL AS has_publish_time
+                        FROM excel_import_rows r
+                        JOIN excel_imports e ON e.id=r.import_id
+                        JOIN posts p ON p.id=r.post_id AND p.workspace_id=e.workspace_id
+                        WHERE r.import_id=? AND r.post_id IS NOT NULL
+                          AND (r.processing_status IS NULL OR r.processing_status NOT LIKE 'SKIPPED_%')
+                          AND r.source_row_number BETWEEN ? AND ?
+                        ORDER BY r.source_row_number
+                        """, (rs, i) -> new Source(
                         rs.getInt("source_row_number"), rs.getObject("post_id", UUID.class),
                         rs.getString("content"), rs.getString("topic"), rs.getString("status"),
                         rs.getString("approval_status"), rs.getBoolean("has_job"),

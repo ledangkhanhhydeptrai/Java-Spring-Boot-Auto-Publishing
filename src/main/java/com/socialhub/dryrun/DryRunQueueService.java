@@ -1,5 +1,7 @@
 package com.socialhub.dryrun;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -25,7 +27,8 @@ public class DryRunQueueService {
     private final DryRunExcelService excel;
 
     public record SimulatedJob(int excelRow, String validation, String queueStatus,
-                               String mockResult, String scheduledAt, List<String> messages) {
+                               String mockResult, String scheduledAt,
+                               @JsonSerialize(contentUsing = ViDisplayTextSerializer.class) List<String> messages) {
     }
 
     public record QueueReport(String fileName, int totalRows, int alreadyPublished,

@@ -1,4 +1,4 @@
-package com.socialhub.grouppublishingtask.automation.dispatch;
+package com.socialhub.grouppublishingtask.dispatch;
 
 import com.socialhub.grouppublishingtask.automation.GroupTaskQueueService;
 import com.socialhub.security.AccessService;

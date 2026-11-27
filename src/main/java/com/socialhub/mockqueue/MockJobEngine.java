@@ -1,15 +1,29 @@
 package com.socialhub.mockqueue;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** Synthetic-only state machine. Never invokes a real publisher. */
+/**
+ * Synthetic-only state machine. Never invokes a real publisher.
+ */
 public final class MockJobEngine {
-    public enum Outcome { SUCCESS, TRANSIENT_FAILURE, TIMEOUT_AFTER_ACCEPT }
-    public enum Status { COMPLETED, RETRY_PENDING, NEEDS_REVIEW }
-    public record Result(String jobId, Status status, int attempts, boolean accepted, String detail) {}
-    /** Distinguishes a redelivered terminal job from a newly processed one. */
-    public record Handled(Result result, boolean duplicate) {}
+    public enum Outcome {SUCCESS, TRANSIENT_FAILURE, TIMEOUT_AFTER_ACCEPT}
+
+    public enum Status {COMPLETED, RETRY_PENDING, NEEDS_REVIEW}
+
+    public record Result(String jobId, Status status, int attempts, boolean accepted,
+                         @JsonSerialize(using = ViDisplayTextSerializer.class) String detail) {
+    }
+
+    /**
+     * Distinguishes a redelivered terminal job from a newly processed one.
+     */
+    public record Handled(Result result, boolean duplicate) {
+    }
+
     private final Map<String, Result> terminal = new ConcurrentHashMap<>();
     private final Map<String, Integer> attempts = new ConcurrentHashMap<>();
     private final Map<String, Boolean> accepted = new ConcurrentHashMap<>();
@@ -44,6 +58,12 @@ public final class MockJobEngine {
         if (result.status() != Status.RETRY_PENDING) terminal.put(jobId, result);
         return new Handled(result, false);
     }
-    public int acceptedCount() { return accepted.size(); }
-    public int terminalCount() { return terminal.size(); }
+
+    public int acceptedCount() {
+        return accepted.size();
+    }
+
+    public int terminalCount() {
+        return terminal.size();
+    }
 }

@@ -1,5 +1,7 @@
 package com.socialhub.excelimport.orchestrator.service;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.socialhub.common.ApiException;
 import com.socialhub.excelimport.service.implement.ExcelBulkRunBridgeService;
 import com.socialhub.excelimport.service.implement.ExcelAutoPublishService;
@@ -84,7 +86,7 @@ public class ExcelPublishingOrchestratorService {
             int startedRuns,
             int remainingUnplannedRows,
             List<RunResult> runs,
-            List<String> errors,
+            @JsonSerialize(contentUsing = ViDisplayTextSerializer.class) List<String> errors,
             String status
     ) {
     }

@@ -17,7 +17,12 @@ public interface PublishingJobService {
     );
 
     Page<PublishingJobDto.View> listWorkspaceJobs(UUID workspaceId, int page, int size,
-                                                  String status, UUID postId);
+                                                  String status, UUID postId, String platform);
+
+    default Page<PublishingJobDto.View> listWorkspaceJobs(UUID workspaceId, int page, int size,
+                                                          String status, UUID postId) {
+        return listWorkspaceJobs(workspaceId, page, size, status, postId, "");
+    }
 
     PublishingJobDto.View reschedulePending(
             UUID jobId,

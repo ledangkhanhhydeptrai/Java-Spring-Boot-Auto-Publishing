@@ -1,6 +1,9 @@
 
 package com.socialhub.media.service.interfaces;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -11,8 +14,9 @@ public interface MediaProcessingService {
             String sourceUrl,
             String publicUrl,
             String status,
-            String message
-    ) {}
+            @JsonSerialize(using = ViDisplayTextSerializer.class) String message
+    ) {
+    }
 
     record ProcessResult(
             UUID postId,
@@ -21,7 +25,8 @@ public interface MediaProcessingService {
             int skipped,
             int failed,
             List<MediaResult> media
-    ) {}
+    ) {
+    }
 
     ProcessResult processPostMedia(UUID postId);
 }

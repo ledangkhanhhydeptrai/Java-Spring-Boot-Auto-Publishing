@@ -1,5 +1,7 @@
 package com.socialhub.dryrun;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -30,7 +32,8 @@ public class DryRunExcelService {
             DateTimeFormatter.ofPattern("dd/MM/yyyy")
     };
 
-    public record RowResult(int excelRow, String result, List<String> messages) {
+    public record RowResult(int excelRow, String result,
+                            @JsonSerialize(contentUsing = ViDisplayTextSerializer.class) List<String> messages) {
     }
 
     public record PreviewResult(String fileName, String sheetName, int totalRows,

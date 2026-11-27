@@ -1,0 +1,667 @@
+# mode	English source text	Vietnamese display text
+X	10 preview tokens required	Cần đủ 10 kết quả xem trước để xác nhận.
+X	A Publishing Job for this account is already PUBLISHED; do not republish	Tài khoản này đã có lịch đăng thành công. Không đăng lại.
+X	A SH26 plan changed; preview again before confirming	Kế hoạch SH26 đã thay đổi. Vui lòng xem trước lại rồi xác nhận.
+X	A connected Threads account in the same workspace is required	Vui lòng kết nối tài khoản Threads thuộc không gian làm việc này.
+X	A probe is already in progress.	Đang có một lượt kiểm tra hàng đợi. Vui lòng thử lại sau.
+X	A01 P001 existing Job is missing or mapped to wrong Page	Không tìm thấy lịch đăng A01 P001 hoặc lịch đang gắn sai Fanpage.
+X	A01 must contain 99 or 100 new drafts	Nhóm A01 phải có 99 hoặc 100 bài nháp mới.
+X	Accepted for background preparation, not yet published to Facebook	Đã nhận yêu cầu chuẩn bị chạy nền, chưa đăng bài lên Facebook.
+X	Access denied	Bạn không có quyền thực hiện thao tác này.
+X	Account not found	Không tìm thấy tài khoản mạng xã hội.
+X	Account unavailable, OAuth token invalid/expired or wrong workspace/platform	Tài khoản chưa khả dụng, kết nối không hợp lệ hoặc không thuộc không gian làm việc và nền tảng đã chọn.
+X	Admin access required	Bạn cần quyền quản trị viên để thực hiện thao tác này.
+X	Already processed	Đã xử lý trước đó.
+P	Already published or unknown status at 	Dòng nguồn đã đăng hoặc có trạng thái chưa xác định. Vui lòng đối soát.
+X	Already-published Excel row cannot be rescheduled	Không thể đổi lịch của dòng Excel đã đăng thành công.
+X	An active publishing job for this account conflicts with the planned time	Tài khoản đang có lịch đăng trùng với giờ dự kiến.
+X	An existing Job for this Post and account was found	Đã có lịch đăng cho bài viết và tài khoản này.
+X	An orchestrator run already needs processing or review	Đã có một đợt xử lý đang chạy hoặc cần xác minh. Vui lòng xử lý đợt đó trước.
+X	Another Group Task was added; preview again	Có lịch đăng nhóm mới vừa được thêm. Vui lòng xem trước lại.
+X	Another Post in the workspace has identical content	Có bài khác cùng nội dung trong không gian làm việc.
+X	Another active Job is scheduled within one minute	Đã có lịch đăng khác trong khoảng một phút. Vui lòng chọn giờ khác.
+X	Another active connection writes to the same Sheet tab	Một kết nối khác đang ghi dữ liệu vào cùng trang tính.
+X	Another diagnostic is running.	Đang có một lượt kiểm thử khác.
+X	Another run already exists for this import	Đã có đợt xử lý cho lần nhập dữ liệu này.
+X	Approval status changed	Trạng thái duyệt bài đã thay đổi. Vui lòng tải lại.
+X	Archived post media cannot be modified	Không thể chỉnh sửa ảnh hoặc video của bài đã lưu trữ.
+X	At most 100 post-account pairs per batch	Mỗi đợt chỉ được chọn tối đa 100 cặp bài viết và tài khoản.
+X	Authentication required	Vui lòng đăng nhập để tiếp tục.
+X	Batch is not eligible; run preview to inspect issues	Đợt đăng chưa đủ điều kiện. Vui lòng xem trước để kiểm tra các vấn đề.
+X	Broker did not return the test message.	Hàng đợi chưa trả về tin kiểm thử.
+P	Bulk eligibility mismatch; expected 	Số lịch đủ điều kiện không khớp dự kiến. Vui lòng đối soát.
+P	Bulk preview error: 	Không thể xem trước đợt đăng hàng loạt. Vui lòng kiểm tra dữ liệu.
+X	Bulk request must include data and at most 10000 potential jobs	Vui lòng chọn dữ liệu hợp lệ, tối đa 10.000 lịch đăng dự kiến mỗi đợt.
+X	Bulk run not found in workspace	Không tìm thấy đợt đăng hàng loạt trong không gian làm việc này.
+P	Bulk setup/start stopped: 	Đợt đăng hàng loạt đã dừng khi chuẩn bị hoặc khởi động. Vui lòng kiểm tra kết quả trước khi thử lại.
+X	CSRF token ready	Đã chuẩn bị thông tin bảo mật cho phiên làm việc.
+X	Campaign contains jobs without approval or publishing eligibility	Chiến dịch có bài chưa được duyệt hoặc chưa đủ điều kiện đăng.
+X	Campaign name is required	Vui lòng nhập tên chiến dịch.
+X	Campaign not found	Không tìm thấy chiến dịch.
+X	Cannot change content while scheduling	Không thể thay đổi nội dung khi đang lập lịch đăng.
+X	Cannot confirm SH26 mixed media jobs: check LIVE, multiJob, video, reels, bulk=false flags.	Chưa thể xác nhận lịch SH26 nhiều loại nội dung. Vui lòng kiểm tra cấu hình đăng thật, nhiều bài, video, Reel và chế độ hàng loạt.
+P	Cannot confirm VIDEO/REEL as NOT_PUBLISHED after 	Không thể xác nhận video hoặc Reel chưa đăng sau khi đã thử gửi. Vui lòng đối soát bài thật trước.
+P	Cannot export Excel: 	Không thể xuất tệp Excel. Vui lòng kiểm tra dữ liệu và thử lại.
+P	Cannot parse Excel: 	Không thể đọc tệp Excel. Vui lòng kiểm tra dữ liệu và định dạng.
+X	Cannot parse the original Excel file	Không thể đọc tệp Excel gốc. Vui lòng kiểm tra lại tệp.
+X	Cannot prepare SH26 drafts	Không thể chuẩn bị bài nháp SH26. Vui lòng kiểm tra dữ liệu.
+X	Cannot read .xlsx workbook	Không thể mở tệp .xlsx. Vui lòng kiểm tra định dạng tệp.
+X	Cannot read Excel file	Không thể đọc tệp Excel. Vui lòng kiểm tra tệp.
+X	Cannot remove owner	Không thể xóa chủ sở hữu khỏi không gian làm việc.
+X	Cannot save original content backup on server; no database changes made	Không thể sao lưu nội dung gốc trên máy chủ. Dữ liệu chưa bị thay đổi.
+X	Carousel parent attempts exhausted	Đã hết số lần thử tạo bài Threads nhiều ảnh.
+X	Cloudinary URL is empty	Thiếu đường dẫn Cloudinary.
+X	Cloudinary returned an invalid image URL	Cloudinary trả về đường dẫn ảnh không hợp lệ.
+X	Cloudinary video requires VIDEO/REEL pipeline	Video Cloudinary cần được xử lý qua luồng video/Reel riêng.
+X	Column L already bound to another Group or Sheet identity; no reassignment	Cột L đã được liên kết với nhóm hoặc trang tính khác. Không thể tự động đổi liên kết.
+X	Column L already contains different data	Cột L đang có dữ liệu khác. Không ghi đè.
+P	Column L contains a different or invalid Group link at row 	Cột L có đường dẫn bài nhóm khác hoặc không hợp lệ. Vui lòng đối soát dữ liệu trước khi ghi.
+X	Column L has a different header; no Sheet cells written	Tiêu đề cột L không khớp. Chưa ghi dữ liệu vào Google Sheets.
+X	Column L header must be Link Facebook Group or blank; no cells written	Tiêu đề cột L phải là Link Facebook Group hoặc để trống. Chưa ghi dữ liệu.
+X	Column L is already used by a different Group/header; no cells written	Cột L đang có tiêu đề hoặc dữ liệu của nhóm khác. Chưa ghi dữ liệu.
+X	Column L requires a matching saved Sheet-Group binding; no cells written	Cần lưu đúng liên kết trang tính và nhóm trước khi ghi cột L. Chưa ghi dữ liệu.
+P	Concurrent job update: 	Lịch đăng vừa được cập nhật bởi tiến trình khác. Vui lòng tải lại.
+X	Confirm with dryRun=false, confirmLive=true and a fresh previewToken	Vui lòng xem trước lại và xác nhận đăng thật bằng kết quả mới nhất.
+X	Confirmation phrase must be IMPORT_SH26_1000_DRAFTS	Vui lòng nhập đúng nội dung xác nhận IMPORT_SH26_1000_DRAFTS để nhập bài nháp.
+X	Conflicting Sheet gid in link	Mã trang tính trong đường dẫn không khớp. Vui lòng kiểm tra đường dẫn.
+X	Connected Threads account required in same workspace	Vui lòng kết nối tài khoản Threads thuộc không gian làm việc này.
+X	Connection is assigned to active publishing jobs; cancel or finish them first	Kết nối đang được sử dụng bởi các lịch đăng chưa hoàn tất. Vui lòng xử lý hoặc hủy chúng trước.
+X	Connection not eligible for this Page	Kết nối này không đủ quyền quản lý Fanpage đã chọn.
+X	Connection not found	Không tìm thấy kết nối.
+X	Content changed or is ineligible	Nội dung đã thay đổi hoặc không đủ điều kiện đăng.
+X	Could not establish a unique import link	Không thể xác định duy nhất lần nhập dữ liệu cần liên kết.
+X	Could not fetch Threads permalink after publication	Chưa lấy được đường dẫn bài Threads sau khi đăng. Không đăng lại bài.
+X	Could not persist orchestrator request	Không thể lưu yêu cầu điều phối đăng bài. Vui lòng thử lại.
+X	Create Post Successfully	Tạo bài viết thành công.
+X	Create post as DRAFT and complete approval before scheduling	Vui lòng tạo bài nháp và hoàn tất duyệt bài trước khi lên lịch.
+X	Created jobs do not match unique batch rows; inspect jobs before retrying	Số lịch đã tạo không khớp các dòng nguồn duy nhất. Vui lòng đối soát trước khi thử lại.
+X	Created with existing Group Task approval semantics	Đã tạo lịch đăng theo quy trình duyệt nhóm hiện tại.
+X	Current Sheet B differs from imported Post	Nội dung cột B hiện tại khác bài đã nhập.
+X	Current Sheet F date; may differ from historical original after Writeback	Dùng ngày hiện tại ở cột F; có thể khác ngày gốc nếu đã ghi kết quả trước đó.
+X	Current attempt already has a manual review decision	Lần đăng này đã được đối soát thủ công.
+X	Current attempt has not been manually reviewed	Lần đăng này chưa được đối soát thủ công.
+X	Current linked Sheet content differs from imported Post	Nội dung trang tính đã liên kết khác bài đã nhập.
+X	Data changed since preview; preview again	Dữ liệu đã thay đổi kể từ lần xem trước. Vui lòng xem trước lại.
+X	Delete Post Successfully	Xóa bài viết thành công.
+X	Diagnostic envelope validated and acknowledged. No real Task dispatched.	Đã xác thực và xác nhận tin kiểm thử. Chưa gửi lịch đăng thực tế.
+P	Diagnostic failed: 	Kiểm thử hàng đợi thất bại. Vui lòng kiểm tra kết nối.
+X	Diagnostic interrupted.	Lượt kiểm thử bị gián đoạn.
+X	Diagnostic is disabled.	Chức năng kiểm thử đang tắt.
+X	Different workspaces	Các dữ liệu đã chọn không thuộc cùng không gian làm việc.
+P	Direct publication confirmation is disabled. 	Chức năng xác nhận đăng trực tiếp đang tắt.
+P	Duplicate Excel column: 	Tệp Excel có tiêu đề cột trùng lặp. Vui lòng kiểm tra lại.
+X	Duplicate Post in selected sources	Bài viết bị trùng trong các nguồn đã chọn.
+P	Duplicate code 	Phát hiện mã bài viết bị trùng. Vui lòng kiểm tra dữ liệu nguồn.
+X	Duplicate or referenced resource	Dữ liệu đã tồn tại hoặc đang được sử dụng. Vui lòng kiểm tra trước khi thay đổi.
+P	Duplicate published source row: 	Phát hiện dòng dữ liệu nguồn đã đăng bị trùng.
+P	Duplicate staged Google Sheet row 	Phát hiện dòng dữ liệu Google Sheets bị trùng.
+X	Eligible jobs changed; call GET /bulk-runs/preview again	Danh sách bài đủ điều kiện đã thay đổi. Vui lòng xem trước lại đợt đăng.
+X	Email already registered	Email này đã được đăng ký. Vui lòng đăng nhập hoặc sử dụng email khác.
+X	Empty content	Bài viết chưa có nội dung.
+X	Empty post content	Bài viết chưa có nội dung.
+X	Enable APP_GROUP_QUEUE_PROBE_ENABLED=true and restart Backend to test transport.	Chức năng kiểm tra hàng đợi đang tắt. Vui lòng liên hệ quản trị viên để bật kiểm thử.
+X	Enabled Google Sheet import link and same-workspace Facebook Group required	Cần liên kết nhập Google Sheets đang bật và nhóm Facebook thuộc cùng không gian làm việc.
+X	Encrypted Threads token missing	Thiếu thông tin kết nối Threads. Vui lòng kết nối lại.
+X	Encrypted token invalid	Thông tin kết nối đã lưu không hợp lệ. Vui lòng kết nối lại.
+P	Every group must target a different Page: 	Mỗi nhóm dữ liệu phải được gắn với một Fanpage khác nhau.
+X	Evidence and verification note are required	Vui lòng cung cấp bằng chứng và ghi chú xác minh.
+X	Evidence is required	Vui lòng cung cấp bằng chứng đối soát.
+X	Exact confirmation phrase is required	Vui lòng nhập đúng nội dung xác nhận được yêu cầu.
+X	Excel Bulk bridge disabled; set APP_EXCEL_BULK_BRIDGE_ENABLED=true	Chức năng đăng hàng loạt từ Excel chưa được bật. Vui lòng liên hệ quản trị viên hệ thống.
+P	Excel MOCK blocked: enable dedicated Excel simulation, disable generic synthetic MOCK, 	Chế độ mô phỏng Excel chưa được cấu hình đúng. Vui lòng liên hệ quản trị viên.
+X	Excel Post content differs from Google Sheets row; reconcile manually	Nội dung bài Excel khác dòng Google Sheets. Vui lòng đối soát thủ công.
+X	Excel automatic publishing is disabled (APP_EXCEL_AUTO_PUBLISH_ENABLED=false)	Chức năng đăng tự động từ Excel đang tắt.
+X	Excel contains no data rows	Tệp Excel không có dòng dữ liệu.
+X	Excel date is still in the future	Ngày đăng Excel vẫn ở tương lai.
+X	Excel exceeds 10000 data rows	Tệp Excel vượt quá 10.000 dòng dữ liệu.
+X	Excel file already imported for this account	Tệp Excel này đã được nhập cho tài khoản đã chọn.
+X	Excel file exceeds 10 MB	Tệp Excel vượt quá dung lượng 10 MB.
+X	Excel file is empty	Tệp Excel không có dữ liệu.
+X	Excel has no sheets	Tệp Excel không có trang tính.
+X	Excel header is missing	Tệp Excel thiếu hàng tiêu đề.
+X	Excel headers Topic / Nội dung do not match	Tiêu đề cột Topic hoặc Nội dung trong Excel không đúng mẫu.
+X	Excel import not found	Không tìm thấy lần nhập Excel.
+X	Excel import not found in this workspace	Không tìm thấy lần nhập Excel trong không gian làm việc này.
+X	Excel import not found in workspace	Không tìm thấy lần nhập Excel trong không gian làm việc này.
+X	Excel import not found in workspace or not bound to an account	Không tìm thấy lần nhập Excel hoặc chưa liên kết tài khoản đăng bài.
+X	Excel import row was skipped	Dòng Excel đã bị bỏ qua khi nhập.
+X	Excel import/account not found in workspace	Không tìm thấy lần nhập Excel hoặc tài khoản trong không gian làm việc này.
+X	Excel media batch safety bound exceeded	Đợt xử lý ảnh/video đã vượt giới hạn an toàn nội bộ.
+X	Excel media cursor did not advance	Tiến trình xử lý ảnh/video không chuyển sang dòng tiếp theo. Vui lòng kiểm tra dữ liệu.
+X	Excel orchestrator disabled; set APP_EXCEL_ORCHESTRATOR_ENABLED=true	Chức năng điều phối đăng từ Excel đang tắt. Vui lòng liên hệ quản trị viên.
+E	Excel row 	Dòng dữ liệu Excel chưa đáp ứng điều kiện xử lý. Vui lòng kiểm tra lại.
+X	Excel row Post changed; preview again	Bài liên kết với dòng Excel đã thay đổi. Vui lòng xem trước lại.
+X	Excel row disappeared	Dòng Excel không còn tồn tại.
+X	Excel row has already been published or skipped	Dòng Excel đã đăng hoặc đã bị bỏ qua.
+X	Excel row has no Post	Dòng Excel chưa được liên kết với bài viết.
+X	Excel source row not found	Không tìm thấy dòng dữ liệu Excel gốc.
+X	Excluded by maxRows limit	Dòng nằm ngoài số lượng đã chọn cho đợt này.
+X	Existing Group permalink matches	Đường dẫn bài nhóm đã tồn tại và khớp.
+P	Existing P001 cannot be reused safely: 	Không thể sử dụng lại bài P001 một cách an toàn. Vui lòng đối soát dữ liệu.
+X	Existing P001 content, Page or Publishing Job differs from Google Sheets; manual review required	Nội dung, Fanpage hoặc lịch đăng P001 không khớp Google Sheets. Cần đối soát thủ công.
+X	Existing P001 media differs from Sheet; review without deleting or reimporting	Ảnh hoặc video của P001 khác với Google Sheets. Vui lòng đối soát, không xóa hoặc nhập lại.
+X	Existing Post for this account/sheet/row/content; use it instead of creating a duplicate	Đã có bài khớp tài khoản, trang tính, dòng và nội dung. Sử dụng bài hiện tại, không tạo trùng.
+X	Existing column L data must not be overwritten	Cột L đã có dữ liệu khác. Không ghi đè.
+X	Existing import date preserved	Giữ nguyên ngày đăng đã lưu khi nhập dữ liệu.
+X	Existing matching Group link	Đường dẫn bài nhóm hiện tại đã khớp.
+X	Existing task for this Post/Group	Đã có lịch đăng cho bài viết và nhóm này.
+E	Expected 	Dữ liệu không khớp số lượng hoặc cấu trúc yêu cầu. Vui lòng kiểm tra lại.
+P	Expected 1000 unique SH-T10 rows; got 	Cần đúng 1.000 dòng SH-T10 không trùng lặp. Vui lòng kiểm tra số lượng.
+X	Expected 1000 unique SH26 posts = 340 IMAGE + 330 VIDEO + 330 REEL	Cần 1.000 bài SH26 không trùng, gồm 340 bài ảnh, 330 video và 330 Reel.
+X	Expected Trang tính1 and exactly 10 explicit SH26 target mappings	Cần chọn Trang tính1 và liên kết đủ 10 đích SH26.
+E	Expected exactly 	Số lượng dữ liệu không đúng yêu cầu. Vui lòng kiểm tra lại.
+P	Expected exactly one SYNCED Google Sheets connection for this link (found 	Đường dẫn phải tương ứng với đúng một kết nối Google Sheets đã đồng bộ.
+X	Expected exactly one existing SH26-A01-P001 Post; do not create duplicates	Cần đúng một bài SH26-A01-P001 đã tồn tại. Không tạo bài trùng.
+X	Explicit SCHEDULE_SH26_1000_LIVE confirmation required	Vui lòng xác nhận đúng thao tác lên lịch đăng thật 1.000 bài SH26.
+X	Explicit Sheet tab required	Vui lòng chọn trang tính cụ thể.
+X	Explicit confirmLive=true required for autoPlan; scheduled jobs can publish LIVE when enabled	Vui lòng xác nhận lên lịch đăng thật. Các bài có thể tự đăng khi bật chức năng xuất bản.
+X	Explicit confirmation and previewToken required	Vui lòng xem trước và xác nhận bằng kết quả mới nhất.
+X	Explicit connectionId and facebookGroupId required	Vui lòng chọn kết nối Google Sheets và nhóm Facebook cụ thể.
+X	Explicit dryRun=false and confirmLive=true required	Vui lòng xác nhận thao tác đăng thật sau khi xem trước.
+X	Explicit writeback confirmation is required	Vui lòng xác nhận ghi dữ liệu về Google Sheets.
+X	External post ID and evidence are required	Vui lòng cung cấp mã bài đăng trên mạng xã hội và bằng chứng.
+X	External post ID exceeds 255 characters	Mã bài đăng trên mạng xã hội không được vượt quá 255 ký tự.
+X	External post ID is required	Vui lòng cung cấp mã bài đã đăng trên mạng xã hội.
+P	Facebook BULK LIVE not explicitly enabled or conflicts with exact-job automation. 	Chức năng đăng Facebook hàng loạt chưa bật hoặc xung đột với chế độ đăng tự động hiện tại.
+X	Facebook Bulk retry is disabled; review the bulk run separately	Chưa thể thử lại đợt đăng Facebook hàng loạt. Vui lòng đối soát đợt đăng riêng.
+X	Facebook Group no longer belongs to this Workspace; no tasks created	Nhóm Facebook không còn thuộc không gian làm việc này. Chưa tạo lịch đăng nào.
+X	Facebook Group not found	Không tìm thấy nhóm Facebook.
+X	Facebook OAuth connection missing or expires before due time	Kết nối Facebook chưa có hoặc hết hạn trước giờ đăng. Vui lòng kết nối lại.
+X	Facebook Page access token is missing	Fanpage chưa có thông tin kết nối. Vui lòng kết nối lại.
+X	Facebook REEL/VIDEO retry is disabled after an attempt; reconcile Meta publication first	Không thể tự động thử lại video hoặc Reel Facebook đã từng gửi. Vui lòng đối soát trên Facebook trước.
+P	Facebook Reel FINISH accepted (video_id=	Meta đã nhận yêu cầu hoàn tất Reel. Cần xác minh bài đã xuất bản trước khi cập nhật kết quả.
+X	Facebook connection selector is incomplete	Chưa chọn đầy đủ kết nối Facebook.
+X	Facebook workspace ID is missing	Thiếu không gian làm việc của tài khoản Facebook.
+X	File does not match original import SHA-256. Select the original Excel file.	Tệp không khớp với tệp Excel đã nhập ban đầu. Vui lòng chọn đúng tệp gốc.
+X	For this test, maxJobs must be between 1 and 5	Mỗi lần kiểm thử chỉ được chọn từ 1 đến 5 lịch đăng.
+X	Get Current User Successfully	Đã tải thông tin tài khoản.
+X	Get Post Detail Successfully	Đã tải chi tiết bài viết.
+X	Get Posts Successfully	Đã tải danh sách bài viết.
+X	Google Sheet URL too long	Đường dẫn Google Sheets quá dài.
+X	Google Sheet and Excel import must be synced in same workspace	Google Sheets và lần nhập Excel phải được đồng bộ trong cùng không gian làm việc.
+X	Google Sheet changed since preview; preview again	Google Sheets đã thay đổi. Vui lòng xem trước lại.
+X	Google Sheet connection not found	Không tìm thấy kết nối Google Sheets.
+X	Google Sheet exceeds 10000 data rows	Google Sheets vượt quá 10.000 dòng dữ liệu.
+X	Google Sheet has no header	Google Sheets thiếu hàng tiêu đề.
+X	Google Sheet or tab/range not found (check URL and range)	Không tìm thấy bảng tính, trang tính hoặc vùng dữ liệu. Vui lòng kiểm tra đường dẫn và phạm vi.
+X	Google Sheet writeback is disabled	Chức năng ghi kết quả về Google Sheets đang tắt.
+P	Google Sheets API request failed (HTTP 	Google Sheets không xử lý được yêu cầu. Vui lòng kiểm tra kết nối hoặc thử lại sau.
+X	Google Sheets API temporarily unavailable or rate limited	Google Sheets tạm thời không khả dụng hoặc đã chạm giới hạn yêu cầu. Vui lòng thử lại sau.
+X	Google Sheets connection not found	Không tìm thấy kết nối Google Sheets.
+X	Google Sheets connection writeback is disabled	Kết nối Google Sheets này chưa bật ghi kết quả.
+X	Google Sheets credentials unavailable	Chưa có thông tin xác thực Google Sheets. Vui lòng liên hệ quản trị viên.
+X	Google Sheets denied access; share this Sheet with the Service Account as Viewer and enable Sheets API	Google Sheets từ chối truy cập. Vui lòng cấp quyền xem cho tài khoản dịch vụ và bật Google Sheets API.
+X	Google Sheets is missing P001 for reuse	Google Sheets thiếu bài P001 để sử dụng lại.
+X	Google Sheets link is required	Vui lòng nhập đường dẫn Google Sheets.
+P	Google Sheets read failed: 	Không thể đọc Google Sheets. Vui lòng kiểm tra quyền truy cập và kết nối.
+X	Google Sheets request interrupted	Yêu cầu Google Sheets bị gián đoạn. Vui lòng thử lại.
+P	Google Sheets write failed. Preview before next attempt: 	Không thể ghi Google Sheets. Vui lòng xem trước và đối soát lại trước khi thử ghi lần nữa.
+X	Google credentials unavailable; verify GOOGLE_APPLICATION_CREDENTIALS on the Spring Boot process	Máy chủ chưa có thông tin xác thực Google. Vui lòng liên hệ quản trị viên.
+X	Group Task already exists for this Post and Group	Đã có lịch đăng cho bài viết và nhóm này.
+X	Group Task was created concurrently. Entire plan rolled back	Lịch đăng nhóm vừa được tạo bởi tiến trình khác. Toàn bộ kế hoạch này đã được hoàn tác.
+X	Group disappeared. Preview again	Nhóm không còn tồn tại. Vui lòng chọn lại và xem trước.
+X	Group name already exists or data is invalid	Tên nhóm đã tồn tại hoặc dữ liệu không hợp lệ.
+X	Group name must be 1..120 chars; description <= 500	Tên nhóm phải từ 1 đến 120 ký tự, mô tả tối đa 500 ký tự.
+X	Group not found	Không tìm thấy nhóm.
+X	Group not found in workspace	Không tìm thấy nhóm trong không gian làm việc này.
+X	IMAGE requires a public HTTPS URL	Ảnh cần đường dẫn HTTPS công khai.
+P	IMAGE_PENDING_WORKER: 	Bài ảnh đã được đưa vào kế hoạch chờ xử lý, chưa đăng thật.
+P	INVALID_IMAGE_URL: 	Đường dẫn ảnh không hợp lệ.
+X	Identity check interrupted	Kiểm tra danh tính Facebook bị gián đoạn.
+X	Image ready	Ảnh đã sẵn sàng.
+X	Image uploaded successfully	Tải ảnh lên thành công.
+X	Import mapping changed; preview again	Liên kết dữ liệu nhập đã thay đổi. Vui lòng xem trước lại.
+X	Import must belong to the selected CONNECTED Threads account; Facebook imports are not eligible	Lần nhập phải thuộc tài khoản Threads đang kết nối đã chọn. Không sử dụng lần nhập Facebook cho thao tác này.
+X	Import not found in workspace or unsupported platform	Không tìm thấy lần nhập trong không gian làm việc hoặc nền tảng chưa được hỗ trợ.
+X	Import not linked to this Sheet	Lần nhập chưa được liên kết với trang tính này.
+X	Import or task state changed; preview again	Dữ liệu nhập hoặc trạng thái lịch đăng đã thay đổi. Vui lòng xem trước lại.
+X	Import requires a social account and publish time	Vui lòng chọn tài khoản mạng xã hội và giờ đăng khi nhập dữ liệu.
+P	Import row count changed: 	Số dòng của lần nhập đã thay đổi. Vui lòng kiểm tra lại dữ liệu nguồn.
+X	Import social account is not CONNECTED	Tài khoản của lần nhập chưa kết nối. Vui lòng kết nối lại.
+X	Import/Group not found in same workspace	Không tìm thấy lần nhập hoặc nhóm thuộc cùng không gian làm việc.
+P	Incorrect SH26 draft count for 	Số bài nháp SH26 không đúng. Vui lòng kiểm tra dữ liệu từng nhóm.
+X	Inspect group results, Job IDs and real Facebook Attempts. Never blindly retry after timeout.	Vui lòng đối soát kết quả từng nhóm và lịch sử đăng Facebook thực tế. Không thử lại ngay nếu lần đăng trước hết thời gian chờ.
+X	Internal server error	Hệ thống gặp lỗi. Vui lòng thử lại hoặc liên hệ quản trị viên.
+P	Invalid / disconnected target for 	Tài khoản đích không hợp lệ hoặc chưa kết nối.
+X	Invalid A1 range; example: A1:H30 or 'Sheet 1'!A1:H30	Phạm vi ô không hợp lệ. Ví dụ: A1:H30 hoặc 'Sheet 1'!A1:H30.
+P	Invalid Cloudinary media on import 	Ảnh hoặc video Cloudinary của lần nhập không hợp lệ.
+X	Invalid Excel date	Ngày trong Excel không hợp lệ.
+X	Invalid Facebook Page ID	Fanpage không hợp lệ. Vui lòng chọn lại.
+X	Invalid Google Sheets URL	Đường dẫn Google Sheets không hợp lệ.
+X	Invalid Google Sheets range/tab; verify the tab name and A1 notation	Trang tính hoặc phạm vi ô không hợp lệ. Vui lòng kiểm tra tên trang và phạm vi A1.
+X	Invalid Graph API version	Phiên bản Graph API không hợp lệ. Vui lòng liên hệ quản trị viên.
+P	Invalid IMAGE URL at 	Đường dẫn ảnh không hợp lệ tại dòng nguồn.
+X	Invalid OAuth state	Phiên kết nối tài khoản không hợp lệ. Vui lòng kết nối lại.
+P	Invalid SH26 code on row 	Mã SH26 không hợp lệ tại dòng nguồn.
+X	Invalid Threads encryption key	Cấu hình bảo mật kết nối Threads không hợp lệ. Vui lòng liên hệ quản trị viên.
+X	Invalid Threads user ID	Tài khoản Threads không hợp lệ. Vui lòng kiểm tra kết nối.
+P	Invalid VIDEO/REEL media at 	Video hoặc Reel không hợp lệ tại dòng nguồn.
+X	Invalid account or row range	Tài khoản hoặc khoảng dòng đã chọn không hợp lệ.
+X	Invalid attempt number or maximum attempts reached	Số lần thử đăng không hợp lệ hoặc đã vượt quá giới hạn thử lại.
+X	Invalid authenticated user	Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.
+X	Invalid batch read response	Phản hồi đọc dữ liệu hàng loạt không hợp lệ.
+X	Invalid campaign name	Tên chiến dịch không hợp lệ.
+X	Invalid credentials	Email hoặc mật khẩu không đúng.
+X	Invalid image URL	Đường dẫn ảnh không hợp lệ.
+X	Invalid job status	Trạng thái lịch đăng không hợp lệ.
+X	Invalid media type/order	Loại hoặc thứ tự ảnh, video không hợp lệ.
+P	Invalid or corrupted Excel source row 	Dòng Excel không hợp lệ hoặc dữ liệu bị hỏng.
+X	Invalid or duplicate group token	Mã xác nhận nhóm không hợp lệ hoặc bị trùng.
+X	Invalid pagination (size 1-100)	Phân trang không hợp lệ. Mỗi trang chỉ được hiển thị từ 1 đến 100 mục.
+X	Invalid platform	Nền tảng mạng xã hội không hợp lệ.
+X	Invalid post status	Trạng thái bài viết không hợp lệ.
+X	Invalid public HTTPS image URL	Đường dẫn ảnh HTTPS công khai không hợp lệ.
+X	Invalid publishing platform	Nền tảng đăng bài không hợp lệ.
+X	Invalid request	Yêu cầu không hợp lệ. Vui lòng kiểm tra lại thông tin.
+X	Invalid request parameters	Thông tin gửi lên chưa hợp lệ. Vui lòng kiểm tra lại.
+X	Invalid role	Vai trò người dùng không hợp lệ.
+X	Invalid row count in batch response	Số dòng trong phản hồi hàng loạt không hợp lệ.
+X	Invalid row in batch response	Có dòng không hợp lệ trong phản hồi hàng loạt.
+X	Invalid startAt or intervalMinutes	Thời gian bắt đầu hoặc khoảng cách giữa các bài không hợp lệ.
+X	Invalid status filter	Bộ lọc trạng thái không hợp lệ.
+X	Invalid/empty date in current Sheet column F	Ngày ở cột F của trang tính đang trống hoặc không hợp lệ.
+X	Job ID is required	Vui lòng chọn lịch đăng.
+X	Job already contains publication information	Lịch đăng đã có thông tin bài được xuất bản. Vui lòng đối soát trước.
+X	Job cannot be cancelled	Không thể hủy lịch đăng ở trạng thái hiện tại.
+X	Job exists or media not ready	Lịch đăng đã tồn tại hoặc ảnh, video chưa sẵn sàng.
+X	Job has already been attempted or is not eligible for rescheduling	Lịch đã từng được thử đăng hoặc không đủ điều kiện đổi lịch.
+X	Job has no publishing attempt to review	Lịch đăng chưa có lần thử đăng để đối soát.
+X	Job is already linked to a Bulk Run or Campaign	Lịch đăng đã thuộc một đợt đăng hàng loạt hoặc chiến dịch.
+X	Job is not PENDING	Lịch đăng không ở trạng thái đang chờ.
+X	Job is not a Threads job	Đây không phải lịch đăng Threads.
+X	Job must be PENDING, eligible, due now, approved, and contain images or one video	Bài phải đang chờ, đã đến giờ, đã được duyệt, đủ điều kiện và có ảnh hoặc một video.
+P	Job not eligible for bulk-run: 	Lịch đăng không đủ điều kiện tham gia đợt đăng hàng loạt.
+X	Job not found	Không tìm thấy lịch đăng.
+X	Job update conflict after publishing	Xung đột cập nhật lịch sau khi gửi bài. Vui lòng đối soát, không đăng lại ngay.
+X	Jobs queued. Publisher must be enabled to execute them.	Đã đưa lịch vào hàng đợi. Cần bật tiến trình đăng để xử lý.
+X	KEEP_ORIGINAL	Giữ nguyên lịch gốc.
+X	KEEP_ORIGINAL: future Excel date preserved	Giữ nguyên ngày đăng Excel còn hiệu lực.
+X	Live Google Sheet B differs from staged/imported content	Nội dung cột B hiện tại khác dữ liệu đã nhập hoặc đồng bộ.
+P	Live Sheet changed at row 	Dữ liệu Google Sheets thực tế đã thay đổi. Vui lòng xem trước lại.
+X	Login Successfully	Đăng nhập thành công.
+X	Logout Successfully	Đăng xuất thành công.
+X	MOCK dispatch failed/partial; inspect RabbitMQ before retry	Gửi dữ liệu mô phỏng thất bại hoặc chỉ thành công một phần. Vui lòng kiểm tra hàng đợi trước khi thử lại.
+X	MOCK run not found	Không tìm thấy đợt mô phỏng.
+X	MOCK run not found for import	Không tìm thấy đợt mô phỏng của lần nhập này.
+X	MOCK run not found in workspace	Không tìm thấy đợt mô phỏng trong không gian làm việc này.
+X	Manual Threads publishing is disabled	Chức năng đăng Threads thủ công đang tắt.
+X	Matched existing Excel Post, but needs normal approval/media/scheduling checks	Đã khớp bài Excel hiện có. Cần kiểm tra duyệt bài, ảnh/video và lịch đăng.
+X	Matching Post content exists elsewhere in this workspace; reconcile manually	Đã có bài cùng nội dung trong không gian làm việc. Vui lòng đối soát thủ công.
+X	Media changed while processing	Ảnh hoặc video đã thay đổi trong lúc xử lý.
+X	Media no longer exists	Ảnh hoặc video không còn tồn tại.
+X	Media not found	Không tìm thấy ảnh hoặc video.
+X	Media not ready or not IMAGE (VIDEO/REEL requires separate support)	Ảnh chưa sẵn sàng hoặc loại tệp chưa được hỗ trợ trong luồng này. Video/Reel cần luồng xử lý riêng.
+X	Media not ready; check Google Drive/Cloudinary	Ảnh hoặc video chưa sẵn sàng. Vui lòng kiểm tra Google Drive hoặc Cloudinary.
+P	Media preparation failed for Excel row 	Chuẩn bị ảnh/video của dòng Excel thất bại.
+P	Media preparation failed: 	Chuẩn bị ảnh/video thất bại. Vui lòng kiểm tra đường dẫn và thử lại.
+X	Media was already updated by another worker	Ảnh hoặc video vừa được tiến trình khác cập nhật.
+X	Member not found	Không tìm thấy thành viên.
+X	Meta API returned an empty response	Meta không trả dữ liệu. Vui lòng đối soát kết quả trước khi thử lại.
+X	Meta App ID/Secret not configured for debug_token	Máy chủ chưa cấu hình đủ thông tin kiểm tra quyền Meta. Vui lòng liên hệ quản trị viên.
+P	Meta GET returned HTTP 	Meta không xử lý được yêu cầu kiểm tra. Vui lòng kiểm tra kết nối.
+X	Meta GET returned empty body	Meta không trả về dữ liệu kiểm tra.
+X	Meta did not provide Page tasks	Meta chưa trả về thông tin quyền quản lý Fanpage.
+X	Meta identity check failed	Không xác minh được danh tính trên Meta.
+X	Meta photo upload returned no photo id	Meta chưa trả mã ảnh đã tải lên. Vui lòng kiểm tra kết quả.
+X	Meta publication outcome unknown. Manual verification required.	Chưa xác định được kết quả đăng trên Meta. Vui lòng đối soát bài thật trước khi thử lại.
+P	Meta reports pages_manage_posts and CREATE_CONTENT for this Page token. 	Meta xác nhận kết nối này có quyền quản lý bài và tạo nội dung.
+X	Meta response did not include a publication id	Meta chưa trả mã bài đã đăng. Vui lòng đối soát trước khi thử lại.
+X	Meta returned an invalid Threads permalink	Meta trả về đường dẫn bài Threads không hợp lệ.
+P	Missing Excel column: 	Tệp Excel thiếu cột bắt buộc. Vui lòng kiểm tra mẫu.
+X	Missing Topic / Nội dung / Ngày đăng / Trạng thái / Link bài đã đăng columns	Thiếu một hoặc nhiều cột: Topic, Nội dung, Ngày đăng, Trạng thái, Link bài đã đăng.
+P	Missing [IMAGE]/[VIDEO]/[REEL] at 	Thiếu ký hiệu loại ảnh/video/Reel trong dữ liệu nguồn.
+X	Missing content or ineligible Post/approval state	Thiếu nội dung hoặc trạng thái bài/duyệt bài chưa đủ điều kiện.
+X	Missing header	Tệp thiếu hàng tiêu đề.
+X	Missing image source URL	Thiếu đường dẫn ảnh nguồn.
+X	Missing or invalid Ngày đăng	Thiếu ngày đăng hoặc ngày đăng không hợp lệ.
+X	Missing original Excel date or import publish time	Thiếu ngày đăng gốc trong Excel hoặc giờ đăng của lần nhập.
+X	Missing, invalid or conflicting Group permalink	Thiếu đường dẫn bài nhóm, đường dẫn không hợp lệ hoặc bị xung đột.
+X	Mock demo limits: 1..100 accounts, 1..1000 jobs	Kiểm thử mô phỏng hỗ trợ từ 1 đến 100 tài khoản và từ 1 đến 1.000 lịch đăng.
+X	Multiple distinct imported Posts share this Sheet content	Nhiều bài đã nhập có cùng nội dung dòng trang tính. Không thể xác định duy nhất.
+X	No Excel rows with a linked Post and non-empty content available for MOCK demo	Không có dòng Excel đã liên kết bài viết và có nội dung để mô phỏng.
+X	No MOCK run found for this Excel import	Chưa có đợt mô phỏng cho lần nhập Excel này.
+X	No Posts in enabled linked Excel Imports	Không có bài viết trong các lần nhập Excel đã liên kết và đang bật.
+X	No available automatic slot within 365 days	Không có khung giờ tự động phù hợp trong 365 ngày tiếp theo.
+X	No available slot	Không còn khung giờ phù hợp.
+X	No bound OAuth connection	Lịch đăng chưa được gắn kết nối Facebook.
+X	No broker result.	Chưa nhận được kết quả từ hàng đợi.
+X	No clean scheduling preview. Resolve blocked rows or use next eligible batch	Chưa có kế hoạch đủ điều kiện. Vui lòng xử lý các dòng bị chặn hoặc chọn đợt phù hợp tiếp theo.
+X	No diagnostic message received.	Chưa nhận được tin kiểm thử.
+X	No eligible Facebook Page connection for this account	Không có kết nối Facebook đủ quyền cho Fanpage này.
+X	No eligible pending Excel Jobs. Check approval, media, OAuth and schedule (>15 min ahead)	Không có lịch Excel đang chờ đủ điều kiện. Vui lòng kiểm tra duyệt bài, ảnh/video, kết nối Facebook và chọn giờ đăng cách hiện tại hơn 15 phút.
+X	No enabled imports linked to this Sheet	Chưa có lần nhập đang bật được liên kết với trang tính này.
+X	No enabled synced Sheet link for this source row	Dòng nguồn chưa có liên kết trang tính đang bật và đã đồng bộ.
+X	No free replacement schedule	Không còn khung giờ thay thế phù hợp.
+X	No matching Excel-import Post at this exact source row; do not auto-create a duplicate	Không tìm thấy bài Excel khớp đúng dòng nguồn. Không tự động tạo bài trùng.
+X	No matching Group writeback binding to disable	Không tìm thấy cấu hình ghi kết quả nhóm phù hợp để tắt.
+X	No original Excel date; new batch date used for Job	Không có ngày gốc trong Excel; dùng ngày mới của đợt đăng để lên lịch.
+X	No publishing jobs created	Chưa tạo lịch đăng nào.
+X	No unique RabbitTemplate bean.	Không xác định được kết nối RabbitMQ.
+X	No unique RabbitTemplate bean; check the current AMQP configuration.	Không xác định được kết nối hàng đợi. Vui lòng kiểm tra cấu hình RabbitMQ.
+X	No usable Page token	Không có phiên kết nối Fanpage hợp lệ. Vui lòng kết nối lại.
+X	Not a workspace member	Bạn không phải thành viên của không gian làm việc này.
+X	Not all selected rows can be reconciled with Sheet	Không thể đối chiếu tất cả các dòng đã chọn với Google Sheets.
+X	Not authenticated	Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.
+X	Not enough eligible clean rows for this confirmed run	Không đủ dòng dữ liệu hợp lệ cho đợt xử lý đã xác nhận.
+X	Not found	Không tìm thấy dữ liệu yêu cầu.
+X	Old Excel date kept for audit; new date used for Job	Giữ ngày Excel gốc để đối soát, dùng ngày mới cho lịch đăng.
+X	One or more bound Facebook OAuth connections are invalid/expired	Một hoặc nhiều kết nối Facebook không hợp lệ hoặc đã hết hạn. Vui lòng kết nối lại.
+X	One or more imports are missing, empty, or outside this workspace	Một hoặc nhiều lần nhập không tồn tại, không có dữ liệu hoặc thuộc không gian làm việc khác.
+X	Only DRAFT or READY posts can be submitted	Chỉ bài nháp hoặc bài sẵn sàng mới có thể gửi duyệt.
+X	Only DRAFT posts can be processed in Excel batch	Chỉ bài nháp mới được xử lý ảnh hàng loạt từ Excel.
+X	Only FACEBOOK_PAGE and THREADS are supported	Hiện chỉ hỗ trợ Facebook Fanpage và Threads.
+X	Only FACEBOOK_PAGE or THREADS supported	Hiện chỉ hỗ trợ Facebook Fanpage và Threads.
+X	Only Facebook Page and Threads jobs supported	Hiện chỉ hỗ trợ lịch đăng Facebook Fanpage và Threads.
+X	Only IMAGE is supported	Luồng này chỉ hỗ trợ ảnh.
+X	Only NEEDS_REVIEW jobs can be authorized for retry	Chỉ lịch đăng cần xác minh mới có thể được cho phép thử lại sau khi đối soát.
+X	Only NEEDS_REVIEW jobs can be confirmed	Chỉ lịch đăng cần xác minh mới có thể xác nhận kết quả.
+X	Only NEEDS_REVIEW jobs can be verified	Chỉ lịch đăng cần xác minh mới có thể được đối soát.
+X	Only PENDING or FAILED jobs can be added	Chỉ lịch đăng đang chờ hoặc thất bại mới có thể được thêm.
+X	Only PENDING tasks can be approved for Group Worker	Chỉ lịch đăng nhóm đang chờ mới có thể được duyệt cho tiến trình đăng nhóm.
+X	Only a PENDING job with zero attempts can be bound	Chỉ lịch đăng đang chờ và chưa từng thử đăng mới có thể gắn kết nối.
+X	Only column L will change	Chỉ cập nhật cột L.
+X	Only column L; G/H/I/J/K untouched	Chỉ cập nhật cột L; giữ nguyên các cột G, H, I, J và K.
+X	Only https://docs.google.com/spreadsheets/d/{id}/edit URLs are accepted	Vui lòng sử dụng đường dẫn Google Sheets hợp lệ theo dạng https://docs.google.com/spreadsheets/d/{id}/edit.
+X	Only one REEL, without images, is supported	Mỗi bài chỉ hỗ trợ một Reel và không kèm ảnh.
+X	Only one VIDEO, without images, is supported	Mỗi bài chỉ hỗ trợ một video và không kèm ảnh.
+X	Only timezone Asia/Ho_Chi_Minh is supported for this Excel import	Lần nhập Excel này chỉ hỗ trợ múi giờ Việt Nam (Asia/Ho_Chi_Minh).
+X	Orchestrator preview changed	Kết quả xem trước đợt xử lý đã thay đổi. Vui lòng xem trước lại.
+X	Orchestrator run not found	Không tìm thấy đợt điều phối đăng bài.
+X	Original .xlsx file required (max 10 MB)	Vui lòng chọn tệp .xlsx gốc, dung lượng tối đa 10 MB.
+X	Original future date collides with another scheduled Job	Giờ đăng gốc trùng với lịch đăng khác.
+X	Original future date is less than 5 minutes away; cannot safely prepare, leave it unchanged	Ngày giờ gốc cách hiện tại dưới 5 phút. Giữ nguyên để tránh thay đổi không an toàn.
+P	Original future slot conflicts or exceeds local limit; date preserved	Khung giờ gốc bị trùng hoặc vượt giới hạn lập lịch nội bộ. Đã giữ nguyên ngày.
+X	Original future slot conflicts; do not reschedule it	Khung giờ gốc bị trùng. Giữ nguyên lịch để đối soát.
+X	Original future slot is too close; do not reschedule it	Khung giờ gốc quá gần. Giữ nguyên lịch để đối soát.
+P	Original row missing: 	Không tìm thấy dòng dữ liệu gốc.
+X	Original scheduled date is in the past; use auto-plan/one to reschedule	Ngày đăng gốc đã qua. Vui lòng đổi lịch trước khi đăng.
+X	Owner access required	Bạn cần quyền chủ sở hữu để thực hiện thao tác này.
+X	Page REEL requires single LIVE mode and app.facebook.reels-publishing-enabled=true	Chức năng đăng Reel Fanpage chưa được cấu hình sẵn sàng.
+X	Page VIDEO requires single LIVE mode and app.facebook.video-publishing-enabled=true	Chức năng đăng video Fanpage chưa được cấu hình sẵn sàng.
+X	Page account is not eligible	Tài khoản Fanpage chưa đủ điều kiện đăng bài.
+P	Page identity confirmed; publishing permission cannot be fully verified. 	Đã xác minh Fanpage nhưng chưa xác nhận được đầy đủ quyền đăng bài.
+X	Page must be greater than or equal to 0	Số trang không được nhỏ hơn 0.
+X	Page not found	Không tìm thấy Fanpage.
+X	Page not found in workspace	Không tìm thấy Fanpage trong không gian làm việc này.
+X	Page tasks check interrupted	Kiểm tra quyền Fanpage bị gián đoạn.
+X	Page tasks not accessible with this token	Phiên kết nối hiện tại không đọc được quyền quản lý Fanpage.
+X	Page tasks response does not match Page ID	Thông tin quyền quản lý không khớp Fanpage đã chọn.
+X	Page video upload returned no numeric ID	Meta chưa trả mã video đã tải lên. Vui lòng đối soát trước khi đăng lại.
+X	Pause campaign before adding jobs	Vui lòng tạm dừng chiến dịch trước khi thêm lịch đăng.
+X	Post already has publishing tasks	Bài viết đã có lịch đăng.
+P	Post already has publishing tasks. 	Bài viết đã có lịch đăng. Vui lòng xử lý lịch hiện tại trước.
+X	Post approval or publishing eligibility is missing	Bài viết chưa được duyệt hoặc chưa đủ điều kiện đăng.
+P	Post approval state is not eligible: 	Trạng thái duyệt bài chưa đủ điều kiện lên lịch.
+P	Post cannot be scheduled from status: 	Không thể lên lịch bài viết ở trạng thái hiện tại.
+X	Post cannot be submitted for approval	Không thể gửi duyệt bài ở trạng thái hiện tại.
+X	Post changed during recovery; retry preview	Bài viết đã thay đổi trong quá trình khôi phục. Vui lòng xem trước lại.
+X	Post content empty	Bài viết chưa có nội dung.
+X	Post content is required	Vui lòng nhập nội dung bài viết.
+X	Post content must not be empty	Vui lòng nhập nội dung bài viết.
+X	Post disappeared. Preview again	Bài viết không còn tồn tại. Vui lòng xem trước lại.
+X	Post disappeared; preview again	Bài viết không còn tồn tại. Vui lòng xem trước lại.
+X	Post has media that is not ready	Ảnh hoặc video của bài viết chưa sẵn sàng.
+X	Post is no longer DRAFT/READY	Bài viết không còn ở trạng thái nháp hoặc sẵn sàng.
+X	Post is no longer in this workspace	Bài viết không còn thuộc không gian làm việc này.
+X	Post is not APPROVED or eligible for Group scheduling	Bài chưa được duyệt hoặc chưa đủ điều kiện lên lịch đăng nhóm.
+X	Post is not READY/SCHEDULED	Bài chưa sẵn sàng hoặc chưa được lên lịch.
+X	Post is not approved and ready for publication	Bài viết chưa được duyệt hoặc chưa sẵn sàng đăng.
+P	Post is not in the selected Workspace (postId=	Bài viết không thuộc không gian làm việc đã chọn.
+X	Post must be READY or SCHEDULED	Bài viết phải ở trạng thái sẵn sàng hoặc đã lên lịch.
+X	Post must be READY/SCHEDULED, APPROVED, <=500 characters, dated and media ready	Bài phải sẵn sàng hoặc đã lên lịch, đã duyệt, tối đa 500 ký tự, có ngày đăng và ảnh/video đã sẵn sàng.
+X	Post must be approved before creating a publishing job	Vui lòng duyệt bài viết trước khi tạo lịch đăng.
+X	Post must be approved before scheduling	Vui lòng duyệt bài viết trước khi lên lịch.
+X	Post must be pending approval	Bài viết phải ở trạng thái chờ duyệt.
+X	Post no longer exists	Bài viết không còn tồn tại.
+X	Post not approved/READY, text/media invalid or wrong workspace	Bài chưa được duyệt hoặc chưa sẵn sàng, nội dung hay ảnh/video không hợp lệ hoặc thuộc không gian làm việc khác.
+X	Post not approved/ready	Bài chưa được duyệt hoặc chưa sẵn sàng.
+X	Post not found	Không tìm thấy bài viết.
+X	Post not found in workspace	Không tìm thấy bài viết trong không gian làm việc này.
+X	Post status is not DRAFT or READY	Bài không ở trạng thái nháp hoặc sẵn sàng.
+X	Post workspace changed	Không gian làm việc của bài viết đã thay đổi. Vui lòng tải lại.
+X	Post, account or Facebook connection is not eligible	Bài viết, tài khoản hoặc kết nối Facebook chưa đủ điều kiện đăng.
+X	Preview changed. Request a fresh preview first	Kết quả xem trước đã thay đổi. Vui lòng xem trước lại trước khi xác nhận.
+X	Preview changed; reload and review before applying	Kết quả xem trước đã thay đổi. Vui lòng tải lại và kiểm tra trước khi áp dụng.
+X	Preview changed; run dryRun=true again and use its token	Kết quả xem trước đã thay đổi. Vui lòng chạy xem trước lại và dùng kết quả mới.
+X	Preview expired or source/slots changed; preview again	Kết quả xem trước đã hết hạn hoặc dữ liệu, khung giờ đã thay đổi. Vui lòng xem trước lại.
+X	Preview expired: data changed. Please preview again before approving.	Dữ liệu đã thay đổi nên kết quả xem trước hết hiệu lực. Vui lòng xem trước lại trước khi duyệt.
+X	Preview has changed. Run dryRun=true again and use its new previewToken	Kết quả xem trước đã thay đổi. Vui lòng xem trước lại trước khi xác nhận.
+X	Preview supports at most 200 rows and columns A..Z per request	Mỗi lần xem trước hỗ trợ tối đa 200 dòng và các cột từ A đến Z.
+X	Preview token and confirmSchedule=true required	Vui lòng xem trước và xác nhận lên lịch bằng kết quả mới nhất.
+X	Preview token required	Vui lòng thực hiện xem trước trước khi xác nhận.
+X	Private image URL is not supported	Không hỗ trợ đường dẫn ảnh riêng tư.
+X	Probe interrupted.	Lượt kiểm tra hàng đợi bị gián đoạn.
+X	Provide 1-100 distinct jobIds	Vui lòng chọn từ 1 đến 100 lịch đăng khác nhau.
+X	Provide 1..50 unique Job IDs	Vui lòng chọn từ 1 đến 50 lịch đăng khác nhau.
+X	Provide a nonempty .xlsx file up to 10 MB	Vui lòng chọn tệp .xlsx có dữ liệu, dung lượng tối đa 10 MB.
+X	Provide nonempty, distinct postIds/accountIds	Vui lòng chọn bài viết và tài khoản, không chọn trùng.
+E	Published row 	Dòng nguồn đã đăng. Vui lòng đối soát, không đăng lại.
+X	Published to Threads	Đã đăng bài lên Threads thành công.
+X	Published to Threads; permalink pending reconciliation	Đã đăng Threads thành công; cần đối soát để lấy đường dẫn bài viết.
+X	Publishing Job ID is required	Vui lòng chọn lịch đăng.
+X	Publishing Job already belongs to a campaign	Lịch đăng đã thuộc một chiến dịch.
+X	Publishing Job already exists for this Post and account	Đã có lịch đăng cho bài viết và tài khoản này.
+X	Publishing Job already exists; never modify it	Lịch đăng đã tồn tại. Giữ nguyên lịch hiện tại.
+X	Publishing Job created; not yet linked to a LIVE Bulk Run	Đã tạo lịch đăng nhưng chưa gắn vào đợt đăng thật hàng loạt.
+X	Publishing Job exists, including potentially pending/failed jobs; do not create another	Đã có lịch đăng, có thể đang chờ hoặc thất bại. Không tạo thêm.
+X	Publishing Job not found	Không tìm thấy lịch đăng.
+X	Publishing Job not found in campaign workspace	Không tìm thấy lịch đăng trong không gian làm việc của chiến dịch.
+X	Publishing account is not eligible	Tài khoản chưa đủ điều kiện đăng bài.
+X	Publishing blocked: post is not approved or job is no longer eligible	Bài chưa được duyệt hoặc lịch không còn đủ điều kiện. Đã chặn đăng.
+X	Publishing has not been tested; actual POST can still fail.	Chưa kiểm thử đăng thật; yêu cầu xuất bản vẫn có thể thất bại.
+X	Publishing job already exists for this post and account	Đã có lịch đăng cho bài viết và tài khoản này. Không cần tạo lại.
+X	Publishing job not found	Không tìm thấy lịch đăng.
+X	Publishing result already exists; retry is not permitted	Lịch đăng đã có kết quả xuất bản. Không được phép thử đăng lại.
+X	Queued Facebook job is no longer eligible; nothing was sent	Lịch đăng Facebook không còn đủ điều kiện. Chưa gửi bài.
+X	REEL requires a public Cloudinary HTTPS video URL	Reel cần đường dẫn video Cloudinary HTTPS công khai.
+X	RESCHEDULED: original Excel date preserved for audit	Đã đề xuất lịch mới; giữ nguyên ngày Excel gốc để đối soát.
+P	RESCHEDULED; source data unchanged	Đã đề xuất khung giờ mới, không thay đổi dữ liệu nguồn.
+X	Recent OAuth CREATE_CONTENT proof unavailable	Chưa có bằng chứng gần đây về quyền tạo nội dung. Vui lòng kiểm tra lại quyền kết nối.
+P	Reconciliation preview only. No database writes, new Jobs or Facebook posts. 	Chỉ xem trước đối soát. Chưa ghi dữ liệu, tạo lịch đăng hoặc đăng Facebook.
+X	Reel classification is not guaranteed by the Group Composer	Chưa thể đảm bảo Facebook phân loại video thành Reel khi đăng vào nhóm.
+X	Reels START did not return a numeric video_id	Meta chưa trả mã video Reel khi khởi tạo.
+X	Register Successfully	Đăng ký tài khoản thành công.
+X	Reject reason is required	Vui lòng nhập lý do từ chối bài viết.
+X	Repair blocked: 1000 unique and safe matching source rows are required	Cần đúng 1.000 dòng nguồn không trùng và khớp an toàn trước khi khôi phục.
+P	Required capability not granted: 	Tài khoản chưa được cấp quyền cần thiết để đăng bài.
+X	Resolve overdue or uncertain Threads jobs before planning more	Còn lịch đăng Threads quá hạn hoặc chưa xác định kết quả. Vui lòng đối soát và xử lý các lịch đó trước khi lên lịch thêm.
+X	Retry requires CONFIRM_NOT_PUBLISHED with evidence and note	Chỉ được thử lại sau khi xác nhận bài chưa đăng, kèm bằng chứng và ghi chú đối soát.
+X	Reused direct Cloudinary image	Đã sử dụng lại ảnh Cloudinary có sẵn.
+X	Reused existing Cloudinary image	Đã sử dụng lại ảnh Cloudinary hiện có.
+X	Review README flags and test on an isolated environment first	Vui lòng kiểm tra cấu hình và kiểm thử trong môi trường riêng trước khi bật đăng thật.
+X	Row no longer present in most recent Google Sheets snapshot; do not publish	Dòng không còn trong dữ liệu Google Sheets mới nhất. Không đăng.
+X	Rows require a separate explicitly confirmed, idempotent import/plan step.	Cần xác nhận riêng bước nhập hoặc lập lịch và kiểm tra chống trùng.
+X	Run a successful manual sync before enabling automatic sync	Vui lòng đồng bộ thử thành công trước khi bật tự động đồng bộ.
+X	Runtime gates allow preview-confirm. Actual Meta permissions are NOT verified.	Cấu hình hiện tại cho phép xem trước và xác nhận. Chưa xác minh quyền đăng thật trên Meta.
+X	SH26 A01 missing	Thiếu dữ liệu SH26 của nhóm A01.
+X	SH26 bulk imports already exist; reconcile imports before running again	Đã có lần nhập SH26 hàng loạt. Vui lòng đối soát trước khi chạy lại.
+X	SH26 data/mapping changed or existing posts detected. Preview again; no drafts were created.	Dữ liệu SH26 hoặc liên kết đã thay đổi, hoặc đã có bài viết. Vui lòng xem trước lại. Chưa tạo bài nháp nào.
+P	SH26 imported Posts missing for 	Thiếu bài viết SH26 đã nhập. Vui lòng kiểm tra lần nhập tương ứng.
+P	SH26 new Job preview is not complete: expected 	Kết quả xem trước lịch SH26 chưa đủ số lượng yêu cầu. Vui lòng kiểm tra lại.
+X	SH26 posts other than the one verified P001 exist; stop and reconcile before importing	Đã tồn tại bài SH26 khác ngoài P001 đã xác minh. Vui lòng đối soát trước khi nhập thêm.
+X	SH26 requires ten distinct imports; do not reimport	SH26 yêu cầu 10 lần nhập khác nhau. Không nhập lại dữ liệu trùng.
+X	Safe to prepare and approve	Đủ điều kiện chuẩn bị và duyệt bài.
+P	Schedule is too close for safe preparation: 	Giờ đăng quá gần để chuẩn bị an toàn. Vui lòng chọn thời điểm xa hơn.
+X	Schedule settings required	Vui lòng nhập cấu hình lịch đăng.
+X	Schedule too close; preview again	Giờ đăng quá gần. Vui lòng chọn giờ mới và xem trước lại.
+X	Scheduled post requires scheduledAt	Bài đã lên lịch phải có thời gian đăng.
+X	Scheduled time is only allowed for SCHEDULED posts	Chỉ bài ở trạng thái đã lên lịch mới được đặt giờ đăng.
+X	Scheduled time is required	Vui lòng chọn thời gian đăng.
+X	Scheduled time is too close; preview again	Giờ đăng quá gần. Vui lòng chọn giờ mới và xem trước lại.
+X	Scheduled time must be at least 1 minute in the future	Giờ đăng phải cách hiện tại ít nhất 1 phút.
+X	Scheduled time must be in the future	Giờ đăng phải ở tương lai.
+X	Scheduled time must be more than 20 minutes ahead and within 30 days	Giờ đăng phải cách hiện tại hơn 20 phút và không quá 30 ngày.
+X	Search query is too long	Nội dung tìm kiếm quá dài. Vui lòng rút ngắn.
+P	Select 1..100 unique imports, connected account, date/time, interval 1..1440 and maxPer24Hours 1..	Vui lòng chọn 1–100 lần nhập khác nhau, tài khoản đã kết nối, ngày giờ đăng, khoảng cách 1–1.440 phút và số bài tối đa trong 24 giờ hợp lệ.
+X	Select a SYNCED writeback-enabled Sheet with linked Group Tasks in this workspace	Vui lòng chọn trang tính đã đồng bộ, đã bật ghi kết quả và có lịch đăng nhóm liên kết trong không gian làm việc này.
+X	Select at most 10000 source rows per plan	Mỗi kế hoạch chỉ được chọn tối đa 10.000 dòng nguồn.
+P	Select exactly one valid Facebook Group in this Workspace (found 	Vui lòng chọn đúng một nhóm Facebook hợp lệ trong không gian làm việc này.
+X	Selected Excel schedule has blocked or missing rows	Lịch Excel đã chọn có dòng bị chặn hoặc thiếu dữ liệu.
+X	Selected posts overlap another enabled import	Bài đã chọn trùng với một lần nhập khác đang bật.
+P	Sheet / Excel mismatch or existing job at source row 	Dữ liệu Sheet không khớp Excel hoặc đã có lịch đăng tại dòng nguồn.
+X	Sheet connection not found in workspace	Không tìm thấy kết nối trang tính trong không gian làm việc này.
+P	Sheet content changed since queue confirmation at row 	Nội dung trang tính đã thay đổi sau khi xác nhận. Vui lòng đối soát lại.
+X	Sheet content differs from Post; no blind row matching	Nội dung trang tính khác bài viết. Không tự động ghép dòng.
+X	Sheet content not found in enabled linked Excel imports	Không tìm thấy nội dung trang tính trong các lần nhập Excel đã liên kết và đang bật.
+X	Sheet mapping is incomplete or ambiguous; no links created	Liên kết trang tính chưa đầy đủ hoặc không xác định được duy nhất. Chưa tạo liên kết nào.
+P	Sheet must contain 1..	Số dòng trang tính vượt phạm vi hỗ trợ. Vui lòng kiểm tra số lượng.
+X	Sheet or import changed since preview; preview again	Trang tính hoặc lần nhập đã thay đổi. Vui lòng xem trước lại.
+X	Sheet/Post/Task state changed since preview. Preview again; no tasks created	Trang tính, bài viết hoặc lịch đăng đã thay đổi. Vui lòng xem trước lại. Chưa tạo lịch đăng nào.
+X	Sheets credentials unavailable	Chưa có thông tin xác thực Google Sheets. Vui lòng liên hệ quản trị viên.
+X	Sheets write credentials unavailable	Chưa có thông tin xác thực để ghi Google Sheets. Vui lòng liên hệ quản trị viên.
+X	Single status G (any platform); Threads H; Facebook I	Cột G là trạng thái chung, H là đường dẫn Threads, I là đường dẫn Facebook.
+X	Size must be between 1 and 100	Số mục mỗi trang phải từ 1 đến 100.
+X	Skipped Excel source row	Dòng Excel nguồn đã bị bỏ qua.
+X	Social Account is no longer eligible	Tài khoản mạng xã hội không còn đủ điều kiện đăng bài.
+X	Social account belongs to another workspace	Tài khoản mạng xã hội thuộc không gian làm việc khác.
+X	Social account is not CONNECTED	Tài khoản mạng xã hội chưa được kết nối.
+P	Social account missing for 	Thiếu tài khoản mạng xã hội tương ứng.
+X	Social account not found	Không tìm thấy tài khoản mạng xã hội.
+X	Source changed while confirming; no rows committed. Preview again	Dữ liệu nguồn đã thay đổi khi xác nhận. Chưa lưu dòng nào. Vui lòng xem trước lại.
+X	Source marks this row published or contains a published URL; do not republish	Dòng nguồn đã đánh dấu đăng hoặc có đường dẫn bài đăng. Không đăng lại.
+X	Source row changed	Dòng dữ liệu nguồn đã thay đổi. Vui lòng tải lại.
+P	Source rows outside supported range; import=	Dòng nguồn nằm ngoài phạm vi hỗ trợ. Vui lòng kiểm tra lần nhập.
+X	Source status/content not eligible for publishing	Trạng thái hoặc nội dung nguồn chưa đủ điều kiện đăng.
+X	Start time must be at least 5 minutes in the future	Giờ bắt đầu phải cách hiện tại ít nhất 5 phút.
+X	Start time must be at least five minutes in the future	Giờ bắt đầu phải cách hiện tại ít nhất 5 phút.
+X	State changed or approval failed; inspect backend logs	Trạng thái đã thay đổi hoặc duyệt bài thất bại. Vui lòng tải lại và liên hệ quản trị viên nếu lỗi tiếp diễn.
+X	Stop all LIVE publishers and automation workers before restoring scheduled content	Cần dừng tất cả tiến trình đăng thật và tự động hóa trước khi khôi phục nội dung đã lên lịch.
+X	Success	Thực hiện thành công.
+X	Supply 1-100 distinct socialAccountIds	Vui lòng chọn từ 1 đến 100 tài khoản mạng xã hội khác nhau.
+X	Sync the selected Sheet and enable writeback first	Vui lòng đồng bộ trang tính đã chọn và bật ghi kết quả trước.
+X	Synced Sheet connection not found in workspace	Không tìm thấy kết nối trang tính đã đồng bộ trong không gian làm việc này.
+X	TEXT: Matched approved Post, no media	Đã khớp bài chữ được duyệt, không có ảnh hoặc video.
+P	TOO_MANY_IMAGES: 	Số ảnh vượt giới hạn của luồng đăng nhóm.
+X	Target Group not in workspace / invalid URL	Nhóm đích không thuộc không gian làm việc hoặc đường dẫn không hợp lệ.
+X	Target platform already has a published URL	Nền tảng đã chọn đã có đường dẫn bài đăng. Không đăng lại.
+X	Task already finalized	Lịch đăng nhóm đã hoàn tất. Không thể thay đổi theo yêu cầu này.
+X	Task does not belong to this Post	Lịch đăng nhóm không thuộc bài viết này.
+X	Task is being processed by Group Worker	Lịch đăng nhóm đang được tiến trình đăng xử lý. Vui lòng không cập nhật đồng thời.
+X	Task is owned by production outbox	Lịch đăng đang thuộc hàng đợi xử lý tự động. Không thể thao tác thủ công.
+X	Task not found	Không tìm thấy lịch đăng nhóm.
+X	Test message received and acknowledged. No Group Task was dispatched.	Đã nhận và xác nhận tin kiểm thử. Chưa gửi lịch đăng nhóm thực tế.
+X	Text post, approved, no existing Group Task	Bài chữ đã duyệt và chưa có lịch đăng nhóm.
+X	Text-only Edge Group Pilot does not support media	Luồng kiểm thử Edge chỉ hỗ trợ bài chữ, chưa hỗ trợ ảnh/video.
+X	The final daily slot would cross midnight; reduce maxPostsPerDay or intervalMinutes	Khung giờ đăng cuối vượt qua nửa đêm. Vui lòng giảm số bài mỗi ngày hoặc khoảng cách giữa các bài.
+X	The first automatic slot must be more than 5 minutes in the future	Khung giờ tự động đầu tiên phải cách hiện tại hơn 5 phút.
+X	This Sheet tab already has a Group writeback binding, or its target was removed	Trang tính này đã có cấu hình ghi kết quả nhóm hoặc nhóm đích đã bị xóa.
+X	This post/account pair already has a Publishing Job	Đã có lịch đăng cho bài viết và tài khoản này.
+P	Threads API failed at 	Threads không xử lý được yêu cầu. Vui lòng kiểm tra kết nối, quyền và kết quả trước khi thử lại.
+X	Threads Job already exists	Lịch đăng Threads đã tồn tại.
+X	Threads Job already exists; not duplicated	Lịch đăng Threads đã tồn tại. Không tạo trùng.
+X	Threads Job exists for this Post/account	Đã có lịch đăng Threads cho bài viết và tài khoản này.
+X	Threads OAuth environment variables are missing	Máy chủ chưa được cấu hình kết nối Threads. Vui lòng liên hệ quản trị viên.
+X	Threads access token expires before the job's scheduled time	Phiên kết nối Threads sẽ hết hạn trước giờ đăng. Vui lòng kết nối lại tài khoản.
+X	Threads account is not connected	Tài khoản Threads chưa kết nối. Vui lòng kết nối lại.
+X	Threads carousel supports at most 20 images	Bài Threads dạng nhiều ảnh hỗ trợ tối đa 20 ảnh.
+X	Threads container ID missing or invalid	Mã vùng chứa nội dung Threads thiếu hoặc không hợp lệ.
+X	Threads container already PUBLISHED; do not publish again; verify externally	Vùng chứa Threads đã xuất bản. Vui lòng đối soát bài thật, không đăng lại.
+P	Threads container status check failed: HTTP 	Không kiểm tra được trạng thái chuẩn bị nội dung Threads.
+P	Threads container status=	Trạng thái chuẩn bị nội dung Threads chưa phù hợp. Chưa gửi yêu cầu xuất bản.
+P	Threads container still IN_PROGRESS after 	Threads vẫn đang chuẩn bị nội dung. Chưa gửi yêu cầu xuất bản.
+X	Threads content exceeds 500 characters	Nội dung Threads vượt quá 500 ký tự.
+X	Threads exceeds 500 characters	Nội dung Threads vượt quá 500 ký tự.
+X	Threads job created; publisher will run when due	Đã tạo lịch đăng Threads. Tiến trình đăng sẽ xử lý khi đến giờ nếu được bật.
+X	Threads media publishing not supported	Chưa hỗ trợ đăng loại ảnh hoặc video này lên Threads.
+P	Threads permalink GET returned HTTP 	Không lấy được đường dẫn bài Threads. Vui lòng đối soát, không đăng lại ngay.
+X	Threads permalink GET returned a mismatched post ID	Đường dẫn Threads trả về không khớp mã bài đã đăng.
+X	Threads published post ID missing	Chưa nhận được mã bài đã đăng từ Threads. Cần đối soát trước khi thử lại.
+X	Threads publishing blocked: post not approved or job not eligible	Bài chưa duyệt hoặc lịch không đủ điều kiện. Đã chặn đăng Threads.
+X	Threads result uncertain. Review Backend logs and Threads before any retry.	Chưa xác định được kết quả đăng Threads. Vui lòng kiểm tra bài trên Threads trước khi thử lại.
+X	Threads scheduling requires tested legacy Threads publisher and automation.live.enabled=false; do not queue into a disabled worker	Tiến trình đăng Threads chưa được cấu hình sẵn sàng. Vui lòng liên hệ quản trị viên trước khi lập lịch.
+X	Threads slot changed; preview again	Khung giờ Threads đã thay đổi. Vui lòng xem trước lại.
+X	Threads text exceeds 500 characters	Nội dung Threads vượt quá 500 ký tự.
+X	Threads text must contain 1-500 characters	Nội dung Threads phải từ 1 đến 500 ký tự.
+X	Threads token expired; reconnect account	Kết nối Threads đã hết hạn. Vui lòng kết nối lại tài khoản.
+X	Threads validation failed before sending request	Dữ liệu đăng Threads không hợp lệ. Chưa gửi yêu cầu đăng.
+P	To avoid overlapping SH-T10 and SH26 on the same Pages, choose startDate >= 	Lịch SH-T10 và SH26 bị chồng trên cùng Fanpage. Vui lòng chọn ngày bắt đầu muộn hơn.
+X	Token belongs to a different Meta app	Phiên kết nối thuộc ứng dụng Meta khác.
+X	Token expired according to debug_token	Meta xác nhận phiên kết nối đã hết hạn. Vui lòng kết nối lại.
+X	Token identifies a different Facebook entity	Phiên kết nối thuộc đối tượng Facebook khác với Fanpage đã chọn.
+X	Token invalid according to debug_token	Meta xác nhận phiên kết nối không hợp lệ. Vui lòng kết nối lại.
+P	Too many imported rows for demo; max 	Số dòng nhập vượt giới hạn kiểm thử. Vui lòng giảm số dòng.
+P	Transport probe failed: 	Kiểm tra kết nối hàng đợi thất bại. Vui lòng kiểm tra RabbitMQ.
+X	UNSUPPORTED_MEDIA: media_type unknown or mixed	Loại ảnh/video không xác định hoặc kết hợp chưa được hỗ trợ.
+P	UNSUPPORTED_VIDEO_SET: exactly one standalone VIDEO/REEL 	Chỉ hỗ trợ một video hoặc Reel độc lập cho mỗi bài nhóm.
+X	Unable to reach or parse Google Sheets API response	Không thể kết nối hoặc đọc phản hồi Google Sheets. Vui lòng kiểm tra kết nối.
+X	Unable to read selected Page token	Không đọc được thông tin kết nối Fanpage đã chọn. Vui lòng kết nối lại.
+P	Unexpected Google Sheets columns at 	Các cột Google Sheets không đúng mẫu.
+P	Unexpected Google Sheets header column 	Tiêu đề cột Google Sheets không đúng mẫu.
+P	Unexpected Threads container status=	Threads trả trạng thái chuẩn bị không xác định. Chưa gửi yêu cầu xuất bản.
+X	Unexpected column I; no write	Tiêu đề cột I không đúng. Chưa ghi dữ liệu.
+X	Unexpected diagnostic envelope rejected.	Đã từ chối tin kiểm thử không hợp lệ.
+X	Unexpected group-task status. Entire plan rolled back; no LIVE approval	Trạng thái lịch đăng nhóm không hợp lệ. Toàn bộ kế hoạch đã hoàn tác, chưa duyệt đăng thật.
+X	Unexpected probe message; no real task was dispatched.	Tin kiểm thử không khớp. Chưa gửi lịch đăng thực tế.
+X	Unique importIds are required	Vui lòng chọn các lần nhập khác nhau, không chọn trùng.
+X	Unknown planner error	Lập lịch gặp lỗi chưa xác định. Vui lòng kiểm tra lại dữ liệu.
+X	Unknown published URL in H/I; manual review required	Đường dẫn bài đăng ở cột H hoặc I chưa xác định được. Cần đối soát thủ công.
+X	Unsupported Threads media type	Loại ảnh hoặc video chưa được hỗ trợ trên Threads.
+X	Unsupported approval state	Trạng thái duyệt bài chưa được hỗ trợ.
+X	Unsupported batch mode	Chế độ xử lý hàng loạt chưa được hỗ trợ.
+X	Unsupported import social account platform	Nền tảng của tài khoản nhập chưa được hỗ trợ.
+P	Unsupported media type: 	Loại ảnh hoặc video chưa được hỗ trợ.
+X	Unsupported platform	Nền tảng này chưa được hỗ trợ.
+X	Update Post Successfully	Cập nhật bài viết thành công.
+X	Upload the original .xlsx (up to 10 MB)	Vui lòng tải lên tệp .xlsx gốc, dung lượng tối đa 10 MB.
+X	Use a public Cloudinary HTTPS upload URL matching IMAGE or VIDEO	Vui lòng sử dụng đường dẫn Cloudinary HTTPS công khai đúng loại ảnh hoặc video.
+X	Use a public DNS hostname for images	Vui lòng sử dụng đường dẫn ảnh từ tên miền công khai.
+X	Use one VIDEO per Threads post; mixed media is not supported yet	Mỗi bài Threads dùng một video; luồng này chưa hỗ trợ kết hợp video và ảnh.
+X	User is already a workspace member	Người dùng này đã là thành viên của không gian làm việc.
+X	User not found	Không tìm thấy người dùng.
+X	VIDEO/REEL LIVE publishing is disabled or Publisher worker flags are not ready; no Jobs created	Chức năng đăng video hoặc Reel thật đang tắt hoặc tiến trình đăng chưa sẵn sàng. Chưa tạo lịch đăng nào.
+P	VIDEO_OR_REEL_PENDING: one video URL; PENDING ONLY. 	Bài có một đường dẫn video/Reel, chỉ tạo lịch ở trạng thái đang chờ, chưa đăng thật.
+X	Valid Google Sheets URL is required	Vui lòng nhập đường dẫn Google Sheets hợp lệ.
+X	Valid schedule and maxRows=1..50 required	Vui lòng chọn lịch hợp lệ và từ 1 đến 50 dòng mỗi đợt.
+X	Validation failed	Thông tin nhập chưa hợp lệ. Vui lòng kiểm tra lại.
+X	Validation passed	Dữ liệu hợp lệ.
+X	Vault bulk preparation disabled; enable app.account-vault.bulk-preparation-enabled in a tested environment	Chức năng chuẩn bị đăng hàng loạt trong kho tài khoản đang tắt. Vui lòng liên hệ quản trị viên.
+X	Verification note is required	Vui lòng nhập ghi chú xác minh.
+P	Video uploaded to Meta (id=	Đã tải video lên Meta. Cần xác minh kết quả xuất bản trước khi thử lại.
+X	Workbook has no sheet	Tệp Excel không có trang tính.
+X	Workspace ID is required	Vui lòng chọn không gian làm việc.
+X	Workspace not found	Không tìm thấy không gian làm việc.
+P	Writeback batch not confirmed: 	Đợt ghi kết quả chưa được xác nhận. Vui lòng xem trước và kiểm tra lại.
+X	Writeback disabled	Chức năng ghi kết quả đang tắt.
+P	Writeback read/header validation failed: 	Không thể đọc hoặc kiểm tra tiêu đề trang tính. Vui lòng kiểm tra lại dữ liệu và quyền truy cập.
+X	afterRowNumber cannot be negative	Vị trí dòng tiếp tục không được là số âm.
+X	confirm=true is required	Vui lòng xác nhận thao tác trước khi tiếp tục.
+X	confirmApproval=true required for bulk approval	Vui lòng xác nhận duyệt bài hàng loạt.
+X	confirmLive must be true	Vui lòng xác nhận cho phép đăng thật.
+X	confirmLive=true is mandatory: this request can activate Facebook LIVE	Thao tác có thể kích hoạt đăng Facebook thật. Vui lòng xác nhận rõ ràng.
+X	confirmLive=true is required	Vui lòng xác nhận cho phép đăng thật.
+X	confirmLive=true is required to create LIVE publishing jobs	Vui lòng xác nhận tạo lịch đăng thật.
+X	confirmPlan=true required	Vui lòng xác nhận kế hoạch trước khi tạo.
+X	confirmPrepare=true is required; this operation creates a DRAFT Bulk Run	Vui lòng xác nhận chuẩn bị đợt đăng hàng loạt ở trạng thái nháp.
+X	confirmPublish must be true	Vui lòng xác nhận cho phép đăng bài.
+X	confirmPublish=true required for creation of LIVE publishing jobs	Vui lòng xác nhận tạo lịch đăng thật.
+X	confirmWrite=true required	Vui lòng xác nhận ghi dữ liệu về trang tính.
+X	connectionId and facebookGroupId required	Vui lòng chọn kết nối Google Sheets và nhóm Facebook.
+X	connectionId is required	Vui lòng chọn kết nối.
+X	connectionId,facebookGroupId,fromRow,toRow,limit(1..10) required	Vui lòng chọn kết nối, nhóm Facebook, khoảng dòng và giới hạn từ 1 đến 10 bài.
+X	existing Facebook URL differs; manual review	Đường dẫn Facebook hiện tại không khớp. Vui lòng đối soát thủ công.
+X	existing Threads URL differs; manual review	Đường dẫn Threads hiện tại không khớp. Vui lòng đối soát thủ công.
+X	facebookGroupId,startAt(>5min),fromRow,toRow,limit(1..10),intervalMinutes(5..1440) required	Vui lòng chọn nhóm, giờ bắt đầu cách hiện tại hơn 5 phút, khoảng dòng, 1–10 bài và khoảng cách 5–1.440 phút.
+X	importId is required, fromRow=2..10001, toRow>=fromRow, limit=1..50, platform=FACEBOOK_PAGE|THREADS|ALL	Vui lòng chọn lần nhập, phạm vi dòng 2–10.001, giới hạn 1–50 bài và nền tảng Facebook Fanpage, Threads hoặc tất cả.
+X	importId, schedule and sheetPreviewToken required	Vui lòng chọn lần nhập, lịch đăng và thực hiện xem trước trang tính.
+X	intervalMinutes=1..1440, maxPostsPerDay=1..100, maxRows=1..500 required	Khoảng cách giữa các bài từ 1–1.440 phút, số bài mỗi ngày 1–100 và số dòng 1–500.
+X	intervalMinutes=10..1440, maxTasksPerDay=1..20 (internal planning limit)	Khoảng cách giữa các bài nhóm từ 10–1.440 phút và tối đa 1–20 lịch mỗi ngày theo giới hạn lập kế hoạch nội bộ.
+X	limit must be between 1 and 100	Số mục cần lấy phải từ 1 đến 100.
+X	limit=1..200 and offset>=0 required	Giới hạn phải từ 1 đến 200 và vị trí bắt đầu không được âm.
+X	maxJobs is required	Vui lòng nhập số lịch đăng tối đa.
+X	maxPosts must be between 1 and 20	Số bài tối đa phải từ 1 đến 20.
+X	maxRows=1..50 and jobsPerRun=1..5 required	Mỗi đợt chọn 1–50 dòng và 1–5 lịch đăng mỗi lượt xử lý.
+X	maxRows=1..50, jobsPerRun=1..5	Mỗi đợt chọn 1–50 dòng và 1–5 lịch đăng mỗi lượt xử lý.
+X	page/size out of range; size must be 1..100	Phân trang không hợp lệ. Số mục mỗi trang phải từ 1 đến 100.
+X	platform required	Vui lòng chọn nền tảng mạng xã hội.
+X	publishTime is required	Vui lòng chọn giờ đăng.
+X	scheduledAt is required	Vui lòng chọn thời gian đăng.
+X	scheduledAt must be at least 2 minutes ahead and within 30 days	Giờ đăng phải cách hiện tại ít nhất 2 phút và không quá 30 ngày.
+X	socialAccountId is required	Vui lòng chọn tài khoản mạng xã hội.
+X	sourceRowNumber and publishAt are required	Vui lòng chọn dòng dữ liệu nguồn và thời gian đăng.
+X	sourceRowNumber must be positive	Số dòng nguồn phải lớn hơn 0.
+X	startDate and startTime are required	Vui lòng chọn ngày và giờ bắt đầu.
+X	startDate and startTime required	Vui lòng chọn ngày và giờ bắt đầu.
+X	threadsAccountId, maxPosts(1..1000), valid fromRow/toRow required	Vui lòng chọn tài khoản Threads, số bài từ 1 đến 1.000 và khoảng dòng hợp lệ.
+X	threadsAccountId, startDate, startTime, intervalMinutes(1..1440), maxRows(1..50) are required	Vui lòng chọn tài khoản Threads, ngày giờ bắt đầu, khoảng cách 1–1.440 phút và từ 1 đến 50 dòng.
+X	unknown upload error	Không xác định được lỗi tải tệp lên.
+X	workspaceId and facebookGroupId required	Vui lòng chọn không gian làm việc và nhóm Facebook.

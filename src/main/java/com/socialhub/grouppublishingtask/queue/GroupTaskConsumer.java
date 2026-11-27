@@ -1,5 +1,7 @@
 package com.socialhub.grouppublishingtask.queue;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.GetResponse;
 import com.socialhub.grouppublishingtask.automation.GroupTaskQueueService;
@@ -42,7 +44,7 @@ public class GroupTaskConsumer {
 
     public record Report(boolean passed, String state, UUID messageId,
                          String exchange, String queue, Integer queuedMessages,
-                         Integer consumers, String note) {
+                         Integer consumers, @JsonSerialize(using = ViDisplayTextSerializer.class) String note) {
     }
 
     @PostMapping("/dispatch-test")

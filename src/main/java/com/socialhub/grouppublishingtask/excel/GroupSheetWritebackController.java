@@ -1,5 +1,7 @@
 package com.socialhub.grouppublishingtask.excel;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -45,7 +47,8 @@ public class GroupSheetWritebackController {
                           Integer toRow, Integer limit, Boolean confirmWrite) {
     }
 
-    public record Row(int sourceRowNumber, String status, String publishedUrl, String note) {
+    public record Row(int sourceRowNumber, String status, String publishedUrl,
+                      @JsonSerialize(using = ViDisplayTextSerializer.class) String note) {
     }
 
     public record Report(boolean dryRun, int candidates, int written, int alreadySynced,

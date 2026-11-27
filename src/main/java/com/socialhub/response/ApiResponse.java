@@ -10,6 +10,10 @@ public record ApiResponse<T>(
         T data
 ) {
 
+    public ApiResponse {
+        message = ViApiMessages.response(status, message);
+    }
+
     public static <T> ApiResponse<T> success(
             int status,
             String message,

@@ -1,11 +1,17 @@
 package com.socialhub.googlesheets.dto;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
+
 import java.util.List;
 import java.util.UUID;
 
-/** Read-only reconciliation: no Post, PublishingJob or Facebook mutations. */
+/**
+ * Read-only reconciliation: no Post, PublishingJob or Facebook mutations.
+ */
 public final class GoogleSheetsPublishingBridgeDto {
-    private GoogleSheetsPublishingBridgeDto() { }
+    private GoogleSheetsPublishingBridgeDto() {
+    }
 
     public record Row(
             int sheetRowNumber,
@@ -15,8 +21,9 @@ public final class GoogleSheetsPublishingBridgeDto {
             UUID existingPostId,
             int existingJobs,
             int publishedJobs,
-            String reason
-    ) { }
+            @JsonSerialize(using = ViDisplayTextSerializer.class) String reason
+    ) {
+    }
 
     public record Preview(
             UUID connectionId,
@@ -35,6 +42,7 @@ public final class GoogleSheetsPublishingBridgeDto {
             int limit,
             List<Row> rows,
             boolean readOnly,
-            String message
-    ) { }
+            @JsonSerialize(using = ViDisplayTextSerializer.class) String message
+    ) {
+    }
 }

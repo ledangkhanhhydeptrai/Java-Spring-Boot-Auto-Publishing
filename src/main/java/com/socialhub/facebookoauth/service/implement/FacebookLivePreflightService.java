@@ -1,5 +1,7 @@
 package com.socialhub.facebookoauth.service.implement;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialhub.facebookoauth.storage.FacebookTokenStorage;
@@ -61,7 +63,7 @@ public class FacebookLivePreflightService {
             String pageName,
             String publishingPermission,
             String status,
-            String message
+            @JsonSerialize(using = ViDisplayTextSerializer.class) String message
     ) {
     }
 

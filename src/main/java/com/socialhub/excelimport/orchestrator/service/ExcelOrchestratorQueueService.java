@@ -1,5 +1,7 @@
 package com.socialhub.excelimport.orchestrator.service;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialhub.common.ApiException;
@@ -16,7 +18,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/** Accept LIVE confirmation once, after a fresh read-only 50-row preview. */
+/**
+ * Accept LIVE confirmation once, after a fresh read-only 50-row preview.
+ */
 @Service
 @RequiredArgsConstructor
 public class ExcelOrchestratorQueueService {
@@ -25,12 +29,17 @@ public class ExcelOrchestratorQueueService {
     private final JdbcTemplate db;
     private final ObjectMapper mapper;
 
-    public record Accepted(UUID queueId, String status, int requestedRows, String message) {}
+    public record Accepted(UUID queueId, String status, int requestedRows,
+                           @JsonSerialize(using = ViDisplayTextSerializer.class) String message) {
+    }
+
     public record QueueStatus(UUID queueId, UUID workspaceId, UUID importId, String status,
                               int requestedRows, int processedRows, int createdJobs,
-                              int preparedJobs, int startedRuns, String lastError,
+                              int preparedJobs, int startedRuns,
+                              @JsonSerialize(using = ViDisplayTextSerializer.class) String lastError,
                               String createdAt, String updatedAt,
-                              int publishedJobs, int totalLinkedJobs, List<UUID> bulkRunIds) {}
+                              int publishedJobs, int totalLinkedJobs, List<UUID> bulkRunIds) {
+    }
 
     public Accepted enqueue(UUID workspaceId, UUID importId, UUID operatorId,
                             ExcelPublishingOrchestratorService.Request request) {
@@ -89,28 +98,28 @@ public class ExcelOrchestratorQueueService {
     private static Map<String, Object> toPersistedPayload(
             ExcelPublishingOrchestratorService.Request request) {
         Map<String, Object> values = new LinkedHashMap<>();
-        values.put("startDate",request.startDate().toString());
-        values.put("startTime",request.startTime().toString());
-        values.put("intervalMinutes",request.intervalMinutes());
-        values.put("maxPostsPerDay",request.maxPostsPerDay());
-        values.put("timezone",request.timezone());
-        values.put("jobsPerRun",request.jobsPerRun());
+        values.put("startDate", request.startDate().toString());
+        values.put("startTime", request.startTime().toString());
+        values.put("intervalMinutes", request.intervalMinutes());
+        values.put("maxPostsPerDay", request.maxPostsPerDay());
+        values.put("timezone", request.timezone());
+        values.put("jobsPerRun", request.jobsPerRun());
         return values;
     }
 
     public QueueStatus get(UUID workspaceId, UUID importId, UUID queueId) {
         access.admin(workspaceId);
         return db.query("""
-                SELECT q.*, COALESCE((SELECT COUNT(*) FROM facebook_bulk_run_jobs bj
-                         JOIN excel_orchestrator_bulk_runs x ON x.bulk_run_id = bj.bulk_run_id
-                         WHERE x.queue_id=q.id),0) AS total_linked,
-                       COALESCE((SELECT COUNT(*) FROM facebook_bulk_run_jobs bj
-                         JOIN excel_orchestrator_bulk_runs x ON x.bulk_run_id = bj.bulk_run_id
-                         JOIN publishing_jobs j ON j.id = bj.publishing_job_id
-                         WHERE x.queue_id=q.id AND j.status='PUBLISHED'),0) AS published
-                FROM excel_orchestrator_queue q
-                WHERE q.id=? AND q.workspace_id=? AND q.import_id=?
-                """, (rs,n) -> new QueueStatus(
+                        SELECT q.*, COALESCE((SELECT COUNT(*) FROM facebook_bulk_run_jobs bj
+                                 JOIN excel_orchestrator_bulk_runs x ON x.bulk_run_id = bj.bulk_run_id
+                                 WHERE x.queue_id=q.id),0) AS total_linked,
+                               COALESCE((SELECT COUNT(*) FROM facebook_bulk_run_jobs bj
+                                 JOIN excel_orchestrator_bulk_runs x ON x.bulk_run_id = bj.bulk_run_id
+                                 JOIN publishing_jobs j ON j.id = bj.publishing_job_id
+                                 WHERE x.queue_id=q.id AND j.status='PUBLISHED'),0) AS published
+                        FROM excel_orchestrator_queue q
+                        WHERE q.id=? AND q.workspace_id=? AND q.import_id=?
+                        """, (rs, n) -> new QueueStatus(
                         rs.getObject("id", UUID.class),
                         rs.getObject("workspace_id", UUID.class),
                         rs.getObject("import_id", UUID.class), rs.getString("status"),
@@ -120,8 +129,8 @@ public class ExcelOrchestratorQueueService {
                         rs.getString("created_at"), rs.getString("updated_at"),
                         rs.getInt("published"), rs.getInt("total_linked"),
                         db.query("SELECT bulk_run_id FROM excel_orchestrator_bulk_runs WHERE queue_id=? ORDER BY bulk_run_id",
-                                (r,i) -> r.getObject(1,UUID.class),queueId)
-                ),queueId,workspaceId,importId).stream().findFirst()
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND,"Orchestrator run not found"));
+                                (r, i) -> r.getObject(1, UUID.class), queueId)
+                ), queueId, workspaceId, importId).stream().findFirst()
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Orchestrator run not found"));
     }
 }

@@ -1,5 +1,7 @@
 package com.socialhub.dryrun;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -17,28 +19,29 @@ public class DryRunService {
             UUID jobId,
             String platform,
             String result,
-            String reason
-    ) {}
+            @JsonSerialize(using = ViDisplayTextSerializer.class) String reason
+    ) {
+    }
 
     public List<DryRunResult> preview(UUID workspaceId) {
         return db.query("""
-            SELECT
-                j.id,
-                a.platform,
-                p.content,
-                p.status AS post_status,
-                j.status AS job_status,
-                EXISTS (
-                    SELECT 1
-                    FROM post_media m
-                    WHERE m.post_id = p.id
-                ) AS has_media
-            FROM publishing_jobs j
-            JOIN posts p ON p.id = j.post_id
-            JOIN social_accounts a ON a.id = j.social_account_id
-            WHERE p.workspace_id = ?
-            ORDER BY j.created_at
-            """,
+                        SELECT
+                            j.id,
+                            a.platform,
+                            p.content,
+                            p.status AS post_status,
+                            j.status AS job_status,
+                            EXISTS (
+                                SELECT 1
+                                FROM post_media m
+                                WHERE m.post_id = p.id
+                            ) AS has_media
+                        FROM publishing_jobs j
+                        JOIN posts p ON p.id = j.post_id
+                        JOIN social_accounts a ON a.id = j.social_account_id
+                        WHERE p.workspace_id = ?
+                        ORDER BY j.created_at
+                        """,
                 (rs, rowNum) -> {
                     UUID jobId = rs.getObject("id", UUID.class);
                     String platform = rs.getString("platform");

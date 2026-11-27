@@ -1,5 +1,7 @@
 package com.socialhub.media.service.implement;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.socialhub.common.ApiException;
 import com.socialhub.excelimport.repository.ExcelImportRepository;
 import com.socialhub.post.entity.Post;
@@ -49,7 +51,7 @@ public class ExcelImportMediaBatchService {
             String sourceUrl,
             String publicUrl,
             String status,
-            String message
+            @JsonSerialize(using = ViDisplayTextSerializer.class) String message
     ) {
     }
 

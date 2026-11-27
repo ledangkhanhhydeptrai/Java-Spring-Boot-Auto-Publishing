@@ -1,5 +1,7 @@
 package com.socialhub.excelimport.service.implement;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.socialhub.common.ApiException;
 import com.socialhub.excelimport.entity.ExcelImport;
 import com.socialhub.excelimport.entity.ExcelImportRow;
@@ -50,7 +52,8 @@ public class ExcelAutoPublishService {
     private final EntityManager entityManager;
     private final TransactionTemplate transactions;
 
-    public record Result(UUID importId, int planned, int alreadyPlanned, int blocked, List<String> errors) {
+    public record Result(UUID importId, int planned, int alreadyPlanned, int blocked,
+                         @JsonSerialize(contentUsing = ViDisplayTextSerializer.class) List<String> errors) {
     }
 
     public void validateFile(MultipartFile file) {
@@ -256,7 +259,7 @@ public class ExcelAutoPublishService {
             OffsetDateTime scheduledAt,
             boolean mediaReady,
             boolean automaticApprovalRequired,
-            String message
+            @JsonSerialize(using = ViDisplayTextSerializer.class) String message
     ) {
     }
 
@@ -274,7 +277,7 @@ public class ExcelAutoPublishService {
             int notSelected,
             int createdJobs,
             List<BatchPlanRow> rows,
-            List<String> errors
+            @JsonSerialize(contentUsing = ViDisplayTextSerializer.class) List<String> errors
     ) {
     }
 

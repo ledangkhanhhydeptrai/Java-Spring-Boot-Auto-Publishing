@@ -1,5 +1,7 @@
 package com.socialhub.excelimport.service.implement;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.socialhub.common.ApiException;
 import com.socialhub.publishingjob.service.interfaces.PublishingJobService;
 import com.socialhub.security.AccessService;
@@ -37,12 +39,14 @@ public class ExcelThreadsBridgeService {
     }
 
     public record PlannedRow(int sourceRowNumber, UUID postId, String action,
-                             OffsetDateTime scheduledAt, String note) {
+                             OffsetDateTime scheduledAt,
+                             @JsonSerialize(using = ViDisplayTextSerializer.class) String note) {
     }
 
     public record Result(UUID importId, UUID threadsAccountId, boolean dryRun,
                          String previewToken, int eligible, int created, int alreadyPlanned,
-                         int blocked, List<PlannedRow> rows, List<String> errors) {
+                         int blocked, List<PlannedRow> rows,
+                         @JsonSerialize(contentUsing = ViDisplayTextSerializer.class) List<String> errors) {
     }
 
     private record Source(int row, UUID postId, String content, String postStatus,
@@ -292,7 +296,8 @@ public class ExcelThreadsBridgeService {
     }
 
     public record MultiRow(UUID importId, int sourceRowNumber, UUID postId, String action,
-                           OffsetDateTime scheduledAt, String note) {
+                           OffsetDateTime scheduledAt,
+                           @JsonSerialize(using = ViDisplayTextSerializer.class) String note) {
     }
 
     public record MultiResult(UUID threadsAccountId, boolean dryRun, String previewToken,

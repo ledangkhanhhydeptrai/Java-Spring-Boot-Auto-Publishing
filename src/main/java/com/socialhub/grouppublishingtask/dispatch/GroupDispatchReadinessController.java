@@ -1,7 +1,6 @@
 package com.socialhub.grouppublishingtask.dispatch;
 
 
-import com.socialhub.grouppublishingtask.automation.dispatch.GroupDispatchReadinessService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;

@@ -1,6 +1,9 @@
 
 package com.socialhub.publishingjob.dto;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
+
 import java.util.UUID;
 import java.time.OffsetDateTime;
 
@@ -32,7 +35,7 @@ public final class PublishingJobDto {
             OffsetDateTime scheduledAt,
             OffsetDateTime publishedAt,
             String publishedUrl,
-            String lastError,
+            @JsonSerialize(using = ViDisplayTextSerializer.class) String lastError,
             Integer attemptCount
     ) {
     }

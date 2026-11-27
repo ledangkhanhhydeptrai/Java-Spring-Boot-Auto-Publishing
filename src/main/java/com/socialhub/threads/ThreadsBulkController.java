@@ -1,5 +1,7 @@
 package com.socialhub.threads;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.socialhub.common.ApiException;
 import com.socialhub.security.AccessService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,8 @@ public class ThreadsBulkController {
     public record BulkRequest(List<UUID> jobIds, boolean confirmPublish) {
     }
 
-    public record BulkResult(int queued, List<UUID> jobIds, String message) {
+    public record BulkResult(int queued, List<UUID> jobIds,
+                             @JsonSerialize(using = ViDisplayTextSerializer.class) String message) {
     }
 
     @PostMapping("/bulk-run")

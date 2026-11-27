@@ -1,5 +1,7 @@
 package com.socialhub.excelimport.service.implement;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.socialhub.common.ApiException;
 import com.socialhub.security.AccessService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +27,7 @@ import java.util.UUID;
  * SH26 safe source-date recovery from an ALREADY SYNCED, explicitly linked Sheet.
  * Only fills NULL excel_import_rows.source_publish_date. Does not touch posts,
  * post_media, approval, publishing_jobs, Facebook or Threads APIs.
- *
+ * <p>
  * This is the CURRENT date value of Google Sheet column F, not necessarily the
  * historical original date when Writeback has already modified column F.
  */
@@ -37,15 +39,24 @@ public class ThreadsSourceDateService {
     private final TransactionTemplate transactions;
 
     public record Request(UUID threadsAccountId, Integer fromRow, Integer toRow,
-                          Boolean dryRun, Boolean confirm, String previewToken) { }
+                          Boolean dryRun, Boolean confirm, String previewToken) {
+    }
+
     public record Row(int sourceRowNumber, String action, String dateFromSheet,
-                      String note) { }
+                      @JsonSerialize(using = ViDisplayTextSerializer.class) String note) {
+    }
+
     public record Result(UUID importId, String importPlatform, boolean dryRun,
                          String previewToken, int candidates, int written,
-                         int unchanged, int blocked, List<Row> rows) { }
+                         int unchanged, int blocked, List<Row> rows) {
+    }
+
     private record Source(UUID rowId, int rowNumber, String content, LocalDate storedDate,
-                          String sheetContent, String sheetDate, UUID connectionId) { }
-    private record Choice(Source source, LocalDate parsed, String action, String reason) { }
+                          String sheetContent, String sheetDate, UUID connectionId) {
+    }
+
+    private record Choice(Source source, LocalDate parsed, String action, String reason) {
+    }
 
     public Result run(UUID workspaceId, UUID importId, Request req) {
         access.admin(workspaceId);
@@ -79,24 +90,24 @@ public class ThreadsSourceDateService {
                 Source s = c.source();
                 // No PUBLISHING JOB or POST table is ever modified.
                 written += db.update("""
-                        UPDATE excel_import_rows r
-                        SET source_publish_date = ?
-                        WHERE r.id = ? AND r.import_id = ? AND r.source_publish_date IS NULL
-                          AND EXISTS (
-                            SELECT 1 FROM excel_imports e
-                            JOIN posts p ON p.id = r.post_id AND p.workspace_id = e.workspace_id
-                            JOIN google_sheet_import_links l ON l.import_id = e.id
-                                 AND l.workspace_id = e.workspace_id AND l.enabled = TRUE
-                            JOIN google_sheet_connections gc ON gc.id = l.connection_id
-                                 AND gc.workspace_id = l.workspace_id AND gc.sync_status = 'SYNCED'
-                            JOIN google_sheet_staged_rows gs ON gs.connection_id = l.connection_id
-                                 AND gs.source_row_number = r.source_row_number
-                            WHERE e.id = r.import_id AND e.workspace_id = ?
-                              AND l.connection_id = ?
-                              AND gs.present_in_sheet = TRUE AND gs.content = p.content
-                              AND gs.source_publish_date = ?
-                          )
-                        """, c.parsed(), s.rowId(), importId, workspaceId,
+                                UPDATE excel_import_rows r
+                                SET source_publish_date = ?
+                                WHERE r.id = ? AND r.import_id = ? AND r.source_publish_date IS NULL
+                                  AND EXISTS (
+                                    SELECT 1 FROM excel_imports e
+                                    JOIN posts p ON p.id = r.post_id AND p.workspace_id = e.workspace_id
+                                    JOIN google_sheet_import_links l ON l.import_id = e.id
+                                         AND l.workspace_id = e.workspace_id AND l.enabled = TRUE
+                                    JOIN google_sheet_connections gc ON gc.id = l.connection_id
+                                         AND gc.workspace_id = l.workspace_id AND gc.sync_status = 'SYNCED'
+                                    JOIN google_sheet_staged_rows gs ON gs.connection_id = l.connection_id
+                                         AND gs.source_row_number = r.source_row_number
+                                    WHERE e.id = r.import_id AND e.workspace_id = ?
+                                      AND l.connection_id = ?
+                                      AND gs.present_in_sheet = TRUE AND gs.content = p.content
+                                      AND gs.source_publish_date = ?
+                                  )
+                                """, c.parsed(), s.rowId(), importId, workspaceId,
                         s.connectionId(), s.sheetDate());
             }
             long expected = choices.stream().filter(c -> "CAN_FILL".equals(c.action())).count();
@@ -133,33 +144,33 @@ public class ThreadsSourceDateService {
 
     private List<Choice> scan(UUID workspaceId, UUID importId, Request req) {
         List<Source> sources = db.query("""
-                SELECT r.id AS row_id, r.source_row_number, p.content,
-                       r.source_publish_date, sheet.content AS sheet_content,
-                       sheet.source_publish_date AS sheet_date,
-                       sheet.connection_id
-                FROM excel_import_rows r
-                JOIN excel_imports e ON e.id = r.import_id AND e.workspace_id = ?
-                JOIN posts p ON p.id = r.post_id AND p.workspace_id = e.workspace_id
-                LEFT JOIN LATERAL (
-                    SELECT s.content, s.source_publish_date, s.connection_id
-                    FROM google_sheet_import_links l
-                    JOIN google_sheet_connections c ON c.id = l.connection_id
-                      AND c.workspace_id = l.workspace_id AND c.sync_status = 'SYNCED'
-                    JOIN google_sheet_staged_rows s ON s.connection_id = l.connection_id
-                      AND s.source_row_number = r.source_row_number AND s.present_in_sheet = TRUE
-                    WHERE l.import_id = e.id AND l.workspace_id = e.workspace_id
-                      AND l.enabled = TRUE
-                    ORDER BY l.created_at DESC, l.id DESC LIMIT 1
-                ) sheet ON TRUE
-                WHERE r.import_id = ? AND r.post_id IS NOT NULL
-                  AND (r.processing_status IS NULL OR r.processing_status NOT LIKE 'SKIPPED_%')
-                  AND r.source_row_number BETWEEN ? AND ?
-                ORDER BY r.source_row_number
-                """, (rs, n) -> new Source(
-                rs.getObject("row_id", UUID.class), rs.getInt("source_row_number"),
-                rs.getString("content"), rs.getObject("source_publish_date", LocalDate.class),
-                rs.getString("sheet_content"), rs.getString("sheet_date"),
-                rs.getObject("connection_id", UUID.class)),
+                        SELECT r.id AS row_id, r.source_row_number, p.content,
+                               r.source_publish_date, sheet.content AS sheet_content,
+                               sheet.source_publish_date AS sheet_date,
+                               sheet.connection_id
+                        FROM excel_import_rows r
+                        JOIN excel_imports e ON e.id = r.import_id AND e.workspace_id = ?
+                        JOIN posts p ON p.id = r.post_id AND p.workspace_id = e.workspace_id
+                        LEFT JOIN LATERAL (
+                            SELECT s.content, s.source_publish_date, s.connection_id
+                            FROM google_sheet_import_links l
+                            JOIN google_sheet_connections c ON c.id = l.connection_id
+                              AND c.workspace_id = l.workspace_id AND c.sync_status = 'SYNCED'
+                            JOIN google_sheet_staged_rows s ON s.connection_id = l.connection_id
+                              AND s.source_row_number = r.source_row_number AND s.present_in_sheet = TRUE
+                            WHERE l.import_id = e.id AND l.workspace_id = e.workspace_id
+                              AND l.enabled = TRUE
+                            ORDER BY l.created_at DESC, l.id DESC LIMIT 1
+                        ) sheet ON TRUE
+                        WHERE r.import_id = ? AND r.post_id IS NOT NULL
+                          AND (r.processing_status IS NULL OR r.processing_status NOT LIKE 'SKIPPED_%')
+                          AND r.source_row_number BETWEEN ? AND ?
+                        ORDER BY r.source_row_number
+                        """, (rs, n) -> new Source(
+                        rs.getObject("row_id", UUID.class), rs.getInt("source_row_number"),
+                        rs.getString("content"), rs.getObject("source_publish_date", LocalDate.class),
+                        rs.getString("sheet_content"), rs.getString("sheet_date"),
+                        rs.getObject("connection_id", UUID.class)),
                 workspaceId, importId,
                 req.fromRow() == null ? 2 : req.fromRow(),
                 req.toRow() == null ? 10001 : req.toRow());
@@ -224,7 +235,7 @@ public class ThreadsSourceDateService {
         try {
             return day.contains("/")
                     ? LocalDate.parse(day, DateTimeFormatter.ofPattern("d/M/uuuu", Locale.ROOT)
-                        .withResolverStyle(ResolverStyle.STRICT))
+                    .withResolverStyle(ResolverStyle.STRICT))
                     : LocalDate.parse(day, DateTimeFormatter.ISO_LOCAL_DATE);
         } catch (DateTimeParseException ex) {
             return null;

@@ -33,10 +33,11 @@ public class PublishingJobController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "") String status,
-            @RequestParam(required = false) UUID postId
+            @RequestParam(required = false) UUID postId,
+            @RequestParam(defaultValue = "") String platform
     ) {
         return publishingJobService.listWorkspaceJobs(
-                workspaceId, page, size, status, postId
+                workspaceId, page, size, status, postId, platform
         );
     }
 

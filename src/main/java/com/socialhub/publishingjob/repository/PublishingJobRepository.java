@@ -22,21 +22,31 @@ public interface PublishingJobRepository
     @Query(value = """
             SELECT j FROM PublishingJob j
             JOIN j.post p
+            JOIN j.socialAccount a
             WHERE p.workspace.id = :workspaceId
               AND (:status = '' OR j.status = :status)
+              AND (:platform = '' OR a.platform = :platform)
               AND (:postId IS NULL OR p.id = :postId)
             """, countQuery = """
             SELECT COUNT(j) FROM PublishingJob j
             JOIN j.post p
+            JOIN j.socialAccount a
             WHERE p.workspace.id = :workspaceId
               AND (:status = '' OR j.status = :status)
+              AND (:platform = '' OR a.platform = :platform)
               AND (:postId IS NULL OR p.id = :postId)
             """)
     Page<PublishingJob> searchWorkspaceJobs(
             @Param("workspaceId") UUID workspaceId,
             @Param("status") String status,
             @Param("postId") UUID postId,
+            @Param("platform") String platform,
             Pageable pageable);
+
+    default Page<PublishingJob> searchWorkspaceJobs(
+            UUID workspaceId, String status, UUID postId, Pageable pageable) {
+        return searchWorkspaceJobs(workspaceId, status, postId, "", pageable);
+    }
 
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)

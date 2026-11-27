@@ -1,5 +1,7 @@
 package com.socialhub.grouppublishingtask.queue;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.GetResponse;
 import com.socialhub.grouppublishingtask.queue.GroupRabbitMQConfig;
@@ -13,7 +15,9 @@ import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.Semaphore;
 
-/** Explicit, bounded transport probe. Never sends real task messages or calls a publisher. */
+/**
+ * Explicit, bounded transport probe. Never sends real task messages or calls a publisher.
+ */
 @Service
 public class GroupQueueTransportProbe {
     private final ObjectProvider<RabbitTemplate> templates;
@@ -21,10 +25,12 @@ public class GroupQueueTransportProbe {
     private final Semaphore singleProbe = new Semaphore(1);
 
     public record Report(boolean passed, String state, String exchange, String queue,
-                         Integer queuedMessages, Integer consumers, String note) { }
+                         Integer queuedMessages, Integer consumers,
+                         @JsonSerialize(using = ViDisplayTextSerializer.class) String note) {
+    }
 
     public GroupQueueTransportProbe(ObjectProvider<RabbitTemplate> templates,
-            @Value("${app.group.queue.probe-enabled:false}") boolean enabled) {
+                                    @Value("${app.group.queue.probe-enabled:false}") boolean enabled) {
         this.templates = templates;
         this.enabled = enabled;
     }
@@ -61,8 +67,9 @@ public class GroupQueueTransportProbe {
                     for (int i = 0; i < 20 && received == null; i++) {
                         received = channel.basicGet(probeQueue, false);
                         if (received == null) {
-                            try { Thread.sleep(50); }
-                            catch (InterruptedException ex) {
+                            try {
+                                Thread.sleep(50);
+                            } catch (InterruptedException ex) {
                                 Thread.currentThread().interrupt();
                                 return report(false, "INTERRUPTED", work.getMessageCount(),
                                         work.getConsumerCount(), "Probe interrupted.");
@@ -77,7 +84,7 @@ public class GroupQueueTransportProbe {
                     return report(match, match ? "TRANSPORT_OK" : "PROBE_MISMATCH",
                             work.getMessageCount(), work.getConsumerCount(),
                             match ? "Test message received and acknowledged. No Group Task was dispatched."
-                                  : "Unexpected probe message; no real task was dispatched.");
+                                    : "Unexpected probe message; no real task was dispatched.");
                 } finally {
                     // Also unbinds the temporary route. Exclusive queue is a fallback on connection close.
                     channel.queueDelete(probeQueue);

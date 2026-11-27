@@ -1,5 +1,7 @@
 package com.socialhub.encodingrepair;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialhub.common.ApiException;
 import com.socialhub.post.entity.Post;
@@ -27,7 +29,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** One-time, exact-source Unicode restoration tool. NOT a general post editing endpoint. */
+/**
+ * One-time, exact-source Unicode restoration tool. NOT a general post editing endpoint.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -38,21 +42,37 @@ public class EncodingRepairService {
     private final AccessService access;
     private final EntityManager entityManager;
     private final ObjectMapper json;
-    @Value("${app.encoding-repair.backup-dir:encoding-repair-backups}") private String backupDir;
+    @Value("${app.encoding-repair.backup-dir:encoding-repair-backups}")
+    private String backupDir;
 
-    @Value("${app.publisher-enabled:false}") private boolean publisherEnabled;
-    @Value("${app.threads.publisher-enabled:false}") private boolean threadsPublisherEnabled;
-    @Value("${app.automation.live.enabled:false}") private boolean automationLiveEnabled;
+    @Value("${app.publisher-enabled:false}")
+    private boolean publisherEnabled;
+    @Value("${app.threads.publisher-enabled:false}")
+    private boolean threadsPublisherEnabled;
+    @Value("${app.automation.live.enabled:false}")
+    private boolean automationLiveEnabled;
 
-    public record Sample(String code, String action, String currentTopic, String expectedTopic) {}
+    public record Sample(String code, String action, String currentTopic, String expectedTopic) {
+    }
+
     public record Preview(String token, int sourceRows, int matched, int alreadyCorrect,
                           int fixable, int protectedJobs, int unsafeMismatch, int notFound,
-                          List<Sample> samples, boolean executionAllowed) {}
-    public record ApplyResult(int repaired, int unchanged, int protectedJobs, String message) {}
-    private record TextSource(String topic, String content) {}
+                          List<Sample> samples, boolean executionAllowed) {
+    }
+
+    public record ApplyResult(int repaired, int unchanged, int protectedJobs,
+                              @JsonSerialize(using = ViDisplayTextSerializer.class) String message) {
+    }
+
+    private record TextSource(String topic, String content) {
+    }
+
     private record Change(UUID id, String code, String oldTopic, String oldContent,
-                          String newTopic, String newContent, String decision) {}
-    private record Snapshot(Preview preview, List<Change> changes) {}
+                          String newTopic, String newContent, String decision) {
+    }
+
+    private record Snapshot(Preview preview, List<Change> changes) {
+    }
 
     @Transactional(readOnly = true)
     public Preview preview(UUID workspaceId, MultipartFile file) {
@@ -128,7 +148,7 @@ public class EncodingRepairService {
     private Snapshot snapshot(UUID workspaceId, MultipartFile file) {
         Map<String, TextSource> excel = parse(file);
         List<Post> existing = entityManager.createQuery(
-                "SELECT p FROM Post p WHERE p.workspace.id = :workspaceId", Post.class)
+                        "SELECT p FROM Post p WHERE p.workspace.id = :workspaceId", Post.class)
                 .setParameter("workspaceId", workspaceId).getResultList();
         Map<String, Post> byCode = new HashMap<>();
         Set<String> ambiguous = new HashSet<>();
@@ -140,7 +160,7 @@ public class EncodingRepairService {
         // Fetch all workspace Job states at once instead of 1000 separate SQL queries.
         Map<UUID, List<String>> statusesByPost = new HashMap<>();
         List<Object[]> workspaceStatuses = entityManager.createQuery(
-                "SELECT j.post.id, j.status FROM PublishingJob j WHERE j.post.workspace.id = :workspaceId", Object[].class)
+                        "SELECT j.post.id, j.status FROM PublishingJob j WHERE j.post.workspace.id = :workspaceId", Object[].class)
                 .setParameter("workspaceId", workspaceId).getResultList();
         for (Object[] state : workspaceStatuses) {
             statusesByPost.computeIfAbsent((UUID) state[0], key -> new ArrayList<>())
@@ -155,20 +175,31 @@ public class EncodingRepairService {
             TextSource wanted = item.getValue();
             Post post = byCode.get(code);
             String action;
-            if (post == null) { action = "NOT_FOUND"; missing++; }
-            else if (ambiguous.contains(code)) { action = "AMBIGUOUS"; unsafe++; }
-            else {
+            if (post == null) {
+                action = "NOT_FOUND";
+                missing++;
+            } else if (ambiguous.contains(code)) {
+                action = "AMBIGUOUS";
+                unsafe++;
+            } else {
                 matched++;
                 List<String> jobStatuses = statusesByPost.getOrDefault(post.getId(), List.of());
                 boolean protectedJob = "PUBLISHED".equals(post.getStatus())
                         || jobStatuses.stream().anyMatch(NEVER_MODIFY::contains);
                 if (Objects.equals(post.getTopic(), wanted.topic()) && Objects.equals(post.getContent(), wanted.content())) {
-                    action = "ALREADY_CORRECT"; correct++;
-                } else if (protectedJob) { action = "PROTECTED_JOB"; protectedCount++; }
-                else if (isExactMojibake(post.getTopic(), wanted.topic())
+                    action = "ALREADY_CORRECT";
+                    correct++;
+                } else if (protectedJob) {
+                    action = "PROTECTED_JOB";
+                    protectedCount++;
+                } else if (isExactMojibake(post.getTopic(), wanted.topic())
                         && isExactMojibake(post.getContent(), wanted.content())) {
-                    action = "FIXABLE"; fixable++;
-                } else { action = "UNSAFE_MISMATCH"; unsafe++; }
+                    action = "FIXABLE";
+                    fixable++;
+                } else {
+                    action = "UNSAFE_MISMATCH";
+                    unsafe++;
+                }
                 changes.add(new Change(post.getId(), code, post.getTopic(), post.getContent(),
                         wanted.topic(), wanted.content(), action));
                 signature.append('|').append(post.getId()).append('|').append(post.getStatus())
@@ -244,6 +275,8 @@ public class EncodingRepairService {
             byte[] bytes = MessageDigest.getInstance("SHA-256")
                     .digest(input.getBytes(StandardCharsets.UTF_8));
             return HexFormat.of().formatHex(bytes);
-        } catch (Exception e) { throw new IllegalStateException("SHA-256 unavailable", e); }
+        } catch (Exception e) {
+            throw new IllegalStateException("SHA-256 unavailable", e);
+        }
     }
 }

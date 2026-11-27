@@ -1,5 +1,7 @@
 package com.socialhub.grouppublishingtask.excel;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.socialhub.common.ApiException;
 import com.socialhub.facebookgroup.entity.FacebookGroup;
 import com.socialhub.facebookgroup.repository.FacebookGroupRepository;
@@ -42,16 +44,26 @@ public class GroupExcelPlanController {
 
     public record PlanRequest(UUID facebookGroupId, Integer fromRow, Integer toRow,
                               Integer limit, OffsetDateTime startAt, Integer intervalMinutes,
-                              String previewToken, Boolean confirmPlan) { }
+                              String previewToken, Boolean confirmPlan) {
+    }
+
     public record PlanRow(int sourceRowNumber, UUID postId, String action,
-                          OffsetDateTime scheduledAt, String reason) { }
+                          OffsetDateTime scheduledAt,
+                          @JsonSerialize(using = ViDisplayTextSerializer.class) String reason) {
+    }
+
     public record PlanResult(UUID importId, UUID facebookGroupId, boolean dryRun,
                              String previewToken, int readyToCreate, int created,
-                             int alreadyExists, int blocked, List<PlanRow> rows) { }
+                             int alreadyExists, int blocked, List<PlanRow> rows) {
+    }
+
     private record Source(int sourceRowNumber, UUID postId, String content, String postStatus,
                           String approvalStatus, String processingStatus, int mediaCount,
-                          boolean taskExists, boolean sheetChanged) { }
-    private record Snapshot(List<PlanRow> rows, String fingerprint) { }
+                          boolean taskExists, boolean sheetChanged) {
+    }
+
+    private record Snapshot(List<PlanRow> rows, String fingerprint) {
+    }
 
     @PostMapping("/preview")
     public PlanResult preview(@PathVariable UUID workspaceId, @PathVariable UUID importId,
@@ -143,30 +155,30 @@ public class GroupExcelPlanController {
 
     private Snapshot snapshot(UUID workspaceId, UUID importId, PlanRequest req) {
         List<Source> sourceRows = db.query("""
-                SELECT r.source_row_number, r.post_id, p.content, p.status AS post_status,
-                       p.approval_status, r.processing_status,
-                       (SELECT count(*) FROM post_media m WHERE m.post_id=p.id) AS media_count,
-                       EXISTS(SELECT 1 FROM group_publishing_tasks t
-                           WHERE t.post_id=p.id AND t.facebook_group_id=?) AS task_exists,
-                       EXISTS(SELECT 1 FROM google_sheet_import_links l
-                           JOIN google_sheet_staged_rows s
-                             ON s.connection_id=l.connection_id
-                            AND s.source_row_number=r.source_row_number
-                           WHERE l.import_id=r.import_id AND l.workspace_id=e.workspace_id
-                             AND l.enabled=TRUE AND s.present_in_sheet=TRUE
-                             AND s.content<>p.content) AS sheet_changed
-                FROM excel_import_rows r
-                JOIN excel_imports e ON e.id=r.import_id AND e.workspace_id=?
-                JOIN posts p ON p.id=r.post_id AND p.workspace_id=e.workspace_id
-                WHERE r.import_id=? AND r.post_id IS NOT NULL
-                  AND r.source_row_number BETWEEN ? AND ?
-                ORDER BY r.source_row_number, r.id
-                LIMIT ?
-                """, (rs, n) -> new Source(rs.getInt("source_row_number"),
-                rs.getObject("post_id", UUID.class), rs.getString("content"),
-                rs.getString("post_status"), rs.getString("approval_status"),
-                rs.getString("processing_status"), rs.getInt("media_count"),
-                rs.getBoolean("task_exists"), rs.getBoolean("sheet_changed")),
+                        SELECT r.source_row_number, r.post_id, p.content, p.status AS post_status,
+                               p.approval_status, r.processing_status,
+                               (SELECT count(*) FROM post_media m WHERE m.post_id=p.id) AS media_count,
+                               EXISTS(SELECT 1 FROM group_publishing_tasks t
+                                   WHERE t.post_id=p.id AND t.facebook_group_id=?) AS task_exists,
+                               EXISTS(SELECT 1 FROM google_sheet_import_links l
+                                   JOIN google_sheet_staged_rows s
+                                     ON s.connection_id=l.connection_id
+                                    AND s.source_row_number=r.source_row_number
+                                   WHERE l.import_id=r.import_id AND l.workspace_id=e.workspace_id
+                                     AND l.enabled=TRUE AND s.present_in_sheet=TRUE
+                                     AND s.content<>p.content) AS sheet_changed
+                        FROM excel_import_rows r
+                        JOIN excel_imports e ON e.id=r.import_id AND e.workspace_id=?
+                        JOIN posts p ON p.id=r.post_id AND p.workspace_id=e.workspace_id
+                        WHERE r.import_id=? AND r.post_id IS NOT NULL
+                          AND r.source_row_number BETWEEN ? AND ?
+                        ORDER BY r.source_row_number, r.id
+                        LIMIT ?
+                        """, (rs, n) -> new Source(rs.getInt("source_row_number"),
+                        rs.getObject("post_id", UUID.class), rs.getString("content"),
+                        rs.getString("post_status"), rs.getString("approval_status"),
+                        rs.getString("processing_status"), rs.getInt("media_count"),
+                        rs.getBoolean("task_exists"), rs.getBoolean("sheet_changed")),
                 req.facebookGroupId(), workspaceId, importId, req.fromRow(), req.toRow(), req.limit());
 
         List<PlanRow> rows = new ArrayList<>();
@@ -175,18 +187,25 @@ public class GroupExcelPlanController {
             OffsetDateTime scheduled = req.startAt().plusMinutes((long) n * req.intervalMinutes());
             n++;
             String action = "READY_TO_CREATE", reason = "Text post, approved, no existing Group Task";
-            if (src.taskExists()) { action = "ALREADY_EXISTS"; reason = "Existing task for this Post/Group"; }
-            else if (src.processingStatus() != null && src.processingStatus().startsWith("SKIPPED")) {
-                action = "BLOCKED"; reason = "Skipped Excel source row";
+            if (src.taskExists()) {
+                action = "ALREADY_EXISTS";
+                reason = "Existing task for this Post/Group";
+            } else if (src.processingStatus() != null && src.processingStatus().startsWith("SKIPPED")) {
+                action = "BLOCKED";
+                reason = "Skipped Excel source row";
             } else if (!"APPROVED".equals(src.approvalStatus()) ||
                     !("READY".equals(src.postStatus()) || "SCHEDULED".equals(src.postStatus()))) {
-                action = "BLOCKED"; reason = "Post not approved/ready";
+                action = "BLOCKED";
+                reason = "Post not approved/ready";
             } else if (src.mediaCount() > 0) {
-                action = "BLOCKED"; reason = "Text-only Edge Group Pilot does not support media";
+                action = "BLOCKED";
+                reason = "Text-only Edge Group Pilot does not support media";
             } else if (src.sheetChanged()) {
-                action = "BLOCKED"; reason = "Current linked Sheet content differs from imported Post";
+                action = "BLOCKED";
+                reason = "Current linked Sheet content differs from imported Post";
             } else if (src.content() == null || src.content().isBlank()) {
-                action = "BLOCKED"; reason = "Post content empty";
+                action = "BLOCKED";
+                reason = "Post content empty";
             }
             rows.add(new PlanRow(src.sourceRowNumber(), src.postId(), action, scheduled, reason));
         }

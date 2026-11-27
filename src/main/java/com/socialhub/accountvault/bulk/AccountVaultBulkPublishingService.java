@@ -1,5 +1,7 @@
 package com.socialhub.accountvault.bulk;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.socialhub.common.ApiException;
 import com.socialhub.publishingjob.bulk.dto.CreateFacebookBulkRunRequest;
 import com.socialhub.publishingjob.bulk.dto.FacebookBulkRunResponse;
@@ -41,7 +43,8 @@ public class AccountVaultBulkPublishingService {
                               boolean confirmPublish) {
     }
 
-    public record PreviewIssue(UUID postId, UUID accountId, String reason) {
+    public record PreviewIssue(UUID postId, UUID accountId,
+                               @JsonSerialize(using = ViDisplayTextSerializer.class) String reason) {
     }
 
     public record Preview(String platform, int postCount, int accountCount,

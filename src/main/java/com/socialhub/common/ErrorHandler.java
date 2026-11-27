@@ -2,6 +2,7 @@
 package com.socialhub.common;
 
 import com.socialhub.response.ApiResponse;
+import com.socialhub.response.ViApiMessages;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -32,9 +33,7 @@ public class ErrorHandler {
         String message = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(error -> error.getField()
-                        + ": "
-                        + error.getDefaultMessage())
+                .map(error -> ViApiMessages.validation(error.getField(), error.getCode(), error.getDefaultMessage()))
                 .distinct()
                 .collect(Collectors.joining("; "));
 

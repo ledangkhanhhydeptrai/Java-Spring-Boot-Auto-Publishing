@@ -1,5 +1,7 @@
 package com.socialhub.googlesheets.dto;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -29,7 +31,8 @@ public final class Sh26BulkDto {
 
     public record Preview(int rows, int images, int videos, int reels,
                           int existingSh26Posts, String previewToken,
-                          boolean valid, List<Group> groups, List<String> errors,
+                          boolean valid, List<Group> groups,
+                          @JsonSerialize(contentUsing = ViDisplayTextSerializer.class) List<String> errors,
                           boolean createsJobs) {
     }
 

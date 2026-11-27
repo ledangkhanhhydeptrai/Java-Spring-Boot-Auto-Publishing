@@ -1,5 +1,7 @@
 package com.socialhub.grouppublishingtask.excel;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -76,7 +78,8 @@ public class GroupSheetQuickPlanController {
         }
     }
 
-    public record Row(int sourceRowNumber, UUID postId, String action, String reason, OffsetDateTime scheduledAt) {
+    public record Row(int sourceRowNumber, UUID postId, String action,
+                      @JsonSerialize(using = ViDisplayTextSerializer.class) String reason, OffsetDateTime scheduledAt) {
     }
 
     public record Result(UUID connectionId, UUID importId, UUID facebookGroupId,

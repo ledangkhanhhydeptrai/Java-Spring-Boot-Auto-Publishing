@@ -214,7 +214,8 @@ public class PublishingJobServiceImpl implements PublishingJobService {
             int page,
             int size,
             String status,
-            UUID postId
+            UUID postId,
+            String platform
     ) {
         access.workspace(workspaceId);
 
@@ -245,6 +246,13 @@ public class PublishingJobServiceImpl implements PublishingJobService {
             );
         }
 
+        String normalizedPlatform = platform == null
+                ? "" : platform.trim().toUpperCase(java.util.Locale.ROOT);
+        if (!normalizedPlatform.isEmpty()
+                && !Set.of("FACEBOOK_PAGE", "THREADS").contains(normalizedPlatform)) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "Invalid publishing platform");
+        }
+
         if (postId != null) {
             Post p = posts.findById(postId)
                     .orElseThrow(() -> new ApiException(
@@ -264,6 +272,7 @@ public class PublishingJobServiceImpl implements PublishingJobService {
                 workspaceId,
                 normalized,
                 postId,
+                normalizedPlatform,
                 PageRequest.of(
                         page,
                         size,

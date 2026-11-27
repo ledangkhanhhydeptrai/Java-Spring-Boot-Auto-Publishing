@@ -1,5 +1,7 @@
 package com.socialhub.excelimport.controller;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
 import com.socialhub.common.ApiException;
 import com.socialhub.excelimport.dto.ExcelImportDto;
 import com.socialhub.excelimport.service.implement.ExcelAutoPublishService;
@@ -40,7 +42,8 @@ public class ExcelBulkImportController {
     private final ExcelAutoPublishService autoPublish;
 
     public record AccountResult(UUID accountId, UUID importId, String state,
-                                int planned, int alreadyPlanned, int blocked, String message) {
+                                int planned, int alreadyPlanned, int blocked,
+                                @JsonSerialize(using = ViDisplayTextSerializer.class) String message) {
     }
 
     public record BulkResult(int requestedAccounts, long maximumJobsFromFile,

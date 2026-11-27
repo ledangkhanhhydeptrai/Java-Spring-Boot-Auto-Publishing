@@ -1,21 +1,20 @@
 
 package com.socialhub.publishingattempt.controller;
 
+import tools.jackson.databind.annotation.JsonSerialize;
+import com.socialhub.response.ViDisplayTextSerializer;
+
 import java.util.List;
 import java.util.UUID;
 import java.time.OffsetDateTime;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
 import com.socialhub.common.ApiException;
 import com.socialhub.security.AccessService;
-
 import com.socialhub.publishingattempt.repository.PublishingAttemptRepository;
-
 import com.socialhub.publishingjob.entity.PublishingJob;
 import com.socialhub.publishingjob.repository.PublishingJobRepository;
 
@@ -32,7 +31,7 @@ public class PublishingAttemptController {
             UUID id,
             Integer attemptNumber,
             String status,
-            String errorMessage,
+            @JsonSerialize(using = ViDisplayTextSerializer.class) String errorMessage,
             OffsetDateTime startedAt,
             OffsetDateTime finishedAt
     ) {
