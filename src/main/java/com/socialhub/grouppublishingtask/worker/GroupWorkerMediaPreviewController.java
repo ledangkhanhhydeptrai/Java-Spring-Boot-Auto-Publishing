@@ -23,6 +23,8 @@ import java.util.UUID;
  * GET is read-only. POST performs an atomic READY -> PROCESSING claim
  * only when the operator explicitly confirms LIVE in Edge.
  */
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(
+        prefix = "app.group.legacy-pilot", name = "enabled", havingValue = "true", matchIfMissing = false)
 @RestController
 @RequestMapping("/internal/group-worker")
 @RequiredArgsConstructor
@@ -162,6 +164,7 @@ public class GroupWorkerMediaPreviewController {
                     JOIN posts p ON p.id=t.post_id
                     JOIN facebook_groups g ON g.id=t.facebook_group_id
                     WHERE t.id=? AND g.external_group_id=? AND t.status='READY'
+                    AND NOT EXISTS (SELECT 1 FROM group_dispatch_outbox o WHERE o.task_id=t.id)
                       AND p.workspace_id=g.workspace_id
                       AND p.status IN ('READY','SCHEDULED','PUBLISHED')
                       AND p.approval_status='APPROVED'

@@ -10,40 +10,46 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
-/** Read-only view of the existing Group task queue; no competing claim or retry path. */
+/**
+ * Read-only view of the existing Group task queue; no competing claim or retry path.
+ */
 @Service
 public class GroupTaskQueueService {
     private final JdbcTemplate db;
 
-    public GroupTaskQueueService(JdbcTemplate db) { this.db = db; }
+    public GroupTaskQueueService(JdbcTemplate db) {
+        this.db = db;
+    }
 
     public record Counts(long total, long pending, long ready, long dueReady,
                          long processing, long published, long failed, long needsReview,
-                         long cancelled) { }
+                         long cancelled) {
+    }
 
-    public record DueTask(UUID taskId, UUID postId, OffsetDateTime scheduledAt) { }
+    public record DueTask(UUID taskId, UUID postId, OffsetDateTime scheduledAt) {
+    }
 
     @Transactional(readOnly = true)
     public Counts counts(UUID workspaceId, UUID groupId) {
         requireGroup(workspaceId, groupId);
         return db.queryForObject("""
-            SELECT COUNT(*),
-                   COUNT(*) FILTER (WHERE t.status='PENDING'),
-                   COUNT(*) FILTER (WHERE t.status='READY'),
-                   COUNT(*) FILTER (WHERE t.status='READY'
-                     AND t.scheduled_at<=now() AND p.approval_status='APPROVED'
-                     AND p.status IN ('READY','SCHEDULED','PUBLISHED')),
-                   COUNT(*) FILTER (WHERE t.status='PROCESSING'),
-                   COUNT(*) FILTER (WHERE t.status='PUBLISHED'),
-                   COUNT(*) FILTER (WHERE t.status='FAILED'),
-                   COUNT(*) FILTER (WHERE t.status='NEEDS_REVIEW'),
-                   COUNT(*) FILTER (WHERE t.status='CANCELLED')
-              FROM group_publishing_tasks t
-              JOIN facebook_groups g ON g.id=t.facebook_group_id
-              JOIN posts p ON p.id=t.post_id AND p.workspace_id=g.workspace_id
-             WHERE g.workspace_id=? AND g.id=?
-            """, (rs,n) -> new Counts(rs.getLong(1),rs.getLong(2),rs.getLong(3),
-                rs.getLong(4),rs.getLong(5),rs.getLong(6),rs.getLong(7),rs.getLong(8),
+                SELECT COUNT(*),
+                       COUNT(*) FILTER (WHERE t.status='PENDING'),
+                       COUNT(*) FILTER (WHERE t.status='READY'),
+                       COUNT(*) FILTER (WHERE t.status='READY'
+                         AND t.scheduled_at<=now() AND p.approval_status='APPROVED'
+                         AND p.status IN ('READY','SCHEDULED','PUBLISHED')),
+                       COUNT(*) FILTER (WHERE t.status='PROCESSING'),
+                       COUNT(*) FILTER (WHERE t.status='PUBLISHED'),
+                       COUNT(*) FILTER (WHERE t.status='FAILED'),
+                       COUNT(*) FILTER (WHERE t.status='NEEDS_REVIEW'),
+                       COUNT(*) FILTER (WHERE t.status='CANCELLED')
+                  FROM group_publishing_tasks t
+                  JOIN facebook_groups g ON g.id=t.facebook_group_id
+                  JOIN posts p ON p.id=t.post_id AND p.workspace_id=g.workspace_id
+                 WHERE g.workspace_id=? AND g.id=?
+                """, (rs, n) -> new Counts(rs.getLong(1), rs.getLong(2), rs.getLong(3),
+                rs.getLong(4), rs.getLong(5), rs.getLong(6), rs.getLong(7), rs.getLong(8),
                 rs.getLong(9)), workspaceId, groupId);
     }
 
@@ -51,27 +57,77 @@ public class GroupTaskQueueService {
     public List<DueTask> due(UUID workspaceId, UUID groupId, int limit) {
         requireGroup(workspaceId, groupId);
         if (limit < 1 || limit > 100)
-            throw new ApiException(HttpStatus.BAD_REQUEST,"limit must be between 1 and 100");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "limit must be between 1 and 100");
         return db.query("""
-            SELECT t.id,t.post_id,t.scheduled_at
-              FROM group_publishing_tasks t
-              JOIN facebook_groups g ON g.id=t.facebook_group_id
-              JOIN posts p ON p.id=t.post_id AND p.workspace_id=g.workspace_id
-             WHERE g.workspace_id=? AND g.id=? AND t.status='READY'
-               AND t.scheduled_at<=now() AND p.approval_status='APPROVED'
-               AND p.status IN ('READY','SCHEDULED','PUBLISHED')
-             ORDER BY t.scheduled_at,t.id LIMIT ?
-            """, (rs,n) -> new DueTask(rs.getObject(1,UUID.class),rs.getObject(2,UUID.class),
-                rs.getObject(3,OffsetDateTime.class)),workspaceId,groupId,limit);
+                SELECT t.id,t.post_id,t.scheduled_at
+                  FROM group_publishing_tasks t
+                  JOIN facebook_groups g ON g.id=t.facebook_group_id
+                  JOIN posts p ON p.id=t.post_id AND p.workspace_id=g.workspace_id
+                 WHERE g.workspace_id=? AND g.id=? AND t.status='READY'
+                   AND t.scheduled_at<=now() AND p.approval_status='APPROVED'
+                   AND p.status IN ('READY','SCHEDULED','PUBLISHED')
+                 ORDER BY t.scheduled_at,t.id LIMIT ?
+                """, (rs, n) -> new DueTask(rs.getObject(1, UUID.class), rs.getObject(2, UUID.class),
+                rs.getObject(3, OffsetDateTime.class)), workspaceId, groupId, limit);
+    }
+
+    /**
+     * Counts overdue PENDING tasks separately; does not approve or change schedules.
+     */
+    @Transactional(readOnly = true)
+    public long pendingDue(UUID workspaceId, UUID groupId) {
+        requireGroup(workspaceId, groupId);
+        Long count = db.queryForObject("""
+                SELECT COUNT(*) FROM group_publishing_tasks t
+                JOIN facebook_groups g ON g.id=t.facebook_group_id
+                JOIN posts p ON p.id=t.post_id AND p.workspace_id=g.workspace_id
+                WHERE g.workspace_id=? AND g.id=? AND t.status='PENDING'
+                  AND t.scheduled_at<=now()
+                """, Long.class, workspaceId, groupId);
+        return count == null ? 0L : count;
+    }
+
+    /**
+     * Internal read-only discovery: only groups with outstanding tasks, in their own workspace.
+     */
+    public record Target(UUID workspaceId, UUID groupId) {
+    }
+
+    @Transactional(readOnly = true)
+    public List<Target> activeTargetsAfter(UUID afterGroupId, int limit) {
+        if (limit < 1 || limit > 100) throw new IllegalArgumentException("Invalid target batch size");
+        return db.query("""
+                        SELECT g.workspace_id, g.id FROM facebook_groups g
+                         WHERE (CAST(? AS uuid) IS NULL OR g.id > CAST(? AS uuid))
+                           AND EXISTS (
+                             SELECT 1 FROM group_publishing_tasks t
+                             JOIN posts p ON p.id=t.post_id AND p.workspace_id=g.workspace_id
+                             WHERE t.facebook_group_id=g.id AND t.status IN ('PENDING','READY','PROCESSING')
+                           )
+                         ORDER BY g.id LIMIT ?
+                        """, (rs, n) -> new Target(rs.getObject(1, UUID.class), rs.getObject(2, UUID.class)),
+                afterGroupId, afterGroupId, limit);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean hasActiveTasks(UUID workspaceId, UUID groupId) {
+        return Boolean.TRUE.equals(db.queryForObject("""
+                SELECT EXISTS (
+                  SELECT 1 FROM facebook_groups g
+                  JOIN group_publishing_tasks t ON t.facebook_group_id=g.id
+                  JOIN posts p ON p.id=t.post_id AND p.workspace_id=g.workspace_id
+                  WHERE g.workspace_id=? AND g.id=? AND t.status IN ('PENDING','READY','PROCESSING')
+                )
+                """, Boolean.class, workspaceId, groupId));
     }
 
     private void requireGroup(UUID workspaceId, UUID groupId) {
         if (workspaceId == null || groupId == null)
-            throw new ApiException(HttpStatus.BAD_REQUEST,"workspaceId and facebookGroupId required");
+            throw new ApiException(HttpStatus.BAD_REQUEST, "workspaceId and facebookGroupId required");
         Boolean valid = db.queryForObject("""
-            SELECT EXISTS(SELECT 1 FROM facebook_groups WHERE workspace_id=? AND id=?)
-            """,Boolean.class,workspaceId,groupId);
+                SELECT EXISTS(SELECT 1 FROM facebook_groups WHERE workspace_id=? AND id=?)
+                """, Boolean.class, workspaceId, groupId);
         if (!Boolean.TRUE.equals(valid))
-            throw new ApiException(HttpStatus.NOT_FOUND,"Group not found in workspace");
+            throw new ApiException(HttpStatus.NOT_FOUND, "Group not found in workspace");
     }
 }

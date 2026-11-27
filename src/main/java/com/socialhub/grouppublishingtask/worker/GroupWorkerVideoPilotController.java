@@ -22,6 +22,8 @@ import java.util.UUID;
  * Facebook's resulting post may be presented as a Reel. This class does not
  * select a Reel creation surface, schedule batches, or publish by itself.
  */
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(
+        prefix = "app.group.legacy-pilot", name = "enabled", havingValue = "true", matchIfMissing = false)
 @RestController
 @RequestMapping("/internal/group-worker")
 @RequiredArgsConstructor
@@ -71,6 +73,7 @@ public class GroupWorkerVideoPilotController {
                   JOIN posts p ON p.id=t.post_id
                   JOIN facebook_groups g ON g.id=t.facebook_group_id
                   WHERE t.id=? AND g.external_group_id=? AND t.status='READY'
+                    AND NOT EXISTS (SELECT 1 FROM group_dispatch_outbox o WHERE o.task_id=t.id)
                     AND p.workspace_id=g.workspace_id
                     AND p.status IN ('READY','SCHEDULED','PUBLISHED')
                     AND p.approval_status='APPROVED'

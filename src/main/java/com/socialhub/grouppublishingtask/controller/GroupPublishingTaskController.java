@@ -27,6 +27,7 @@ public class GroupPublishingTaskController {
     private final FacebookGroupRepository groups;
     private final PostRepository posts;
     private final AccessService access;
+    private final org.springframework.jdbc.core.JdbcTemplate db;
 
     public record Create(@NotNull UUID facebookGroupId, OffsetDateTime scheduledAt) {
     }
@@ -145,16 +146,19 @@ public class GroupPublishingTaskController {
         }
     }
 
+    @org.springframework.transaction.annotation.Transactional
     @PostMapping("/{id}/ready")
     public View ready(@PathVariable UUID postId, @PathVariable UUID id) {
         return status(postId, id, "READY", null);
     }
 
+    @org.springframework.transaction.annotation.Transactional
     @PostMapping("/{id}/confirm")
     public View confirm(@PathVariable UUID postId, @PathVariable UUID id, @Valid @RequestBody Confirm r) {
         return status(postId, id, "PUBLISHED", r.publishedUrl());
     }
 
+    @org.springframework.transaction.annotation.Transactional
     @PostMapping("/{id}/cancel")
     public View cancel(@PathVariable UUID postId, @PathVariable UUID id) {
         return status(postId, id, "CANCELLED", null);
@@ -173,7 +177,7 @@ public class GroupPublishingTaskController {
             UUID workspaceId = p.getWorkspace().getId();
             access.admin(workspaceId);
 
-            GroupPublishingTask t = tasks.findById(id)
+            GroupPublishingTask t = tasks.lockForStatusChange(id, postId)
                     .orElseThrow(() -> new ApiException(
                             HttpStatus.NOT_FOUND,
                             "Task not found"
@@ -188,6 +192,11 @@ public class GroupPublishingTaskController {
                 );
             }
 
+            // Row lock is held until commit; the outbox claim locks the same row.
+            Boolean owned = db.queryForObject("SELECT EXISTS (SELECT 1 FROM group_dispatch_outbox WHERE task_id=?)", Boolean.class, id);
+            if (Boolean.TRUE.equals(owned)) {
+                throw new ApiException(HttpStatus.CONFLICT, "Task is owned by production outbox");
+            }
             if ("PUBLISHED".equals(t.getStatus())
                     || "CANCELLED".equals(t.getStatus())) {
                 throw new ApiException(

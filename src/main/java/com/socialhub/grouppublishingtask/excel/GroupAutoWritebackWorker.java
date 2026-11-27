@@ -6,63 +6,75 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/** Only copies recorded PUBLISHED group links. Never approves, claims or publishes a task. */
+/**
+ * Reads only explicitly enabled DB bindings; writes recorded PUBLISHED links only.
+ */
 @Slf4j
 @Component
 public class GroupAutoWritebackWorker {
-    private final GroupSheetQuickPlanController planner;
+    private final GroupWritebackTargetService targets;
     private final boolean enabled;
-    private final UUID connectionId;
-    private final UUID groupId;
+    private final int batchSize;
     private final AtomicBoolean running = new AtomicBoolean();
+    private UUID cursor; // Used only by the single I/O thread. Restart safely begins at first target.
     private final ExecutorService io = Executors.newSingleThreadExecutor(r -> {
         Thread t = new Thread(r, "group-writeback-io");
         t.setDaemon(true);
         return t;
     });
 
-    public GroupAutoWritebackWorker(GroupSheetQuickPlanController planner,
-            @Value("${app.group.writeback.enabled:false}") boolean enabled,
-            @Value("${app.group.writeback.connection-id:}") String connection,
-            @Value("${app.group.writeback.group-id:}") String group) {
-        this.planner = planner;
+    public GroupAutoWritebackWorker(GroupWritebackTargetService targets,
+                                    @Value("${app.group.writeback.enabled:false}") boolean enabled,
+                                    @Value("${app.group.writeback.targets-per-cycle:5}") int batchSize) {
+        this.targets = targets;
         this.enabled = enabled;
-        this.connectionId = parse(connection);
-        this.groupId = parse(group);
-        if (enabled && (connectionId == null || groupId == null))
-            log.warn("[GROUP WRITEBACK] Disabled: both configured UUIDs must be valid");
+        this.batchSize = Math.max(1, Math.min(batchSize, 20));
     }
 
-    private static UUID parse(String raw) {
-        try { return UUID.fromString(raw.strip()); }
-        catch (RuntimeException invalid) { return null; }
-    }
-
-    // Dispatch only: Google I/O never blocks the shared Spring publishing scheduler.
-    @Scheduled(initialDelayString="${app.group.writeback.initial-delay-ms:30000}",
-               fixedDelayString="${app.group.writeback.poll-ms:120000}")
+    @Scheduled(initialDelayString = "${app.group.writeback.initial-delay-ms:30000}",
+            fixedDelayString = "${app.group.writeback.poll-ms:120000}")
     public void tick() {
-        if (!enabled || connectionId == null || groupId == null || io.isShutdown()
-                || !running.compareAndSet(false, true)) return;
+        if (!enabled || io.isShutdown() || !running.compareAndSet(false, true)) return;
         try {
             io.execute(() -> {
                 try {
-                    var report = planner.runConfiguredWriteback(connectionId, groupId);
-                    if (report != null && (report.written() > 0 || report.blocked() > 0))
-                        log.info("[GROUP WRITEBACK] candidates={} written={} synced={} blocked={}",
-                                report.candidates(), report.written(), report.alreadySynced(), report.blocked());
+                    List<UUID> batch = targets.nextTargets(cursor, batchSize);
+                    if (batch.isEmpty() && cursor != null) {
+                        cursor = null;
+                        batch = targets.nextTargets(null, batchSize);
+                    }
+                    for (UUID connectionId : batch) {
+                        if (Thread.currentThread().isInterrupted()) break;
+                        cursor = connectionId;
+                        try {
+                            var report = targets.run(connectionId);
+                            if (report != null && (report.written() > 0 || report.blocked() > 0))
+                                log.info("[GROUP WRITEBACK] connection={} candidates={} written={} synced={} blocked={}",
+                                        connectionId, report.candidates(), report.written(), report.alreadySynced(), report.blocked());
+                        } catch (RuntimeException failure) {
+                            log.warn("[GROUP WRITEBACK] Target skipped: connection={} error={}", connectionId, failure.getClass().getSimpleName());
+                        }
+                    }
+                    if (batch.size() < batchSize) cursor = null;
                 } catch (RuntimeException failure) {
-                    log.warn("[GROUP WRITEBACK] Stopped this cycle: {}", failure.getClass().getSimpleName());
-                } finally { running.set(false); }
+                    log.warn("[GROUP WRITEBACK] Scan failed: {}", failure.getClass().getSimpleName());
+                } finally {
+                    running.set(false);
+                }
             });
-        } catch (RuntimeException rejected) { running.set(false); }
+        } catch (RuntimeException rejected) {
+            running.set(false);
+        }
     }
 
     @PreDestroy
-    public void stop() { io.shutdownNow(); }
+    public void stop() {
+        io.shutdownNow();
+    }
 }
