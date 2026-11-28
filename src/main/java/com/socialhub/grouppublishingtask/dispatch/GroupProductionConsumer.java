@@ -37,7 +37,7 @@ final class GroupProductionConsumer implements MessageListener {
         if (reservation.decision() == GroupProductionExecutionStore.Decision.DUPLICATE) return;
         if (reservation.decision() == GroupProductionExecutionStore.Decision.REJECT)
             throw new AmqpRejectAndDontRequeueException("No matching eligible outbox task");
-        String state = "NEEDS_REVIEW", code = "PROVIDER_OUTCOME_UNKNOWN", link = null;
+        String state = "NEEDS_REVIEW", code = "PROVIDER_OUTCOME_UNKNOWN", link = null, remoteId = null;
         try {
             if (!publisher.isAuthorized(reservation.request())) code = "PROVIDER_NOT_AUTHORIZED";
             else {
@@ -46,6 +46,7 @@ final class GroupProductionConsumer implements MessageListener {
                         && GroupPublicationLink.matches(reservation.request().externalGroupId(), result.permalink())) {
                     state = "PUBLISHED";
                     link = result.permalink();
+                    remoteId = result.remotePostId();
                     code = "PROVIDER_CONFIRMED";
                 } else if (result != null && result.outcome() == GroupProductionPublisher.Outcome.FAILED) {
                     state = "FAILED";
@@ -55,6 +56,6 @@ final class GroupProductionConsumer implements MessageListener {
         } catch (RuntimeException failure) { /* uncertain remote outcome: never auto-republish */ }
         // If this DB write fails, redelivery cannot call publisher again; expired STARTED needs reconciliation.
         // A false return means a reviewer already fenced this outcome; do not overwrite it.
-        store.finish(event, reservation.token(), state, link, code);
+        store.finish(event, reservation.token(), state, link, code, remoteId);
     }
 }

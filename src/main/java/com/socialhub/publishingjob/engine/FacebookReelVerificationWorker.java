@@ -3,6 +3,7 @@ package com.socialhub.publishingjob.engine;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialhub.facebookoauth.storage.FacebookTokenStorage;
+import com.socialhub.publishingjob.bulk.service.FacebookBulkPilotRules;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +35,9 @@ import java.util.UUID;
         matchIfMissing = true
 )
 public class FacebookReelVerificationWorker {
+
+    @Value("${app.facebook.bulk-pilot-run-id:}")
+    private String pilotRunId;
 
     private final JdbcTemplate db;
     private final ObjectMapper json;
@@ -134,9 +138,11 @@ public class FacebookReelVerificationWorker {
                           OR r.last_checked_at <
                              NOW() - INTERVAL '1 minute'
                       )
+                    AND (CAST(? AS uuid) IS NULL OR EXISTS (SELECT 1 FROM facebook_bulk_run_jobs bj
+                         WHERE bj.publishing_job_id=j.id AND bj.bulk_run_id=?))
                     ORDER BY r.updated_at ASC
                     LIMIT 5
-                    """);
+                    """, FacebookBulkPilotRules.runId(pilotRunId), FacebookBulkPilotRules.runId(pilotRunId));
 
         } catch (Exception e) {
 

@@ -61,11 +61,14 @@ final class GroupProductionExecutionStore {
         }));
     }
 
-    boolean finish(GroupDispatchEnvelope event, UUID token, String state, String link, String code) {
+    boolean finish(GroupDispatchEnvelope event, UUID token, String state, String link, String code, String remoteId) {
         return Boolean.TRUE.equals(tx.execute(status -> {
             var locked = db.query("SELECT id FROM group_publishing_tasks WHERE id=? FOR UPDATE", (rs, n) -> rs.getObject(1, UUID.class), event.taskId());
             if (locked.size() != 1) return false;
-            return finishLocked(event, token, state, link, code);
+            boolean finished = finishLocked(event, token, state, link, code);
+            if (finished && "PUBLISHED".equals(state) && remoteId != null)
+                db.update("UPDATE group_dispatch_inbox SET remote_post_id=? WHERE event_id=?", remoteId, event.eventId());
+            return finished;
         }));
     }
 
@@ -89,6 +92,10 @@ final class GroupProductionExecutionStore {
     // Crash/timeout: never acquire execution rights again. Route to human reconciliation.
     // Lock ordering matches reserve/finish: task before inbox.
     int reviewExpired(UUID workspaceId, UUID groupId, int limit) {
+        return reviewExpired(workspaceId, groupId, limit, null);
+    }
+
+    int reviewExpired(UUID workspaceId, UUID groupId, int limit, UUID exactTask) {
         if (workspaceId == null || groupId == null || limit < 1 || limit > 100)
             throw new IllegalArgumentException("Invalid review scope");
         return Objects.requireNonNull(tx.execute(status -> {
@@ -98,9 +105,9 @@ final class GroupProductionExecutionStore {
                     JOIN facebook_groups g ON g.id=t.facebook_group_id
                     JOIN posts p ON p.id=t.post_id AND p.workspace_id=g.workspace_id
                     WHERE i.state='STARTED' AND i.review_after<=now() AND t.status='PROCESSING'
-                    AND g.workspace_id=? AND g.id=? ORDER BY i.review_after,i.event_id
+                    AND g.workspace_id=? AND g.id=? AND (CAST(? AS uuid) IS NULL OR t.id=?) ORDER BY i.review_after,i.event_id
                     LIMIT ? FOR UPDATE OF t SKIP LOCKED
-                    """, (rs, n) -> new UUID[]{rs.getObject(1, UUID.class), rs.getObject(2, UUID.class), rs.getObject(3, UUID.class)}, workspaceId, groupId, limit);
+                    """, (rs, n) -> new UUID[]{rs.getObject(1, UUID.class), rs.getObject(2, UUID.class), rs.getObject(3, UUID.class)}, workspaceId, groupId, exactTask, exactTask, limit);
             int count = 0;
             for (UUID[] row : events)
                 if (finishLocked(new GroupDispatchEnvelope(row[0], row[1], workspaceId, groupId), row[2], "NEEDS_REVIEW", null, "EXECUTION_UNCERTAIN"))
@@ -111,6 +118,10 @@ final class GroupProductionExecutionStore {
 
     // Exhausted broker delivery with no recorded consumer reservation: fence it for review.
     int reviewDead(UUID workspaceId, UUID groupId, int limit) {
+        return reviewDead(workspaceId, groupId, limit, null);
+    }
+
+    int reviewDead(UUID workspaceId, UUID groupId, int limit, UUID exactTask) {
         if (workspaceId == null || groupId == null || limit < 1 || limit > 100)
             throw new IllegalArgumentException("Invalid review scope");
         return Objects.requireNonNull(tx.execute(status -> db.update("""
@@ -120,7 +131,7 @@ final class GroupProductionExecutionStore {
                     JOIN facebook_groups g ON g.id=t.facebook_group_id
                     JOIN posts p ON p.id=t.post_id AND p.workspace_id=g.workspace_id
                     WHERE o.state='DEAD' AND t.status='PROCESSING'
-                      AND g.workspace_id=? AND g.id=?
+                      AND g.workspace_id=? AND g.id=? AND (CAST(? AS uuid) IS NULL OR t.id=?)
                       AND NOT EXISTS (SELECT 1 FROM group_dispatch_inbox i WHERE i.event_id=o.event_id)
                     ORDER BY o.event_id LIMIT ? FOR UPDATE OF t SKIP LOCKED
                 ), recorded AS (
@@ -129,6 +140,6 @@ final class GroupProductionExecutionStore {
                     ON CONFLICT DO NOTHING RETURNING task_id
                 ) UPDATE group_publishing_tasks t SET status='NEEDS_REVIEW'
                   FROM recorded WHERE t.id=recorded.task_id AND t.status='PROCESSING'
-                """, workspaceId, groupId, limit)));
+                """, workspaceId, groupId, exactTask, exactTask, limit)));
     }
 }

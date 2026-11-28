@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 public class FacebookBulkRunFinalizer {
 
     private final JdbcTemplate db;
+    @org.springframework.beans.factory.annotation.Value("${app.facebook.bulk-pilot-run-id:}")
+    private String pilotRunId;
 
     @Scheduled(fixedDelayString =
             "${app.facebook.bulk-finalizer-delay-ms:10000}")
@@ -21,6 +23,7 @@ public class FacebookBulkRunFinalizer {
                 SET status = 'COMPLETED',
                     finished_at = NOW()
                 WHERE br.status = 'RUNNING'
+                  AND (CAST(? AS uuid) IS NULL OR br.id=?)
                 
                   AND EXISTS (
                       SELECT 1
@@ -36,6 +39,6 @@ public class FacebookBulkRunFinalizer {
                       WHERE bj.bulk_run_id = br.id
                         AND j.status IS DISTINCT FROM 'PUBLISHED'
                   )
-                """);
+                """, FacebookBulkPilotRules.runId(pilotRunId), FacebookBulkPilotRules.runId(pilotRunId));
     }
 }

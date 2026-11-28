@@ -183,6 +183,17 @@ public class FacebookTokenStorage {
         return decrypt(encrypted);
     }
 
+    /**
+     * Encrypt a user grant using the same configured key; never return it in an API response.
+     */
+    public String encryptUserToken(String plaintext) throws Exception {
+        return encrypt(plaintext);
+    }
+
+    public String decryptUserToken(String encrypted) throws Exception {
+        return decrypt(encrypted);
+    }
+
     private String encrypt(String plaintext) throws Exception {
         if (plaintext == null || plaintext.isBlank()) {
             throw new IllegalArgumentException("Facebook access token must not be empty");

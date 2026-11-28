@@ -3,6 +3,7 @@ package com.socialhub.publishingjob.engine;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialhub.facebookoauth.storage.FacebookTokenStorage;
+import com.socialhub.publishingjob.bulk.service.FacebookBulkPilotRules;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,11 +35,11 @@ import java.util.regex.Pattern;
 /**
  * Read-only reconciliation for Page VIDEO jobs after /{pageId}/videos accepted an upload.
  * No upload, publish, retry, or mutation of a live Meta post occurs in this worker.
- *
+ * <p>
  * A video being encoded/ready is NOT sufficient proof it is published. We require
  * Meta to explicitly report publication, or a published Page post pointing to the
  * exact uploaded video ID. Unexpected or unavailable responses leave NEEDS_REVIEW.
- *
+ * <p>
  * Its network calls run on a dedicated single thread so the normal
  * Facebook/Threads publisher scheduler is not blocked.
  */
@@ -56,6 +57,9 @@ public class FacebookVideoVerificationWorker {
             .connectTimeout(Duration.ofSeconds(8))
             .followRedirects(HttpClient.Redirect.NEVER)
             .build();
+
+    @Value("${app.facebook.bulk-pilot-run-id:}")
+    private String pilotRunId;
 
     private final JdbcTemplate db;
     private final ObjectMapper json;
@@ -129,9 +133,11 @@ public class FacebookVideoVerificationWorker {
                     SELECT 1 FROM post_media m
                     WHERE m.post_id = j.post_id AND m.media_type = 'VIDEO'
                   )
+                    AND (CAST(? AS uuid) IS NULL OR EXISTS (SELECT 1 FROM facebook_bulk_run_jobs bj
+                         WHERE bj.publishing_job_id=j.id AND bj.bulk_run_id=?))
                 ORDER BY j.scheduled_at ASC, j.id ASC
                 LIMIT 2000
-                """);
+                """, FacebookBulkPilotRules.runId(pilotRunId), FacebookBulkPilotRules.runId(pilotRunId));
         int checked = 0;
         for (Map<String, Object> row : rows) {
             UUID jobId = (UUID) row.get("job_id");
@@ -275,10 +281,11 @@ public class FacebookVideoVerificationWorker {
         });
     }
 
-    private record PagePostProof(String permalink) { }
+    private record PagePostProof(String permalink) {
+    }
 
     private PagePostProof findPublishedPagePost(String pageId, String videoId,
-                                               String token) {
+                                                String token) {
         try {
             // The feed is read-only. Never publish or retry here.
             JsonNode feed = graphGet(pageId + "/feed",

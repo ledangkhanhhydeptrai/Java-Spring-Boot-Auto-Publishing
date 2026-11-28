@@ -9,6 +9,7 @@ import com.socialhub.publishingjob.bulk.service.FacebookBulkRunService;
 import com.socialhub.publishingjob.dto.PublishingJobDto;
 import com.socialhub.publishingjob.repository.PublishingJobRepository;
 import com.socialhub.facebookoauth.repository.FacebookPageConnectionRepository;
+import com.socialhub.facebookoauth.entity.FacebookPageConnection;
 import com.socialhub.publishingjob.service.implement.PublishingJobServiceImpl;
 import com.socialhub.security.AccessService;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,12 @@ public class AccountVaultBulkPublishingService {
 
     public record BulkRequest(String platform, List<UUID> postIds,
                               List<UUID> accountIds, OffsetDateTime scheduledAt,
-                              boolean confirmPublish) {
+                              boolean confirmPublish, Map<UUID, UUID> facebookConnectionIds) {
+        // Preserve existing Java callers and old request JSON without the optional map.
+        public BulkRequest(String platform, List<UUID> postIds, List<UUID> accountIds,
+                           OffsetDateTime scheduledAt, boolean confirmPublish) {
+            this(platform, postIds, accountIds, scheduledAt, confirmPublish, null);
+        }
     }
 
     public record PreviewIssue(UUID postId, UUID accountId,
@@ -112,10 +118,21 @@ public class AccountVaultBulkPublishingService {
         }
         if (request.postIds() == null || request.accountIds() == null
                 || request.postIds().isEmpty() || request.accountIds().isEmpty()
-                || request.postIds().contains(null) || request.accountIds().contains(null)
+                || request.postIds().stream().anyMatch(java.util.Objects::isNull)
+                || request.accountIds().stream().anyMatch(java.util.Objects::isNull)
                 || new HashSet<>(request.postIds()).size() != request.postIds().size()
                 || new HashSet<>(request.accountIds()).size() != request.accountIds().size()) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Provide nonempty, distinct postIds/accountIds");
+        }
+        Map<UUID, UUID> bindings = request.facebookConnectionIds();
+        if (bindings != null) {
+            if (!"FACEBOOK_PAGE".equals(platform)
+                    || bindings.size() != request.accountIds().size()
+                    || !bindings.keySet().equals(new HashSet<>(request.accountIds()))
+                    || bindings.values().stream().anyMatch(java.util.Objects::isNull)) {
+                throw new ApiException(HttpStatus.BAD_REQUEST,
+                        "Vui lòng chọn đúng một kết nối Facebook cho mỗi Fanpage đã chọn.");
+            }
         }
         long total = (long) request.postIds().size() * request.accountIds().size();
         if (total > MAX_JOBS_PER_BATCH) {
@@ -128,6 +145,33 @@ public class AccountVaultBulkPublishingService {
                     "scheduledAt must be at least 2 minutes ahead and within 30 days");
         }
         return platform;
+    }
+
+    /**
+     * Resolve a single eligible grant. An explicit choice never falls back.
+     */
+    private List<FacebookPageConnection> eligibleConnections(UUID accountId, OffsetDateTime due) {
+        return facebookConnections.findEligible(accountId).stream()
+                .filter(c -> c.getAccessTokenEncrypted() != null && !c.getAccessTokenEncrypted().isBlank())
+                .filter(c -> c.getTokenExpiresAt() == null || c.getTokenExpiresAt().isAfter(due))
+                .toList();
+    }
+
+    private FacebookPageConnection resolveConnection(BulkRequest request, UUID accountId, OffsetDateTime due) {
+        UUID requested = request.facebookConnectionIds() == null ? null : request.facebookConnectionIds().get(accountId);
+        List<FacebookPageConnection> eligible = eligibleConnections(accountId, due);
+        if (requested != null) {
+            return eligible.stream().filter(c -> requested.equals(c.getId())).findFirst()
+                    .orElseThrow(() -> new ApiException(HttpStatus.CONFLICT,
+                            "Kết nối Facebook đã chọn không còn hợp lệ cho Fanpage này hoặc hết hạn trước giờ đăng."));
+        }
+        if (eligible.size() != 1) {
+            throw new ApiException(HttpStatus.CONFLICT, eligible.isEmpty()
+                    ? "Fanpage chưa có kết nối Facebook hợp lệ đến giờ đăng."
+                    : "Fanpage có nhiều tài khoản cấp quyền. Vui lòng chọn tài khoản Facebook thực hiện đăng.");
+        }
+        // Compatibility for callers without an explicit choice, only when unambiguous.
+        return eligible.getFirst();
     }
 
     /**
@@ -163,6 +207,12 @@ public class AccountVaultBulkPublishingService {
             if (!Boolean.TRUE.equals(connected)) {
                 addIssue(issues, null, accountId,
                         "Account unavailable, OAuth token invalid/expired or wrong workspace/platform");
+            } else if ("FACEBOOK_PAGE".equals(platform)) {
+                try {
+                    resolveConnection(request, accountId, request.scheduledAt());
+                } catch (ApiException ex) {
+                    addIssue(issues, null, accountId, ex.getMessage());
+                }
             }
         }
 
@@ -267,6 +317,12 @@ public class AccountVaultBulkPublishingService {
                     "Batch is not eligible; run preview to inspect issues");
         }
 
+        Map<UUID, UUID> fixedConnections = new HashMap<>();
+        if ("FACEBOOK_PAGE".equals(result.platform())) {
+            for (UUID accountId : request.accountIds()) {
+                fixedConnections.put(accountId, resolveConnection(request, accountId, request.scheduledAt()).getId());
+            }
+        }
         List<UUID> createdIds = new ArrayList<>();
         OffsetDateTime first = null;
         OffsetDateTime last = null;
@@ -295,14 +351,12 @@ public class AccountVaultBulkPublishingService {
                 }
                 PublishingJobDto.View created = jobService.create(postId, accountId, due);
                 if ("FACEBOOK_PAGE".equals(result.platform())) {
-                    OffsetDateTime finalDue = due;
-                    // Mandatory immutable grantor binding: no ambiguous cross-Page token selection.
-                    var eligible = facebookConnections.findEligible(accountId).stream()
-                            .filter(c -> c.getTokenExpiresAt() == null
-                                    || c.getTokenExpiresAt().isAfter(finalDue))
+                    UUID connectionId = fixedConnections.get(accountId);
+                    var eligible = eligibleConnections(accountId, due).stream()
+                            .filter(c -> connectionId.equals(c.getId()))
                             .findFirst()
                             .orElseThrow(() -> new ApiException(HttpStatus.CONFLICT,
-                                    "Facebook OAuth connection missing or expires before due time"));
+                                    "Kết nối Facebook đã chọn không hợp lệ tại giờ đăng. Không tự chuyển sang tài khoản khác."));
                     var job = jobs.findById(created.id()).orElseThrow();
                     job.setFacebookConnection(eligible);
                     jobs.save(job);

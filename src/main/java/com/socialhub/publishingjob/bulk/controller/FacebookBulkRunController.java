@@ -64,6 +64,11 @@ public class FacebookBulkRunController {
         return service.reschedule(userId(authentication), runId, request.scheduledAt());
     }
 
+    @GetMapping("/{runId}/jobs")
+    public java.util.List<FacebookBulkRunService.RunJob> jobs(Authentication authentication, @PathVariable UUID runId) {
+        return service.jobs(userId(authentication), runId);
+    }
+
     @PostMapping("/{runId}/start")
     public FacebookBulkRunResponse start(
             Authentication authentication,

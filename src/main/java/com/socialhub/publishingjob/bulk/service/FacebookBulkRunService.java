@@ -57,6 +57,62 @@ public class FacebookBulkRunService {
     @Value("${META_BASE_URL:http://127.0.0.1:9090}")
     private String graphBaseUrl;
 
+    @Value("${app.facebook.bulk-pilot-run-id:}")
+    private String pilotRunId;
+    @Value("${app.facebook.bulk-av-enabled:false}")
+    private boolean bulkAvEnabled;
+    @Value("${app.facebook.video-publishing-enabled:false}")
+    private boolean videoEnabled;
+    @Value("${app.facebook.reels-publishing-enabled:false}")
+    private boolean reelEnabled;
+    @Value("${app.facebook.video-auto-verify-enabled:false}")
+    private boolean videoAutoVerify;
+    @Value("${app.facebook.reels-auto-verify-enabled:false}")
+    private boolean reelAutoVerify;
+    @Value("${FACEBOOK_MAX_IMAGES_PER_POST:10}")
+    private int maxImagesPerPost;
+
+    private boolean allowVideo() {
+        return bulkAvEnabled && FacebookBulkPilotRules.runId(pilotRunId) != null && videoEnabled && videoAutoVerify;
+    }
+
+    private boolean allowReel() {
+        return bulkAvEnabled && FacebookBulkPilotRules.runId(pilotRunId) != null && reelEnabled && reelAutoVerify;
+    }
+
+    // No token or media URL is returned. The existing read-only preflight API
+    // checks the exact immutable grant for each distinct connection.
+    public record RunJob(UUID jobId, String pageName, String pageId, UUID connectionId,
+                         String facebookUserId, OffsetDateTime scheduledAt, String status,
+                         String mediaType, int mediaCount, boolean mediaEligible) {
+    }
+
+    @Transactional(readOnly = true)
+    public List<RunJob> jobs(UUID userId, UUID runId) {
+        BulkRun run = find(runId);
+        permissions.requireManager(run.workspaceId(), userId);
+        return db.query("""
+                        SELECT j.id, a.display_name, a.external_account_id, j.facebook_connection_id,
+                               c.facebook_user_id, j.scheduled_at, j.status,
+                               COALESCE((SELECT STRING_AGG(DISTINCT m.media_type, ', ' ORDER BY m.media_type)
+                                   FROM post_media m WHERE m.post_id=p.id), 'TEXT') AS media_type,
+                               (SELECT COUNT(*) FROM post_media m WHERE m.post_id=p.id) AS media_count,
+                               (""" + FacebookBulkPilotRules.MEDIA_ELIGIBLE + """
+                               ) AS media_eligible
+                        FROM facebook_bulk_run_jobs bj
+                        JOIN publishing_jobs j ON j.id=bj.publishing_job_id
+                        JOIN posts p ON p.id=j.post_id
+                        JOIN social_accounts a ON a.id=j.social_account_id
+                        LEFT JOIN facebook_page_connections c ON c.id=j.facebook_connection_id AND c.social_account_id=a.id
+                        WHERE bj.bulk_run_id=? AND a.workspace_id=? AND p.workspace_id=? AND a.platform='FACEBOOK_PAGE'
+                        ORDER BY j.scheduled_at, j.id
+                        """, (rs, n) -> new RunJob(rs.getObject("id", UUID.class), rs.getString("display_name"),
+                        rs.getString("external_account_id"), rs.getObject("facebook_connection_id", UUID.class),
+                        rs.getString("facebook_user_id"), rs.getObject("scheduled_at", OffsetDateTime.class),
+                        rs.getString("status"), rs.getString("media_type"), rs.getInt("media_count"), rs.getBoolean("media_eligible")),
+                maxImagesPerPost, allowVideo(), allowReel(), runId, run.workspaceId(), run.workspaceId());
+    }
+
     public record RescheduleResult(UUID bulkRunId, String status, int updatedJobs,
                                    OffsetDateTime firstScheduledAt,
                                    OffsetDateTime lastScheduledAt) {
@@ -197,11 +253,11 @@ public class FacebookBulkRunService {
         }
         BulkRun run = find(runId);
         permissions.requireManager(run.workspaceId(), userId);
-        List<String> blockers = liveConfigurationBlockers();
+        List<String> blockers = liveConfigurationBlockers(runId);
         return new LiveReadiness(runId, run.status(), blockers.isEmpty(), List.copyOf(blockers));
     }
 
-    private List<String> liveConfigurationBlockers() {
+    private List<String> liveConfigurationBlockers(UUID runId) {
         List<String> blocking = new ArrayList<>();
         if (!liveStartEnabled) blocking.add("app.account-vault.bulk-live-start-enabled");
         if (exactAutomationLiveEnabled) blocking.add("app.automation.live.enabled must be false");
@@ -212,11 +268,19 @@ public class FacebookBulkRunService {
         if (!"LIVE".equalsIgnoreCase(workerMode)) blocking.add("FACEBOOK_PUBLISHING_MODE=LIVE");
         if (!"https://graph.facebook.com".equals(graphBaseUrl))
             blocking.add("META_BASE_URL=https://graph.facebook.com");
+        try {
+            UUID pilot = FacebookBulkPilotRules.runId(pilotRunId);
+            if (pilot != null && !pilot.equals(runId)) blocking.add("Lượt đăng không thuộc pilot được phép");
+            if (bulkAvEnabled && pilot == null) blocking.add("app.facebook.bulk-pilot-run-id");
+        } catch (IllegalArgumentException ex) {
+            blocking.add("app.facebook.bulk-pilot-run-id không hợp lệ");
+        }
+        if (maxImagesPerPost < 1) blocking.add("FACEBOOK_MAX_IMAGES_PER_POST");
         return blocking;
     }
 
-    private void requireExplicitLiveConfiguration() {
-        List<String> blocking = liveConfigurationBlockers();
+    private void requireExplicitLiveConfiguration(UUID runId) {
+        List<String> blocking = liveConfigurationBlockers(runId);
         if (!blocking.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "Facebook BULK LIVE is not enabled: " + String.join(", ", blocking));
@@ -306,16 +370,9 @@ public class FacebookBulkRunService {
                                   AND j.attempt_count = 0
                                   AND j.external_post_id IS NULL
                                 
-                                  -- Reject media that has not finished uploading.
-                                  -- Posts with uploaded Cloudinary media are allowed.
-                                  AND NOT EXISTS (
-                                      SELECT 1
-                                      FROM post_media m
-                                      WHERE m.post_id = p.id
-                                        AND (
-                                            m.public_url IS NULL
-                                            OR BTRIM(m.public_url) = ''
-                                        )
+                                  -- DRAFT may contain AV while pilot disabled, but not malformed/mixed media.
+                                  AND (
+                                """ + FacebookBulkPilotRules.MEDIA_ELIGIBLE + """
                                   )
                                 
                                   -- Prevent putting the same job into multiple bulk runs.
@@ -338,7 +395,8 @@ public class FacebookBulkRunService {
                                 rs.getObject("id", UUID.class),
                         jobId,
                         workspaceId,
-                        workspaceId
+                        workspaceId,
+                        maxImagesPerPost, true, true
                 );
 
                 log.info(
@@ -512,7 +570,7 @@ public class FacebookBulkRunService {
             log.info("[BULK START] Workspace permission OK");
 
             // The direct /api/facebook/bulk-runs/{runId}/start endpoint must NOT bypass LIVE flags.
-            requireExplicitLiveConfiguration();
+            requireExplicitLiveConfiguration(runId);
 
             // 3. Chỉ cho phép start DRAFT
             if (!"DRAFT".equals(run.status())) {
@@ -573,6 +631,7 @@ public class FacebookBulkRunService {
                                    OR j.attempt_count <> 0
                                    OR j.external_post_id IS NOT NULL
                                    OR j.published_at IS NOT NULL
+                                   OR j.published_url IS NOT NULL
                                    OR j.next_retry_at IS NOT NULL
                                    OR j.processing_started_at IS NOT NULL
                                    OR j.locked_until IS NOT NULL
@@ -589,6 +648,10 @@ public class FacebookBulkRunService {
                                          AND c.status = 'CONNECTED'
                                          AND NULLIF(BTRIM(c.access_token_encrypted), '') IS NOT NULL
                                          AND (c.token_expires_at IS NULL OR c.token_expires_at > j.scheduled_at)
+                                         AND NOT EXISTS (SELECT 1 FROM facebook_authorized_identities fi
+                                             WHERE fi.workspace_id=a.workspace_id AND fi.facebook_user_id=c.facebook_user_id
+                                               AND (fi.health_status IN ('DISCONNECTED','REAUTH_REQUIRED')
+                                                 OR fi.token_expires_at <= j.scheduled_at))
                                    )
                             
                                    -- Không cho phép Job thuộc Campaign.
@@ -610,23 +673,16 @@ public class FacebookBulkRunService {
                                    OR p.status NOT IN ('READY', 'SCHEDULED')
                                    OR p.approval_status IS DISTINCT FROM 'APPROVED'
                             
-                                   -- Chỉ chặn Media chưa upload thành công.
-                                   -- Cho phép Post có ảnh Cloudinary hợp lệ.
-                                   OR EXISTS (
-                                       SELECT 1
-                                       FROM post_media m
-                                       WHERE m.post_id = p.id
-                                         AND (
-                                             m.public_url IS NULL
-                                             OR BTRIM(m.public_url) = ''
-                                         )
+                                   OR NOT (
+                            """ + FacebookBulkPilotRules.MEDIA_ELIGIBLE + """
                                    )
                               )
                             """,
                     Integer.class,
                     runId,
                     run.workspaceId(),
-                    run.workspaceId()
+                    run.workspaceId(),
+                    maxImagesPerPost, allowVideo(), allowReel()
             );
 
             log.info(
@@ -638,7 +694,7 @@ public class FacebookBulkRunService {
             if (invalidCount == null || invalidCount > 0) {
                 throw new ResponseStatusException(
                         HttpStatus.CONFLICT,
-                        "Some bulk jobs are not eligible, scheduled too soon, or lack a valid OAuth binding; reschedule/reconnect first"
+                        "Một số lịch không đủ điều kiện: thời gian, quyền Facebook hoặc loại media chưa được bật/hỗ trợ. Kiểm tra trước khi kích hoạt."
                 );
             }
 

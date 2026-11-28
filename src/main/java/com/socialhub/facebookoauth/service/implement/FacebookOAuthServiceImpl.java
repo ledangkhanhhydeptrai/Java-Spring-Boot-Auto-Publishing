@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialhub.facebookoauth.permission.FacebookOAuthPermission;
 import com.socialhub.facebookoauth.service.interfaces.FacebookOAuthService;
-import com.socialhub.facebookoauth.storage.FacebookTokenStorage;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,6 +29,8 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Base64;
 import java.util.HexFormat;
 import java.util.UUID;
@@ -45,7 +46,7 @@ public class FacebookOAuthServiceImpl implements FacebookOAuthService {
     private static final long STATE_TTL = 600;
 
     private final FacebookOAuthPermission permission;
-    private final FacebookTokenStorage storage;
+    private final FacebookIdentityService identities;
     private final ObjectMapper json;
 
     private final SecureRandom random = new SecureRandom();
@@ -329,112 +330,13 @@ public class FacebookOAuthServiceImpl implements FacebookOAuthService {
                 return back("long_token_failed");
             }
 
-            // Identity of the Facebook person who granted this authorization.
-            // The userId in OAuth state is a SocialHub user, NOT a Meta user.
-            String meUrl = UriComponentsBuilder
-                    .fromUriString("https://graph.facebook.com/" + graphVersion + "/me")
-                    .queryParam("fields", "id")
-                    .build().encode().toUriString();
-            String facebookUserId = getJson(meUrl, longToken).path("id").asText("");
-            if (facebookUserId.isBlank()) {
-                return back("facebook_user_missing");
-            }
-
-            String pagesUrl = UriComponentsBuilder
-                    .fromUriString(
-                            "https://graph.facebook.com/"
-                                    + graphVersion
-                                    + "/me/accounts"
-                    )
-                    .queryParam(
-                            "fields",
-                            "id,name,access_token,tasks"
-                    )
-                    .queryParam("limit", 100)
-                    .build()
-                    .encode()
-                    .toUriString();
-
-            JsonNode pagesResponse = getJson(
-                    pagesUrl,
-                    longToken
-            );
-
-            JsonNode pages = pagesResponse.path("data");
-
-            if (!pages.isArray() || pages.isEmpty()) {
-
-                log.warn(
-                        "[FACEBOOK OAUTH] CALLBACK | No Facebook Pages returned"
-                );
-
-                return back("no_pages");
-            }
-
-            int connected = 0;
-
-            for (JsonNode page : pages) {
-
-                String pageId =
-                        page.path("id").asText("");
-
-                String pageName =
-                        page.path("name").asText("");
-
-                String pageToken =
-                        page.path("access_token").asText("");
-
-                if (pageId.isBlank() || pageToken.isBlank()) {
-                    continue;
-                }
-
-                // Require the Page task used for publishing.
-                boolean canCreateContent = false;
-
-                JsonNode tasks = page.path("tasks");
-
-                if (tasks.isArray()) {
-
-                    for (JsonNode task : tasks) {
-
-                        if ("CREATE_CONTENT".equals(task.asText())) {
-                            canCreateContent = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!canCreateContent) {
-                    continue;
-                }
-
-                storage.save(
-                        workspaceId,
-                        facebookUserId,
-                        pageId,
-                        pageName.isBlank() ? pageId : pageName,
-                        pageToken
-                );
-
-                connected++;
-
-                log.info(
-                        "[FACEBOOK OAUTH] CALLBACK | Page connected | workspaceId={} | pageId={}",
-                        workspaceId,
-                        pageId
-                );
-            }
-
-            log.info(
-                    "[FACEBOOK OAUTH] CALLBACK | Finished | connectedPages={}",
-                    connected
-            );
-
-            return back(
-                    connected > 0
-                            ? "connected"
-                            : "no_publishable_pages"
-            );
+            // Fetch the complete Page list before persisting. Store the person separately,
+            // including accounts which do not currently have publishable Pages.
+            long expiresIn = longTokenResponse.path("expires_in").asLong(0);
+            OffsetDateTime expiresAt = expiresIn > 0 && expiresIn <= 366L * 86400
+                    ? OffsetDateTime.now(ZoneOffset.UTC).plusSeconds(expiresIn) : null;
+            identities.authorize(workspaceId, longToken, expiresAt);
+            return back("connected", workspaceId);
 
         } catch (Exception e) {
 
@@ -608,6 +510,12 @@ public class FacebookOAuthServiceImpl implements FacebookOAuthService {
                         + "facebook="
                         + enc(status)
         );
+    }
+
+    private ResponseEntity<Void> back(String status, UUID workspaceId) {
+        String separator = frontendReturnUrl.contains("?") ? "&" : "?";
+        return redirect(frontendReturnUrl + separator + "facebook=" + enc(status)
+                + "&workspaceId=" + enc(workspaceId.toString()));
     }
 
     private ResponseEntity<Void> redirect(String url) {

@@ -4,6 +4,7 @@ package com.socialhub.publishingjob.engine;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialhub.facebookoauth.storage.FacebookTokenStorage;
+import com.socialhub.publishingjob.bulk.service.FacebookBulkPilotRules;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -104,6 +105,30 @@ public class FanpageQueueProcessor {
     private String liveConnectionUserId;
 
 
+    @Value("${app.facebook.bulk-pilot-run-id:}")
+    private String pilotRunId;
+
+    @Value("${app.facebook.bulk-av-enabled:false}")
+    private boolean bulkAvEnabled;
+
+    @Value("${app.facebook.video-auto-verify-enabled:false}")
+    private boolean videoAutoVerify;
+
+    @Value("${app.facebook.reels-auto-verify-enabled:false}")
+    private boolean reelAutoVerify;
+
+    private UUID pilotRun() {
+        return FacebookBulkPilotRules.runId(pilotRunId);
+    }
+
+    private boolean bulkVideoAllowed() {
+        return isBulkLive() && bulkAvEnabled && pilotRun() != null && videoPublishingEnabled && videoAutoVerify;
+    }
+
+    private boolean bulkReelAllowed() {
+        return isBulkLive() && bulkAvEnabled && pilotRun() != null && reelsPublishingEnabled && reelAutoVerify;
+    }
+
     private record ClaimedJob(UUID id, int attempt) {
     }
 
@@ -179,6 +204,12 @@ public class FanpageQueueProcessor {
 
     private void validateConfiguration(boolean exactQueuedJob) {
 
+        if (pilotRun() != null && !isBulkLive()) {
+            throw new IllegalStateException("Facebook bulk pilot requires LIVE bulk mode");
+        }
+        if (isBulkLive() && bulkAvEnabled && pilotRun() == null) {
+            throw new IllegalStateException("Facebook bulk VIDEO/REEL pilot requires app.facebook.bulk-pilot-run-id");
+        }
         if (!isMock() && !isLive()) {
             throw new IllegalStateException(
                     "Unsupported Facebook publishing mode"
@@ -350,6 +381,28 @@ public class FanpageQueueProcessor {
                                 )
                                   AND a.platform = 'FACEBOOK_PAGE'
                                   AND a.status = 'CONNECTED'
+                                  AND (
+                                      (j.facebook_connection_id IS NOT NULL AND EXISTS (
+                                          SELECT 1 FROM facebook_page_connections fc
+                                          WHERE fc.id = j.facebook_connection_id AND fc.social_account_id = a.id
+                                            AND fc.status = 'CONNECTED'
+                                            AND NULLIF(BTRIM(fc.access_token_encrypted), '') IS NOT NULL
+                                            AND (fc.token_expires_at IS NULL OR fc.token_expires_at > CURRENT_TIMESTAMP)
+                                            AND NOT EXISTS (SELECT 1 FROM facebook_authorized_identities fi
+                                                WHERE fi.workspace_id = a.workspace_id AND fi.facebook_user_id = fc.facebook_user_id
+                                                  AND (fi.health_status IN ('DISCONNECTED','REAUTH_REQUIRED')
+                                                    OR fi.token_expires_at <= CURRENT_TIMESTAMP))
+                                      )) OR (j.facebook_connection_id IS NULL AND NOT EXISTS (
+                                          SELECT 1 FROM facebook_page_connections fc
+                                          LEFT JOIN facebook_authorized_identities fi ON fi.workspace_id = a.workspace_id
+                                              AND fi.facebook_user_id = fc.facebook_user_id
+                                          WHERE fc.social_account_id = a.id AND (
+                                              fc.status IN ('DISCONNECTED','IDENTITY_BLOCKED','PERMISSION_BLOCKED') OR
+                                              fi.health_status IN ('DISCONNECTED','REAUTH_REQUIRED') OR
+                                              fi.token_expires_at <= CURRENT_TIMESTAMP
+                                          )
+                                      ))
+                                  )
                                   AND p.status IN ('READY', 'SCHEDULED')
                             
                                   -- Facebook video/reel uploads can complete asynchronously.
@@ -555,8 +608,12 @@ public class FanpageQueueProcessor {
             );
         }
 
-        // LIVE bulk remains unchanged; MOCK bulk is limited to one configured run.
-        UUID targetRunId = targetMockBulkRunId();
+        // Existing TEXT/IMAGE LIVE remains compatible when no pilot is configured.
+        // AV is opt-in and requires an exact run. MOCK remains confined to its own run.
+        UUID targetRunId = isMock() ? targetMockBulkRunId() : pilotRun();
+        if (isLive() && bulkAvEnabled && targetRunId == null) {
+            throw new IllegalStateException("Bulk AV requires an exact pilot run");
+        }
 
         return transactions.execute(status -> {
 
@@ -591,6 +648,29 @@ public class FanpageQueueProcessor {
                             
                                   AND a.platform = 'FACEBOOK_PAGE'
                                   AND a.status = 'CONNECTED'
+                                  AND (CAST(? AS UUID) IS NULL OR j.facebook_connection_id IS NOT NULL)
+                                  AND (
+                                      (j.facebook_connection_id IS NOT NULL AND EXISTS (
+                                          SELECT 1 FROM facebook_page_connections fc
+                                          WHERE fc.id = j.facebook_connection_id AND fc.social_account_id = a.id
+                                            AND fc.status = 'CONNECTED'
+                                            AND NULLIF(BTRIM(fc.access_token_encrypted), '') IS NOT NULL
+                                            AND (fc.token_expires_at IS NULL OR fc.token_expires_at > CURRENT_TIMESTAMP)
+                                            AND NOT EXISTS (SELECT 1 FROM facebook_authorized_identities fi
+                                                WHERE fi.workspace_id = a.workspace_id AND fi.facebook_user_id = fc.facebook_user_id
+                                                  AND (fi.health_status IN ('DISCONNECTED','REAUTH_REQUIRED')
+                                                    OR fi.token_expires_at <= CURRENT_TIMESTAMP))
+                                      )) OR (j.facebook_connection_id IS NULL AND NOT EXISTS (
+                                          SELECT 1 FROM facebook_page_connections fc
+                                          LEFT JOIN facebook_authorized_identities fi ON fi.workspace_id = a.workspace_id
+                                              AND fi.facebook_user_id = fc.facebook_user_id
+                                          WHERE fc.social_account_id = a.id AND (
+                                              fc.status IN ('DISCONNECTED','IDENTITY_BLOCKED','PERMISSION_BLOCKED') OR
+                                              fi.health_status IN ('DISCONNECTED','REAUTH_REQUIRED') OR
+                                              fi.token_expires_at <= CURRENT_TIMESTAMP
+                                          )
+                                      ))
+                                  )
                             
                                   AND p.status IN ('READY', 'SCHEDULED')
                                   AND p.approval_status = 'APPROVED'
@@ -601,22 +681,9 @@ public class FanpageQueueProcessor {
                                       WHERE cj.publishing_job_id = j.id
                                   )
                             
-                                  -- Image posts are supported. Reject incomplete or
-                                  -- unsupported media before claiming the job.
-                                  AND NOT EXISTS (
-                                      SELECT 1
-                                      FROM post_media m
-                                      WHERE m.post_id = p.id
-                                        AND (
-                                            m.media_type IS DISTINCT FROM 'IMAGE'
-                                            OR NULLIF(BTRIM(m.public_url), '') IS NULL
-                                        )
-                                  )
                                   AND (
-                                      SELECT COUNT(*)
-                                      FROM post_media m
-                                      WHERE m.post_id = p.id
-                                  ) <= ?
+                            """ + FacebookBulkPilotRules.MEDIA_ELIGIBLE + """
+                                  )
                             
                                   AND COALESCE(
                                       j.scheduled_at,
@@ -667,7 +734,10 @@ public class FanpageQueueProcessor {
                     ),
                     targetRunId,
                     targetRunId,
-                    maxImagesPerPost
+                    isLive() ? targetRunId : null,
+                    maxImagesPerPost,
+                    bulkVideoAllowed(),
+                    bulkReelAllowed()
             );
 
             if (claimed.isEmpty()) {
@@ -718,6 +788,28 @@ public class FanpageQueueProcessor {
                       AND p.status IN ('READY', 'SCHEDULED')
                       AND a.platform = 'FACEBOOK_PAGE'
                       AND a.status = 'CONNECTED'
+                                  AND (
+                                      (j.facebook_connection_id IS NOT NULL AND EXISTS (
+                                          SELECT 1 FROM facebook_page_connections fc
+                                          WHERE fc.id = j.facebook_connection_id AND fc.social_account_id = a.id
+                                            AND fc.status = 'CONNECTED'
+                                            AND NULLIF(BTRIM(fc.access_token_encrypted), '') IS NOT NULL
+                                            AND (fc.token_expires_at IS NULL OR fc.token_expires_at > CURRENT_TIMESTAMP)
+                                            AND NOT EXISTS (SELECT 1 FROM facebook_authorized_identities fi
+                                                WHERE fi.workspace_id = a.workspace_id AND fi.facebook_user_id = fc.facebook_user_id
+                                                  AND (fi.health_status IN ('DISCONNECTED','REAUTH_REQUIRED')
+                                                    OR fi.token_expires_at <= CURRENT_TIMESTAMP))
+                                      )) OR (j.facebook_connection_id IS NULL AND NOT EXISTS (
+                                          SELECT 1 FROM facebook_page_connections fc
+                                          LEFT JOIN facebook_authorized_identities fi ON fi.workspace_id = a.workspace_id
+                                              AND fi.facebook_user_id = fc.facebook_user_id
+                                          WHERE fc.social_account_id = a.id AND (
+                                              fc.status IN ('DISCONNECTED','IDENTITY_BLOCKED','PERMISSION_BLOCKED') OR
+                                              fi.health_status IN ('DISCONNECTED','REAUTH_REQUIRED') OR
+                                              fi.token_expires_at <= CURRENT_TIMESTAMP
+                                          )
+                                      ))
+                                  )
                       AND a.workspace_id = p.workspace_id
                 )
                 """, Boolean.class, job.id(), job.attempt());
@@ -773,6 +865,28 @@ public class FanpageQueueProcessor {
                               AND j.external_post_id IS NULL AND j.published_at IS NULL
                               AND j.published_url IS NULL
                               AND a.platform='FACEBOOK_PAGE' AND a.status='CONNECTED'
+                                  AND (
+                                      (j.facebook_connection_id IS NOT NULL AND EXISTS (
+                                          SELECT 1 FROM facebook_page_connections fc
+                                          WHERE fc.id = j.facebook_connection_id AND fc.social_account_id = a.id
+                                            AND fc.status = 'CONNECTED'
+                                            AND NULLIF(BTRIM(fc.access_token_encrypted), '') IS NOT NULL
+                                            AND (fc.token_expires_at IS NULL OR fc.token_expires_at > CURRENT_TIMESTAMP)
+                                            AND NOT EXISTS (SELECT 1 FROM facebook_authorized_identities fi
+                                                WHERE fi.workspace_id = a.workspace_id AND fi.facebook_user_id = fc.facebook_user_id
+                                                  AND (fi.health_status IN ('DISCONNECTED','REAUTH_REQUIRED')
+                                                    OR fi.token_expires_at <= CURRENT_TIMESTAMP))
+                                      )) OR (j.facebook_connection_id IS NULL AND NOT EXISTS (
+                                          SELECT 1 FROM facebook_page_connections fc
+                                          LEFT JOIN facebook_authorized_identities fi ON fi.workspace_id = a.workspace_id
+                                              AND fi.facebook_user_id = fc.facebook_user_id
+                                          WHERE fc.social_account_id = a.id AND (
+                                              fc.status IN ('DISCONNECTED','IDENTITY_BLOCKED','PERMISSION_BLOCKED') OR
+                                              fi.health_status IN ('DISCONNECTED','REAUTH_REQUIRED') OR
+                                              fi.token_expires_at <= CURRENT_TIMESTAMP
+                                          )
+                                      ))
+                                  )
                               AND a.external_account_id = ?
                               AND a.workspace_id=p.workspace_id
                               AND NOT EXISTS (
@@ -827,6 +941,13 @@ public class FanpageQueueProcessor {
         try {
             // Defensive check after claiming the job, before processing its payload.
             requireApprovedForPublish(job);
+            if (pilotRun() != null && !Boolean.TRUE.equals(db.queryForObject("""
+                    SELECT EXISTS (SELECT 1 FROM facebook_bulk_run_jobs bj
+                        JOIN facebook_bulk_runs br ON br.id=bj.bulk_run_id
+                        WHERE bj.publishing_job_id=? AND br.id=? AND br.status='RUNNING')
+                    """, Boolean.class, job.id(), pilotRun()))) {
+                throw new IllegalStateException("Job is outside the active Facebook bulk pilot");
+            }
             Map<String, Object> row = db.queryForMap("""
                     SELECT a.external_account_id, a.workspace_id, p.content, j.facebook_connection_id
                     FROM publishing_jobs j
@@ -882,11 +1003,11 @@ public class FanpageQueueProcessor {
                     throw new IllegalStateException("Unsupported media type: " + type);
                 }
             }
-            if (videoUrl != null && (isBulkProcessing() || !videoPublishingEnabled || !isLive())) {
-                throw new IllegalStateException("Page VIDEO requires single LIVE mode and app.facebook.video-publishing-enabled=true");
+            if (videoUrl != null && ((isBulkProcessing() && !bulkVideoAllowed()) || !videoPublishingEnabled || !isLive())) {
+                throw new IllegalStateException("Page VIDEO requires enabled LIVE video publishing and, for bulk, an enabled scoped AV pilot with verification");
             }
-            if (reelUrl != null && (isBulkProcessing() || !reelsPublishingEnabled || !isLive())) {
-                throw new IllegalStateException("Page REEL requires single LIVE mode and app.facebook.reels-publishing-enabled=true");
+            if (reelUrl != null && ((isBulkProcessing() && !bulkReelAllowed()) || !reelsPublishingEnabled || !isLive())) {
+                throw new IllegalStateException("Page REEL requires enabled LIVE reel publishing and, for bulk, an enabled scoped AV pilot with verification");
             }
             // MOCK photo publishing is permitted only against the fixed localhost
             // mock endpoint validated by validateConfiguration().
@@ -972,12 +1093,12 @@ public class FanpageQueueProcessor {
                 requireApprovedForPublish(job);
                 extendLease(job);
                 requestMayHaveBeenSent = true;
-                RestClient videoClient = RestClient.builder()
-                        .baseUrl(VIDEO_LIVE_URL)
-                        .requestFactory(new JdkClientHttpRequestFactory(
-                                HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10))
-                                        .followRedirects(HttpClient.Redirect.NEVER).build()))
-                        .build();
+                JdkClientHttpRequestFactory videoFactory = new JdkClientHttpRequestFactory(
+                        HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10))
+                                .followRedirects(HttpClient.Redirect.NEVER).build());
+                videoFactory.setReadTimeout(Duration.ofSeconds(90));
+                RestClient videoClient = RestClient.builder().baseUrl(VIDEO_LIVE_URL)
+                        .requestFactory(videoFactory).build();
                 String body = "file_url=" + formEncode(videoUrl)
                         + "&description=" + formEncode(content) + accessToken;
                 JsonNode response = sendMetaPost(videoClient, pageId, "/videos", body);
@@ -1083,12 +1204,16 @@ public class FanpageQueueProcessor {
         if (!isLive()) return;
         transactions.executeWithoutResult(tx -> {
             List<Map<String, Object>> abandoned = db.queryForList("""
-                    SELECT id, attempt_count FROM publishing_jobs
-                    WHERE status = 'PROCESSING'
-                      AND locked_until < NOW() - INTERVAL '5 minutes'
-                      AND external_post_id IS NULL
-                    FOR UPDATE SKIP LOCKED
-                    """);
+                    SELECT j.id, j.attempt_count FROM publishing_jobs j
+                    JOIN social_accounts a ON a.id=j.social_account_id
+                    WHERE a.platform='FACEBOOK_PAGE' AND j.status = 'PROCESSING'
+                      AND j.locked_until < NOW() - INTERVAL '5 minutes'
+                      AND j.external_post_id IS NULL
+                      AND (CAST(? AS uuid) IS NULL OR EXISTS (
+                        SELECT 1 FROM facebook_bulk_run_jobs bj
+                        WHERE bj.publishing_job_id=j.id AND bj.bulk_run_id=?))
+                    FOR UPDATE OF j SKIP LOCKED
+                    """, pilotRun(), pilotRun());
             for (Map<String, Object> row : abandoned) {
                 UUID id = (UUID) row.get("id");
                 int attempt = ((Number) row.get("attempt_count")).intValue();

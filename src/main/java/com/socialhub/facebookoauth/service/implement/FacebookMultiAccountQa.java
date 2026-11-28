@@ -1,11 +1,13 @@
-package com.socialhub.tools.facebook;
+package com.socialhub.facebookoauth.service.implement;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.socialhub.common.ApiException;
-import com.socialhub.facebookoauth.service.implement.FacebookIdentityService;
-import com.socialhub.facebookoauth.service.implement.FacebookIdentitySyncQueue;
-import com.socialhub.facebookoauth.service.implement.FacebookIdentitySyncWorker;
 import com.socialhub.publishingjob.engine.FanpageQueueProcessor;
+import com.socialhub.publishingjob.bulk.service.FacebookBulkRunService;
+import com.socialhub.publishingjob.bulk.service.WorkspaceBulkPermissionService;
+
+import java.time.OffsetDateTime;
+
 import org.flywaydb.core.Flyway;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -46,17 +48,9 @@ public final class FacebookMultiAccountQa {
         flyway.migrate();
         eq("41", flyway.info().current().getVersion().getVersion(), "expected schema V41 from source (8)");
         System.out.println("[PASS] Flyway V1-V41 on isolated PostgreSQL");
-        qa.test("10 identities", () -> qa.load(10));
-        qa.test("100 identities", () -> qa.load(100));
-        qa.test("1000 identities", () -> qa.load(1000));
-        qa.test("Concurrent starts, workspace isolation and one active claim", qa::concurrentStart);
-        qa.test("Failed and skipped account isolation, error visible in progress", qa::failureIsolation);
-        qa.test("Interrupted claim and recovery of pending items", qa::recovery);
-        qa.test("Actual worker lifecycle and persisted latest result", qa::workerLifecycle);
-        qa.test("Expired token health check and real regular worker claim guard", qa::expiredHealth);
-        qa.test("Disconnect one grant, preserve other grants and historical outcomes", qa::disconnect);
-        qa.test("Disconnect rejected while relevant job is processing", qa::disconnectBusy);
-        qa.test("Actual bulk claim guard", qa::bulkGuard);
+        qa.test("Actual bulk claim: four media types, scoped run, mixed/media/overdue/foreign run rejected", qa::pilotClaim);
+        qa.test("Actual bulk claim: disabled video/reel flags and missing pilot scope", qa::pilotDisabled);
+        qa.test("Actual bulk start guard, persisted run jobs and reschedule", qa::pilotStart);
         System.out.printf("SUMMARY: PASS=%d FAIL=%d (plus Flyway setup)%n", qa.passed, qa.failed);
         if (qa.failed != 0) System.exit(1);
     }
@@ -414,5 +408,130 @@ public final class FacebookMultiAccountQa {
         eq("PROCESSING", status(healthy), "healthy bulk job");
         eq("PENDING", status(blocked), "blocked bulk job remains pending");
         eq(null, m.invoke(processor), "cannot claim remaining blocked bulk job");
+    }
+
+    private UUID run(UUID w, String state, UUID... jobs) {
+        UUID id = UUID.randomUUID();
+        db.update("INSERT INTO facebook_bulk_runs(id,workspace_id,status) VALUES (?,?,?)", id, w, state);
+        for (UUID j : jobs)
+            db.update("INSERT INTO facebook_bulk_run_jobs(bulk_run_id,publishing_job_id) VALUES (?,?)", id, j);
+        return id;
+    }
+
+    private void media(UUID job, String type, String url) {
+        db.update("INSERT INTO post_media(post_id,source_url,public_url,media_type) SELECT post_id,?,?,? FROM publishing_jobs WHERE id=?", url == null ? "qa source" : url, url, type, job);
+    }
+
+    private FanpageQueueProcessor pilot(UUID run, boolean av) throws Exception {
+        var p = processor();
+        field(p, "publishingMode", "LIVE");
+        field(p, "bulkEnabled", true);
+        field(p, "pilotRunId", run == null ? "" : run.toString());
+        field(p, "bulkAvEnabled", av);
+        field(p, "videoPublishingEnabled", true);
+        field(p, "reelsPublishingEnabled", true);
+        field(p, "videoAutoVerify", true);
+        field(p, "reelAutoVerify", true);
+        field(p, "maxImagesPerPost", 10);
+        return p;
+    }
+
+    private Object claimPilot(FanpageQueueProcessor p) throws Exception {
+        Method m = p.getClass().getDeclaredMethod("claimBulk");
+        m.setAccessible(true);
+        return m.invoke(p);
+    }
+
+    private void pilotClaim() throws Exception {
+        UUID w = workspace();
+        seed(w, 1);
+        UUID p = page(w), g = grant(p, identity(1));
+        UUID text = job(w, p, g, "PENDING"), image = job(w, p, g, "PENDING"), video = job(w, p, g, "PENDING"), reel = job(w, p, g, "PENDING"), mixed = job(w, p, g, "PENDING"), missing = job(w, p, g, "PENDING"), overdue = job(w, p, g, "PENDING"), unbound = job(w, p, null, "PENDING"), other = job(w, p, g, "PENDING");
+        media(image, "IMAGE", "https://res.cloudinary.com/qa/image/a.png");
+        media(video, "VIDEO", "https://res.cloudinary.com/qa/video/a.mp4");
+        media(reel, "REEL", "https://res.cloudinary.com/qa/video/b.mp4");
+        media(mixed, "VIDEO", "https://res.cloudinary.com/qa/video/a.mp4");
+        media(mixed, "IMAGE", "https://res.cloudinary.com/qa/image/a.png");
+        media(missing, "REEL", null);
+        db.update("UPDATE publishing_jobs SET scheduled_at=now()-interval '20 minutes' WHERE id=?", overdue);
+        UUID target = run(w, "RUNNING", text, image, video, reel, mixed, missing, overdue, unbound);
+        run(w, "RUNNING", other);
+        var worker = pilot(target, true);
+        for (int i = 0; i < 4; i++) require(claimPilot(worker) != null, "expected claim " + i);
+        eq(null, claimPilot(worker), "no additional claims");
+        for (UUID id : List.of(text, image, video, reel)) eq("PROCESSING", status(id), "accepted media");
+        for (UUID id : List.of(mixed, missing, overdue, unbound, other))
+            eq("PENDING", status(id), "blocked or out of scope");
+    }
+
+    private void pilotDisabled() throws Exception {
+        UUID w = workspace();
+        seed(w, 1);
+        UUID p = page(w), g = grant(p, identity(1));
+        UUID v = job(w, p, g, "PENDING"), r = job(w, p, g, "PENDING"), t = job(w, p, g, "PENDING");
+        media(v, "VIDEO", "https://res.cloudinary.com/qa/video/a.mp4");
+        media(r, "REEL", "https://res.cloudinary.com/qa/video/b.mp4");
+        UUID target = run(w, "RUNNING", v, r, t);
+        var worker = pilot(target, false);
+        require(claimPilot(worker) != null, "text still claimable");
+        eq("PROCESSING", status(t), "text claimed");
+        eq(null, claimPilot(worker), "no AV while disabled");
+        var noScope = pilot(null, true);
+        try {
+            claimPilot(noScope);
+            throw new AssertionError("scope required");
+        } catch (java.lang.reflect.InvocationTargetException ex) {
+            require(ex.getCause() instanceof IllegalStateException, "missing scope rejected");
+        }
+        var av = pilot(target, true);
+        field(av, "reelAutoVerify", false);
+        require(claimPilot(av) != null, "video claimable");
+        eq("PROCESSING", status(v), "video claimed");
+        eq(null, claimPilot(av), "reel blocked without verifier");
+        eq("PENDING", status(r), "reel stays pending");
+    }
+
+    private void pilotStart() throws Exception {
+        UUID w = workspace();
+        seed(w, 1);
+        UUID p = page(w), g = grant(p, identity(1)), v = job(w, p, g, "PENDING"), r = job(w, p, g, "PENDING"), other = job(w, p, g, "PENDING");
+        media(v, "VIDEO", "https://res.cloudinary.com/qa/video/a.mp4");
+        media(r, "REEL", "https://res.cloudinary.com/qa/video/b.mp4");
+        UUID target = run(w, "DRAFT", v, r), foreign = run(w, "DRAFT", other);
+        db.update("UPDATE publishing_jobs SET scheduled_at=now()+CASE WHEN id=? THEN interval '10 minutes' ELSE interval '15 minutes' END WHERE id IN (?,?)", v, v, r);
+        var service = new FacebookBulkRunService(db, new WorkspaceBulkPermissionService(null) {
+            @Override
+            public void requireManager(UUID workspace, UUID user) {
+                eq(w, workspace, "workspace scoped");
+            }
+        });
+        for (String f : List.of("liveStartEnabled", "legacyPublisherEnabled", "schedulerBulkEnabled", "workerBulkEnabled", "bulkAvEnabled", "videoEnabled", "reelEnabled", "videoAutoVerify", "reelAutoVerify"))
+            field(service, f, true);
+        field(service, "schedulerMode", "LIVE");
+        field(service, "workerMode", "LIVE");
+        field(service, "graphBaseUrl", "https://graph.facebook.com");
+        field(service, "pilotRunId", target.toString());
+        field(service, "maxImagesPerPost", 10);
+        UUID user = UUID.randomUUID();
+        eq(false, service.liveReadiness(user, foreign).enabled(), "other run blocked");
+        eq(true, service.liveReadiness(user, target).enabled(), "pilot configured");
+        var jobs = service.jobs(user, target);
+        eq(2, jobs.size(), "persisted run jobs");
+        require(jobs.stream().allMatch(FacebookBulkRunService.RunJob::mediaEligible), "AV media accepted");
+        var newStart = OffsetDateTime.now().plusHours(1);
+        var moved = tx.execute(s -> service.reschedule(user, target, newStart));
+        eq(2, moved.updatedJobs(), "two existing jobs moved");
+        eq(5L, Duration.between(moved.firstScheduledAt(), moved.lastScheduledAt()).toMinutes(), "spacing preserved");
+        field(service, "reelAutoVerify", false);
+        try {
+            tx.execute(s -> service.start(user, target));
+            throw new AssertionError("start should reject disabled reel");
+        } catch (org.springframework.web.server.ResponseStatusException ex) {
+            eq(409, ex.getStatusCode().value(), "disabled media conflict");
+        }
+        field(service, "reelAutoVerify", true);
+        eq("RUNNING", tx.execute(s -> service.start(user, target)).status(), "selected run starts");
+        eq("DRAFT", service.get(user, foreign).status(), "other draft unchanged");
+        eq("PENDING", status(v), "start does not publish");
     }
 }
